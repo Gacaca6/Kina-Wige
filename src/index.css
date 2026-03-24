@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #2D6A4F;
+  --color-primary-light: #40916C;
+  --color-secondary: #52B788;
+  --color-accent: #FFD700;
+  --color-accent-warm: #FF9800;
+  --color-surface: #F0FFF4;
+  --color-surface-warm: #FFF8E7;
+  --color-dark: #1B4332;
+  --color-danger: #E91E63;
+
+  --font-headline: "Fredoka", sans-serif;
+  --font-body: "Nunito", sans-serif;
+  --font-display: "Fredoka", sans-serif;
+}
+
+@layer utilities {
+  .storybook-canvas {
+    background: radial-gradient(circle at center, var(--color-primary-light) 0%, var(--color-primary) 100%);
+  }
+  .hillside-gradient {
+    background: linear-gradient(180deg, var(--color-primary-light) 0%, var(--color-primary) 100%);
+  }
+  .glass-dock {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+}
+
+@keyframes bounce-germ {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(5deg); }
+}
+.germ-bounce {
+  animation: bounce-germ 2s infinite ease-in-out;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-surface);
+  color: var(--color-dark);
+}
