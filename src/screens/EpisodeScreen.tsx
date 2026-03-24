@@ -71,7 +71,7 @@ export default function EpisodeScreen() {
           <div className="space-y-6">
             <div className="inline-block bg-primary/10 text-primary px-4 py-1 rounded-lg text-sm font-bold uppercase tracking-widest">{t('episode.story')}</div>
             <p className="text-lg leading-relaxed text-on-surface font-medium">
-              Hirwa yari ashotse mu gikari, ariko yibagiwe gukaraba amaboko mbere yo kurya! Keza na Mama baramufasha kwibuka intambwe 7 zo gukaraba neza hakoreshejwe amazi meza n'isabune.
+              Hirwa yari asohotse mu gikari, ariko yibagiwe gukaraba amaboko mbere yo kurya! Keza na Mama baramufasha kwibuka intambwe 7 zo gukaraba neza hakoreshejwe amazi meza n'isabune.
             </p>
           </div>
           <div className="bg-surface-container-lowest p-6 rounded-lg shadow-[0_24px_48px_-12px_rgba(0,33,19,0.06)]">
