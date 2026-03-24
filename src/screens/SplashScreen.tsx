@@ -28,7 +28,7 @@ export default function SplashScreen() {
           transition={{ delay: 1.2 }}
           className="text-white/80 font-body text-base"
         >
-          The Modern Umudugudu for early learning.
+          The Modern way for early learning.
         </motion.p>
 
         <motion.div
