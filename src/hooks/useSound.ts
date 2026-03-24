@@ -1,10 +1,11 @@
 import { useCallback, useRef, useEffect } from 'react';
 
-type SoundName = 
-  | 'tap' | 'water_on' | 'soap_squish' | 'germ_pop_1' | 'germ_pop_2' 
-  | 'germ_pop_3' | 'germ_pop_4' | 'germ_pop_5' | 'germ_scared' 
-  | 'scrub_bubble' | 'rinse_splash' | 'dry_cloth' | 'clean_chime' 
-  | 'victory_fanfare' | 'star_ding' | 'step_complete';
+type SoundName =
+  | 'tap' | 'water_on' | 'soap_squish' | 'germ_pop_1' | 'germ_pop_2'
+  | 'germ_pop_3' | 'germ_pop_4' | 'germ_pop_5' | 'germ_scared'
+  | 'scrub_bubble' | 'rinse_splash' | 'dry_cloth' | 'clean_chime'
+  | 'victory_fanfare' | 'star_ding' | 'step_complete'
+  | 'success' | 'error';
 
 class SoundEngine {
   private ctx: AudioContext | null = null;
@@ -142,7 +143,160 @@ class SoundEngine {
         });
         break;
       }
-      // Add other sounds as needed...
+      case 'germ_scared': {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, t);
+        osc.frequency.exponentialRampToValueAtTime(300, t + 0.1);
+        gain.gain.setValueAtTime(0, t);
+        gain.gain.linearRampToValueAtTime(0.3, t + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
+        osc.connect(gain);
+        gain.connect(this.masterGain);
+        osc.start(t);
+        osc.stop(t + 0.1);
+        break;
+      }
+      case 'scrub_bubble': {
+        const bufferSize = this.ctx.sampleRate * 0.2;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.value = 2000;
+        filter.Q.value = 2;
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0, t);
+        gain.gain.linearRampToValueAtTime(0.1, t + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.masterGain);
+        noise.start(t);
+        break;
+      }
+      case 'rinse_splash': {
+        const bufferSize = this.ctx.sampleRate * 0.4;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(1000, t);
+        filter.frequency.exponentialRampToValueAtTime(300, t + 0.4);
+        filter.Q.value = 1;
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0, t);
+        gain.gain.linearRampToValueAtTime(0.25, t + 0.05);
+        gain.gain.linearRampToValueAtTime(0, t + 0.4);
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.masterGain);
+        noise.start(t);
+        break;
+      }
+      case 'dry_cloth': {
+        const bufferSize = this.ctx.sampleRate * 0.3;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 500;
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0, t);
+        gain.gain.linearRampToValueAtTime(0.15, t + 0.1);
+        gain.gain.linearRampToValueAtTime(0, t + 0.3);
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.masterGain);
+        noise.start(t);
+        break;
+      }
+      case 'clean_chime': {
+        const notes = [
+          { f: 523, start: 0, d: 0.2 },
+          { f: 659, start: 0.2, d: 0.3 }
+        ];
+        notes.forEach(note => {
+          const osc = this.ctx!.createOscillator();
+          const gain = this.ctx!.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(note.f, t + note.start);
+          gain.gain.setValueAtTime(0, t + note.start);
+          gain.gain.linearRampToValueAtTime(0.3, t + note.start + 0.03);
+          gain.gain.exponentialRampToValueAtTime(0.01, t + note.start + note.d);
+          osc.connect(gain);
+          gain.connect(this.masterGain!);
+          osc.start(t + note.start);
+          osc.stop(t + note.start + note.d);
+        });
+        break;
+      }
+      case 'step_complete': {
+        const notes = [
+          { f: 392, start: 0, d: 0.15 },
+          { f: 523, start: 0.15, d: 0.15 }
+        ];
+        notes.forEach(note => {
+          const osc = this.ctx!.createOscillator();
+          const gain = this.ctx!.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(note.f, t + note.start);
+          gain.gain.setValueAtTime(0, t + note.start);
+          gain.gain.linearRampToValueAtTime(0.3, t + note.start + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.01, t + note.start + note.d);
+          osc.connect(gain);
+          gain.connect(this.masterGain!);
+          osc.start(t + note.start);
+          osc.stop(t + note.start + note.d);
+        });
+        break;
+      }
+      case 'success': {
+        // Same as clean_chime
+        const sNotes = [
+          { f: 523, start: 0, d: 0.2 },
+          { f: 659, start: 0.2, d: 0.3 }
+        ];
+        sNotes.forEach(note => {
+          const osc = this.ctx!.createOscillator();
+          const gain = this.ctx!.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(note.f, t + note.start);
+          gain.gain.setValueAtTime(0, t + note.start);
+          gain.gain.linearRampToValueAtTime(0.3, t + note.start + 0.03);
+          gain.gain.exponentialRampToValueAtTime(0.01, t + note.start + note.d);
+          osc.connect(gain);
+          gain.connect(this.masterGain!);
+          osc.start(t + note.start);
+          osc.stop(t + note.start + note.d);
+        });
+        break;
+      }
+      case 'error': {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(200, t);
+        osc.frequency.exponentialRampToValueAtTime(100, t + 0.2);
+        gain.gain.setValueAtTime(0, t);
+        gain.gain.linearRampToValueAtTime(0.2, t + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
+        osc.connect(gain);
+        gain.connect(this.masterGain);
+        osc.start(t);
+        osc.stop(t + 0.2);
+        break;
+      }
       default:
         break;
     }
