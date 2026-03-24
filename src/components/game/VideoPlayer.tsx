@@ -1,111 +1,133 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Play, Pause, SkipForward, Maximize, Minimize, Volume2, VolumeX } from 'lucide-react';
+import { Play, Pause, Maximize, Minimize } from 'lucide-react';
 
 const CLIPS = ['/videos/clip1.mp4', '/videos/clip2.mp4', '/videos/clip3.mp4'];
-const CROSSFADE_MS = 800;
 
 export default function VideoPlayer() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentClip, setCurrentClip] = useState(0);
-  const [progress, setProgress] = useState(0);
   const [totalProgress, setTotalProgress] = useState(0);
   const [showControls, setShowControls] = useState(true);
-  const [isFading, setIsFading] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
+  const [totalDuration, setTotalDuration] = useState(0);
 
   const videoRef = useRef<HTMLVideoElement>(null);
-  const nextVideoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const controlsTimer = useRef<ReturnType<typeof setTimeout>>();
   const durations = useRef<number[]>([0, 0, 0]);
+  const currentClipRef = useRef(0);
+
+  // Keep ref in sync so callbacks always see latest value
+  currentClipRef.current = currentClip;
 
   const hideControlsDelayed = useCallback(() => {
     if (controlsTimer.current) clearTimeout(controlsTimer.current);
-    if (isPlaying) {
-      controlsTimer.current = setTimeout(() => setShowControls(false), 3000);
-    }
-  }, [isPlaying]);
+    controlsTimer.current = setTimeout(() => setShowControls(false), 3000);
+  }, []);
 
   const handleTap = () => {
     setShowControls(true);
-    hideControlsDelayed();
+    if (isPlaying) hideControlsDelayed();
   };
 
   const togglePlay = () => {
-    if (!videoRef.current) return;
+    const video = videoRef.current;
+    if (!video) return;
     if (!hasStarted) setHasStarted(true);
-    if (videoRef.current.paused) {
-      videoRef.current.play();
+    if (video.paused) {
+      video.play();
       setIsPlaying(true);
       hideControlsDelayed();
     } else {
-      videoRef.current.pause();
+      video.pause();
       setIsPlaying(false);
       setShowControls(true);
-    }
-  };
-
-  const transitionToNext = useCallback(() => {
-    if (currentClip >= CLIPS.length - 1) {
-      setIsPlaying(false);
-      setShowControls(true);
-      return;
-    }
-
-    setIsFading(true);
-
-    // Preload next video
-    if (nextVideoRef.current) {
-      nextVideoRef.current.src = CLIPS[currentClip + 1];
-      nextVideoRef.current.load();
-      nextVideoRef.current.play().catch(() => {});
-    }
-
-    setTimeout(() => {
-      setCurrentClip(prev => prev + 1);
-      setIsFading(false);
-    }, CROSSFADE_MS);
-  }, [currentClip]);
-
-  const skipToNext = () => {
-    if (currentClip < CLIPS.length - 1) {
-      transitionToNext();
     }
   };
 
   const toggleFullscreen = async () => {
     if (!containerRef.current) return;
     if (!document.fullscreenElement) {
-      await containerRef.current.requestFullscreen();
+      await containerRef.current.requestFullscreen().catch(() => {});
       setIsFullscreen(true);
     } else {
-      await document.exitFullscreen();
+      await document.exitFullscreen().catch(() => {});
       setIsFullscreen(false);
     }
   };
 
-  // Time update handler
+  // Compute elapsed time across all previous clips + current position
+  const getElapsedTime = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return 0;
+    let elapsed = 0;
+    for (let i = 0; i < currentClipRef.current; i++) {
+      elapsed += durations.current[i] || 0;
+    }
+    elapsed += video.currentTime || 0;
+    return elapsed;
+  }, []);
+
+  const getTotalDuration = useCallback(() => {
+    return durations.current.reduce((sum, d) => sum + (d || 0), 0);
+  }, []);
+
+  // Format seconds to mm:ss
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  };
+
+  // Preload all clip durations on mount
+  useEffect(() => {
+    CLIPS.forEach((src, i) => {
+      const tempVideo = document.createElement('video');
+      tempVideo.preload = 'metadata';
+      tempVideo.src = src;
+      tempVideo.onloadedmetadata = () => {
+        durations.current[i] = tempVideo.duration;
+        const total = durations.current.reduce((sum, d) => sum + (d || 0), 0);
+        setTotalDuration(total);
+      };
+    });
+  }, []);
+
+  // Time update + ended handlers
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
     const onTimeUpdate = () => {
-      if (video.duration) {
-        setProgress(video.currentTime / video.duration);
-        // Calculate total progress across all clips
-        const clipWeight = 1 / CLIPS.length;
-        const total = (currentClip * clipWeight) + (video.currentTime / video.duration) * clipWeight;
-        setTotalProgress(total);
+      const total = getTotalDuration();
+      if (total > 0) {
+        setTotalProgress(getElapsedTime() / total);
       }
     };
 
-    const onEnded = () => transitionToNext();
+    const onEnded = () => {
+      const clipIdx = currentClipRef.current;
+      if (clipIdx < CLIPS.length - 1) {
+        // Seamlessly switch to next clip
+        const nextIdx = clipIdx + 1;
+        setCurrentClip(nextIdx);
+        video.src = CLIPS[nextIdx];
+        video.load();
+        video.play().catch(() => {});
+      } else {
+        // All clips finished
+        setIsPlaying(false);
+        setShowControls(true);
+        setTotalProgress(1);
+      }
+    };
 
     const onLoadedMetadata = () => {
-      durations.current[currentClip] = video.duration;
+      durations.current[currentClipRef.current] = video.duration;
+      const total = durations.current.reduce((sum, d) => sum + (d || 0), 0);
+      setTotalDuration(total);
     };
 
     video.addEventListener('timeupdate', onTimeUpdate);
@@ -117,16 +139,7 @@ export default function VideoPlayer() {
       video.removeEventListener('ended', onEnded);
       video.removeEventListener('loadedmetadata', onLoadedMetadata);
     };
-  }, [currentClip, transitionToNext]);
-
-  // Auto-play next clip after transition
-  useEffect(() => {
-    if (videoRef.current && hasStarted) {
-      videoRef.current.play().catch(() => {});
-      setIsPlaying(true);
-      hideControlsDelayed();
-    }
-  }, [currentClip]);
+  }, [getElapsedTime, getTotalDuration]);
 
   // Fullscreen change listener
   useEffect(() => {
@@ -135,31 +148,57 @@ export default function VideoPlayer() {
     return () => document.removeEventListener('fullscreenchange', handler);
   }, []);
 
+  // Handle progress bar click/seek
+  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    const rect = e.currentTarget.getBoundingClientRect();
+    const fraction = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    const targetTime = fraction * getTotalDuration();
+
+    // Find which clip and position
+    let accumulated = 0;
+    for (let i = 0; i < CLIPS.length; i++) {
+      const clipDur = durations.current[i] || 0;
+      if (accumulated + clipDur > targetTime) {
+        const posInClip = targetTime - accumulated;
+        if (i !== currentClipRef.current) {
+          setCurrentClip(i);
+          const video = videoRef.current;
+          if (video) {
+            video.src = CLIPS[i];
+            video.load();
+            video.onloadeddata = () => {
+              video.currentTime = posInClip;
+              if (isPlaying) video.play().catch(() => {});
+              video.onloadeddata = null;
+            };
+          }
+        } else {
+          if (videoRef.current) videoRef.current.currentTime = posInClip;
+        }
+        return;
+      }
+      accumulated += clipDur;
+    }
+  };
+
   return (
     <div
       ref={containerRef}
-      className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black shadow-2xl border-4 border-surface-container-lowest cursor-pointer select-none"
+      className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black shadow-[0_8px_32px_rgba(0,0,0,0.2)] cursor-pointer select-none"
       onClick={handleTap}
     >
-      {/* Current video */}
+      {/* Single video element — plays all clips sequentially */}
       <video
         ref={videoRef}
-        src={CLIPS[currentClip]}
-        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-[800ms] ${isFading ? 'opacity-0' : 'opacity-100'}`}
+        src={CLIPS[0]}
+        className="absolute inset-0 w-full h-full object-cover"
         playsInline
         preload="auto"
-        muted={isMuted}
+        muted
       />
 
-      {/* Next video (for crossfade) */}
-      <video
-        ref={nextVideoRef}
-        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-[800ms] ${isFading ? 'opacity-100' : 'opacity-0'}`}
-        playsInline
-        muted={isMuted}
-      />
-
-      {/* Play button overlay (before started) */}
+      {/* Initial play overlay */}
       {!hasStarted && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -175,7 +214,7 @@ export default function VideoPlayer() {
             <Play className="w-10 h-10 fill-current ml-1" />
           </motion.button>
           <p className="mt-4 font-headline font-bold text-white text-lg drop-shadow-lg">
-            Kanda urebe! (Tap to watch!)
+            Kanda urebe!
           </p>
         </motion.div>
       )}
@@ -188,59 +227,39 @@ export default function VideoPlayer() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="absolute inset-0 z-20 flex flex-col justify-between bg-gradient-to-t from-black/60 via-transparent to-black/30"
+            className="absolute inset-0 z-20 flex flex-col justify-end bg-gradient-to-t from-black/70 via-transparent to-transparent"
           >
-            {/* Top bar */}
-            <div className="flex justify-between items-center px-4 pt-3">
-              <div className="flex items-center gap-2">
-                {CLIPS.map((_, i) => (
-                  <div
-                    key={i}
-                    className={`h-1.5 rounded-full transition-all duration-300 ${
-                      i === currentClip ? 'w-8 bg-white' : i < currentClip ? 'w-4 bg-white/80' : 'w-4 bg-white/30'
-                    }`}
-                  />
-                ))}
-              </div>
-              <span className="text-white/80 text-xs font-bold bg-black/30 px-2 py-1 rounded-full">
-                {currentClip + 1}/{CLIPS.length}
-              </span>
-            </div>
-
-            {/* Center play/pause */}
-            <div className="flex items-center justify-center gap-8">
+            {/* Center play/pause (large, tap-friendly) */}
+            <div className="absolute inset-0 flex items-center justify-center">
               <button
                 onClick={(e) => { e.stopPropagation(); togglePlay(); }}
                 className="w-16 h-16 bg-white/20 backdrop-blur-sm text-white rounded-full flex items-center justify-center hover:bg-white/30 transition-colors active:scale-90"
               >
-                {isPlaying ? <Pause className="w-8 h-8 fill-current" /> : <Play className="w-8 h-8 fill-current ml-1" />}
+                {isPlaying
+                  ? <Pause className="w-8 h-8 fill-current" />
+                  : <Play className="w-8 h-8 fill-current ml-1" />
+                }
               </button>
-              {currentClip < CLIPS.length - 1 && (
-                <button
-                  onClick={(e) => { e.stopPropagation(); skipToNext(); }}
-                  className="w-12 h-12 bg-white/20 backdrop-blur-sm text-white rounded-full flex items-center justify-center hover:bg-white/30 transition-colors active:scale-90"
-                >
-                  <SkipForward className="w-6 h-6 fill-current" />
-                </button>
-              )}
             </div>
 
-            {/* Bottom bar */}
-            <div className="px-4 pb-3 space-y-2">
-              {/* Progress bar */}
-              <div className="w-full h-1.5 bg-white/20 rounded-full overflow-hidden">
+            {/* Bottom controls */}
+            <div className="px-4 pb-4 space-y-2">
+              {/* Seekable progress bar */}
+              <div
+                className="w-full h-2 bg-white/20 rounded-full overflow-hidden cursor-pointer group"
+                onClick={handleProgressClick}
+              >
                 <div
-                  className="h-full bg-accent rounded-full transition-all duration-200"
+                  className="h-full bg-accent rounded-full transition-[width] duration-150 group-hover:bg-accent-warm"
                   style={{ width: `${totalProgress * 100}%` }}
                 />
               </div>
+
+              {/* Time + fullscreen */}
               <div className="flex justify-between items-center">
-                <button
-                  onClick={(e) => { e.stopPropagation(); setIsMuted(!isMuted); }}
-                  className="text-white/80 hover:text-white transition-colors p-1"
-                >
-                  {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-                </button>
+                <span className="text-white/80 text-xs font-bold tabular-nums">
+                  {formatTime(getElapsedTime())} / {formatTime(totalDuration)}
+                </span>
                 <button
                   onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }}
                   className="text-white/80 hover:text-white transition-colors p-1"
