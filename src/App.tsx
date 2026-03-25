@@ -1,6 +1,7 @@
 import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'motion/react';
+import FloatingKeza from './components/ui/FloatingKeza';
 
 const SplashScreen = lazy(() => import('./screens/SplashScreen'));
 const HomeScreen = lazy(() => import('./screens/HomeScreen'));
@@ -9,6 +10,7 @@ const GameScreen = lazy(() => import('./screens/GameScreen'));
 const ParentScreen = lazy(() => import('./screens/ParentScreen'));
 const EpisodeListScreen = lazy(() => import('./screens/EpisodeListScreen'));
 const GamesScreen = lazy(() => import('./screens/GamesScreen'));
+const BazaKezaScreen = lazy(() => import('./screens/BazaKezaScreen'));
 
 function LoadingFallback() {
   return (
@@ -32,9 +34,11 @@ export default function App() {
               <Route path="/parents" element={<ParentScreen />} />
               <Route path="/episodes" element={<EpisodeListScreen />} />
               <Route path="/games" element={<GamesScreen />} />
+              <Route path="/baza-keza" element={<BazaKezaScreen />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </AnimatePresence>
+          <FloatingKeza />
         </Suspense>
       </div>
     </BrowserRouter>
