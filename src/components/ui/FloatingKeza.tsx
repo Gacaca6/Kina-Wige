@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { images } from '../../assets/images';
+import { HelpCircle } from 'lucide-react';
 
 export default function FloatingKeza() {
   const navigate = useNavigate();
@@ -20,28 +20,25 @@ export default function FloatingKeza() {
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ type: 'spring', damping: 12, delay: 1 }}
-      className="fixed bottom-24 right-4 z-40 w-16 h-16 rounded-full shadow-lg active:scale-90 transition-transform"
+      className="fixed bottom-24 right-4 z-40 flex flex-col items-center gap-1 active:scale-90 transition-transform"
       aria-label="Baza Keza — Ask a question"
     >
       {/* Pulse ring */}
-      <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping" style={{ animationDuration: '3s' }} />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-14 h-14 rounded-full bg-accent/25 animate-ping" style={{ animationDuration: '3s' }} />
 
       {/* Button body */}
       <motion.div
         animate={{ y: [0, -4, 0] }}
         transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-        className="relative w-full h-full rounded-full overflow-hidden border-3 border-white shadow-[0_4px_16px_rgba(15,82,56,0.3)] bg-primary"
+        className="relative w-14 h-14 rounded-full flex items-center justify-center bg-gradient-to-br from-accent to-accent-warm shadow-[0_4px_20px_rgba(255,215,0,0.4)] border-[3px] border-white"
       >
-        <img
-          src={images.kezaAvatar}
-          alt="Ask Keza"
-          className="w-full h-full object-cover"
-        />
-        {/* Question mark badge */}
-        <div className="absolute -top-1 -right-1 w-6 h-6 bg-accent rounded-full flex items-center justify-center border-2 border-white shadow-sm">
-          <span className="text-dark font-black text-xs">?</span>
-        </div>
+        <HelpCircle className="w-8 h-8 text-dark" strokeWidth={2.5} />
       </motion.div>
+
+      {/* Label */}
+      <span className="text-[10px] font-headline font-bold text-primary bg-white/90 px-2 py-0.5 rounded-full shadow-sm leading-tight">
+        Baza Keza
+      </span>
     </motion.button>
   );
 }

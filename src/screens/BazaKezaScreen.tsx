@@ -125,31 +125,55 @@ export default function BazaKezaScreen() {
     setIsThinking(false);
   }, [language, play, haptic]);
 
-  // Speech recognition
-  const startListening = useCallback(() => {
+  // Speech recognition — tap to start, tap again to stop, or auto-stops after speech
+  const toggleListening = useCallback(() => {
+    // If already listening, stop
+    if (isListening && recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+      return;
+    }
+
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      // Fallback: show keyboard input
       setShowKeyboard(true);
       return;
     }
 
+    // Stop any previous instance
+    if (recognitionRef.current) {
+      try { recognitionRef.current.abort(); } catch {}
+    }
+
     const recognition = new SpeechRecognition();
-    recognition.lang = language === 'KN' ? 'rw-RW' : language === 'FR' ? 'fr-FR' : 'en-US';
+    // Kinyarwanda may not be supported — fall back to English for better results
+    recognition.lang = language === 'FR' ? 'fr-FR' : 'en-US';
     recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-    recognition.continuous = false;
+    recognition.maxAlternatives = 3;
+    recognition.continuous = true; // Keep listening until user stops or silence detected
 
     recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      setIsListening(false);
-      processQuestion(transcript);
+      // Get the latest final result
+      let transcript = '';
+      for (let i = 0; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          transcript += event.results[i][0].transcript;
+        }
+      }
+      if (transcript.trim()) {
+        recognition.stop();
+        setIsListening(false);
+        processQuestion(transcript.trim());
+      }
     };
 
-    recognition.onerror = () => {
+    recognition.onerror = (event: any) => {
+      console.log('Speech error:', event.error);
       setIsListening(false);
-      // On error, fall back to keyboard
-      setShowKeyboard(true);
+      if (event.error === 'not-allowed' || event.error === 'service-not-available') {
+        setShowKeyboard(true);
+      }
+      // For 'no-speech' or 'aborted', just stop silently
     };
 
     recognition.onend = () => {
@@ -157,18 +181,17 @@ export default function BazaKezaScreen() {
     };
 
     recognitionRef.current = recognition;
-    recognition.start();
-    setIsListening(true);
-    play('tap');
-    haptic.mediumTap();
-  }, [language, processQuestion, play, haptic]);
 
-  const stopListening = useCallback(() => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
+    try {
+      recognition.start();
+      setIsListening(true);
+      play('tap');
+      haptic.mediumTap();
+    } catch (e) {
+      console.log('Speech start failed:', e);
+      setShowKeyboard(true);
     }
-    setIsListening(false);
-  }, []);
+  }, [isListening, language, processQuestion, play, haptic]);
 
   const handleTextSubmit = () => {
     if (textInput.trim()) {
@@ -327,15 +350,12 @@ export default function BazaKezaScreen() {
               <Keyboard className="w-5 h-5" />
             </button>
 
-            {/* Main mic button */}
+            {/* Main mic button — tap to start, tap again to stop */}
             <motion.button
-              onTouchStart={startListening}
-              onTouchEnd={stopListening}
-              onMouseDown={startListening}
-              onMouseUp={stopListening}
+              onClick={toggleListening}
               disabled={isThinking}
               whileTap={{ scale: 0.9 }}
-              className={`w-20 h-20 rounded-full flex items-center justify-center shadow-lg transition-all ${
+              className={`w-20 h-20 rounded-full flex items-center justify-center shadow-lg transition-all relative ${
                 isListening
                   ? 'bg-red-500 shadow-red-500/30 scale-110'
                   : isThinking
@@ -345,9 +365,9 @@ export default function BazaKezaScreen() {
             >
               {isListening ? (
                 <>
-                  <MicOff className="w-8 h-8 text-white" />
+                  <MicOff className="w-8 h-8 text-white relative z-10" />
                   {/* Pulse ring */}
-                  <div className="absolute w-20 h-20 rounded-full border-4 border-red-400 animate-ping opacity-30" />
+                  <div className="absolute inset-0 rounded-full border-4 border-red-400 animate-ping opacity-30" />
                 </>
               ) : (
                 <Mic className="w-8 h-8 text-white" />
