@@ -1,20 +1,66 @@
 <div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+
+# 🎮 Kina-Wige
+
+**A playful game that teaches young children in Kinyarwanda.**
+
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
+
 </div>
 
-# Run and deploy your AI Studio app
+## About
 
-This contains everything you need to run your app locally.
+*Kina-Wige* means *"play and learn"* — and that's exactly what it does. It's an interactive learning game for young children, taught entirely in **Kinyarwanda**, so kids can learn in their mother tongue from their very first lessons.
 
-View your app in AI Studio: https://ai.studio/apps/d781cb9f-afd1-4a8b-9f09-ef2ff5ef70ad
+Learning is joyful, local, and accessible — no English required.
 
-## Run Locally
+## ✨ Features
 
-**Prerequisites:**  Node.js
+- 🗣️ **Mother-tongue first** — everything in Kinyarwanda
+- 🎲 **Learn through play** — interactive games keep young minds engaged
+- 🧒 **Built for children** — simple, colorful, age-appropriate design
+- 🌍 **Locally rooted** — culturally relevant content for Rwandan kids
+- 📱 **Works on any device** — mobile-first and lightweight
 
+## 🛠️ Tech Stack
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+- **Frontend:** React + TypeScript + Vite
+- **Routing:** React Router
+- **Styling:** Tailwind CSS
+- **Tooling:** ESLint
+
+## 🚀 Getting Started
+
+```bash
+# Clone the repository
+git clone https://github.com/Gacaca6/Kina-Wige.git
+cd Kina-Wige
+
+# Install dependencies
+npm install
+
+# Start the dev server
+npm run dev
+```
+
+```bash
+npm run build     # Production build
+npm run preview   # Preview the production build
+npm run lint      # Lint the codebase
+```
+
+## 🗺️ Status
+
+In active development. Contributions and ideas are welcome.
+
+## 👤 Author
+
+**GACACA Godwin** — building AI-powered products for African impact.
+📫 mikelgodwin1234@gmail.com
+
+---
+
+<div align="center"><i>Kina, wige — play and learn. 🌟</i></div>
