@@ -10,7 +10,7 @@ import BottomNav from '../components/ui/BottomNav';
 export default function ParentScreen() {
   const navigate = useNavigate();
   const { t, language, setLanguage } = useI18n();
-  const { activities, weeklyDays, toggleActivity, toggleDay, completedDays, progressMessage, progressPercent } = useParentData();
+  const { activities, weeklyDays, toggleActivity, toggleDay, progressKey, progressPercent } = useParentData();
 
   const toggleLanguage = () => {
     const langs: ('KN' | 'EN' | 'FR')[] = ['KN', 'EN', 'FR'];
@@ -62,7 +62,7 @@ export default function ParentScreen() {
         <section className="space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="font-nunito text-2xl font-bold text-primary">{t('parents.episode1')}</h3>
-            <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Active Lesson</span>
+            <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">{t('parents.activeLesson')}</span>
           </div>
           <div className="bg-surface-container-low rounded-lg overflow-hidden space-y-1">
             <details className="group bg-surface-container-lowest" open>
@@ -73,7 +73,7 @@ export default function ParentScreen() {
                 <span className="font-nunito text-lg font-bold flex-1">{t('parents.whatWelearned')}</span>
               </summary>
               <div className="px-20 pb-8 font-nunito text-on-surface-variant leading-relaxed">
-                Today's session focused on the essential steps of hygiene. Your child learned how germs spread and why soap is our best friend in keeping our family healthy.
+                {t('parents.learnedBody')}
               </div>
             </details>
 
@@ -93,8 +93,8 @@ export default function ParentScreen() {
                     className="w-6 h-6 rounded border-outline text-primary focus:ring-primary"
                   />
                   <div className="flex-1">
-                    <h4 className="font-bold text-on-surface">Indirimbo y'amaboko</h4>
-                    <p className="text-sm text-on-surface-variant italic">5 min &bull; Sing together during handwashing</p>
+                    <h4 className="font-bold text-on-surface">{t('parents.activity1.title')}</h4>
+                    <p className="text-sm text-on-surface-variant italic">{t('parents.activity1.desc')}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4 p-4 rounded-lg bg-surface-container-low border border-transparent hover:border-primary/20 transition-all">
@@ -105,8 +105,8 @@ export default function ParentScreen() {
                     className="w-6 h-6 rounded border-outline text-primary focus:ring-primary"
                   />
                   <div className="flex-1">
-                    <h4 className="font-bold text-on-surface">Ibibazo ku dupfunyi</h4>
-                    <p className="text-sm text-on-surface-variant italic">5 min &bull; Ask: "Where do germs hide?"</p>
+                    <h4 className="font-bold text-on-surface">{t('parents.activity2.title')}</h4>
+                    <p className="text-sm text-on-surface-variant italic">{t('parents.activity2.desc')}</p>
                   </div>
                 </div>
               </div>
@@ -120,7 +120,7 @@ export default function ParentScreen() {
                 <span className="font-nunito text-lg font-bold flex-1">{t('parents.changes')}</span>
               </summary>
               <div className="px-20 pb-8 font-nunito text-on-surface-variant leading-relaxed">
-                Look for your child initiating handwashing without being asked, or reminding others to use soap. This shows they are internalizing the value of hygiene!
+                {t('parents.changesBody')}
               </div>
             </details>
           </div>
@@ -129,8 +129,8 @@ export default function ParentScreen() {
         <section className="bg-[#1B4332] text-white p-8 rounded-lg space-y-6">
           <div className="flex justify-between items-end">
             <div className="space-y-1">
-              <h3 className="font-nunito text-xl font-bold">Incamake y'icyumweru</h3>
-              <p className="text-primary-fixed opacity-90">{progressMessage}</p>
+              <h3 className="font-nunito text-xl font-bold">{t('parents.weekTitle')}</h3>
+              <p className="text-primary-fixed opacity-90">{t(progressKey)}</p>
             </div>
             <div className="font-nunito text-3xl font-black text-tertiary-fixed">{progressPercent}%</div>
           </div>
@@ -148,7 +148,7 @@ export default function ParentScreen() {
 
         <section className="text-center py-10 opacity-60 space-y-4">
           <Hourglass className="w-10 h-10 text-primary mx-auto" />
-          <p className="font-nunito font-bold text-primary">More episodes coming soon</p>
+          <p className="font-nunito font-bold text-primary">{t('parents.moreSoon')}</p>
         </section>
       </main>
 

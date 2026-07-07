@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import type { TranslationKey } from '../i18n/translations';
 
 const ACTIVITIES_KEY = 'kina-wige-activities';
 const WEEKLY_KEY = 'kina-wige-weekly';
@@ -52,11 +53,11 @@ export function useParentData() {
 
   const completedDays = data.weeklyDays.filter(Boolean).length;
 
-  const progressMessage = (() => {
-    if (completedDays === 0) return 'Mutangire uyu munsi!';
-    if (completedDays <= 3) return 'Murakora neza! Mukomeze!';
-    if (completedDays <= 6) return 'Murakomeye cyane!';
-    return '⭐ Mwatsinze! Umwana wanyu yize ikintu gishya!';
+  const progressKey: TranslationKey = (() => {
+    if (completedDays === 0) return 'parents.progress.start';
+    if (completedDays <= 3) return 'parents.progress.good';
+    if (completedDays <= 6) return 'parents.progress.strong';
+    return 'parents.progress.win';
   })();
 
   const progressPercent = Math.round((completedDays / 7) * 100);
@@ -67,7 +68,7 @@ export function useParentData() {
     toggleActivity,
     toggleDay,
     completedDays,
-    progressMessage,
+    progressKey,
     progressPercent,
   };
 }

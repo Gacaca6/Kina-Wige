@@ -1,10 +1,13 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Play, Pause, Maximize, Minimize } from 'lucide-react';
+import { Play, Pause, Maximize, Minimize, Volume2, VolumeX } from 'lucide-react';
 
-const CLIPS = ['/videos/clip1.mp4', '/videos/clip2.mp4', '/videos/clip3.mp4'];
+interface VideoPlayerProps {
+  clips: string[];
+  poster?: string;
+}
 
-export default function VideoPlayer() {
+export default function VideoPlayer({ clips, poster }: VideoPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentClip, setCurrentClip] = useState(0);
   const [totalProgress, setTotalProgress] = useState(0);
@@ -12,11 +15,12 @@ export default function VideoPlayer() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const [totalDuration, setTotalDuration] = useState(0);
+  const [isMuted, setIsMuted] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const controlsTimer = useRef<ReturnType<typeof setTimeout>>();
-  const durations = useRef<number[]>([0, 0, 0]);
+  const durations = useRef<number[]>(clips.map(() => 0));
   const currentClipRef = useRef(0);
 
   // Keep ref in sync so callbacks always see latest value
@@ -37,7 +41,7 @@ export default function VideoPlayer() {
     if (!video) return;
     if (!hasStarted) setHasStarted(true);
     if (video.paused) {
-      video.play();
+      video.play().catch(() => {});
       setIsPlaying(true);
       hideControlsDelayed();
     } else {
@@ -45,6 +49,13 @@ export default function VideoPlayer() {
       setIsPlaying(false);
       setShowControls(true);
     }
+  };
+
+  const toggleMute = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = !video.muted;
+    setIsMuted(video.muted);
   };
 
   const toggleFullscreen = async () => {
@@ -83,7 +94,7 @@ export default function VideoPlayer() {
 
   // Preload all clip durations on mount
   useEffect(() => {
-    CLIPS.forEach((src, i) => {
+    clips.forEach((src, i) => {
       const tempVideo = document.createElement('video');
       tempVideo.preload = 'metadata';
       tempVideo.src = src;
@@ -93,7 +104,7 @@ export default function VideoPlayer() {
         setTotalDuration(total);
       };
     });
-  }, []);
+  }, [clips]);
 
   // Time update + ended handlers
   useEffect(() => {
@@ -109,11 +120,11 @@ export default function VideoPlayer() {
 
     const onEnded = () => {
       const clipIdx = currentClipRef.current;
-      if (clipIdx < CLIPS.length - 1) {
+      if (clipIdx < clips.length - 1) {
         // Seamlessly switch to next clip
         const nextIdx = clipIdx + 1;
         setCurrentClip(nextIdx);
-        video.src = CLIPS[nextIdx];
+        video.src = clips[nextIdx];
         video.load();
         video.play().catch(() => {});
       } else {
@@ -139,7 +150,7 @@ export default function VideoPlayer() {
       video.removeEventListener('ended', onEnded);
       video.removeEventListener('loadedmetadata', onLoadedMetadata);
     };
-  }, [getElapsedTime, getTotalDuration]);
+  }, [clips, getElapsedTime, getTotalDuration]);
 
   // Fullscreen change listener
   useEffect(() => {
@@ -157,7 +168,7 @@ export default function VideoPlayer() {
 
     // Find which clip and position
     let accumulated = 0;
-    for (let i = 0; i < CLIPS.length; i++) {
+    for (let i = 0; i < clips.length; i++) {
       const clipDur = durations.current[i] || 0;
       if (accumulated + clipDur > targetTime) {
         const posInClip = targetTime - accumulated;
@@ -165,7 +176,7 @@ export default function VideoPlayer() {
           setCurrentClip(i);
           const video = videoRef.current;
           if (video) {
-            video.src = CLIPS[i];
+            video.src = clips[i];
             video.load();
             video.onloadeddata = () => {
               video.currentTime = posInClip;
@@ -188,14 +199,14 @@ export default function VideoPlayer() {
       className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black shadow-[0_8px_32px_rgba(0,0,0,0.2)] cursor-pointer select-none"
       onClick={handleTap}
     >
-      {/* Single video element — plays all clips sequentially */}
+      {/* Single video element — plays all clips sequentially, with sound */}
       <video
         ref={videoRef}
-        src={CLIPS[0]}
+        src={clips[0]}
+        poster={poster}
         className="absolute inset-0 w-full h-full object-cover"
         playsInline
         preload="auto"
-        muted
       />
 
       {/* Initial play overlay */}
@@ -233,6 +244,7 @@ export default function VideoPlayer() {
             <div className="absolute inset-0 flex items-center justify-center">
               <button
                 onClick={(e) => { e.stopPropagation(); togglePlay(); }}
+                aria-label={isPlaying ? 'Pause' : 'Play'}
                 className="w-16 h-16 bg-white/20 backdrop-blur-sm text-white rounded-full flex items-center justify-center hover:bg-white/30 transition-colors active:scale-90"
               >
                 {isPlaying
@@ -255,17 +267,27 @@ export default function VideoPlayer() {
                 />
               </div>
 
-              {/* Time + fullscreen */}
+              {/* Time + mute + fullscreen */}
               <div className="flex justify-between items-center">
                 <span className="text-white/80 text-xs font-bold tabular-nums">
                   {formatTime(getElapsedTime())} / {formatTime(totalDuration)}
                 </span>
-                <button
-                  onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }}
-                  className="text-white/80 hover:text-white transition-colors p-1"
-                >
-                  {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
-                </button>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); toggleMute(); }}
+                    aria-label={isMuted ? 'Unmute' : 'Mute'}
+                    className="text-white/80 hover:text-white transition-colors p-1"
+                  >
+                    {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }}
+                    aria-label={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+                    className="text-white/80 hover:text-white transition-colors p-1"
+                  >
+                    {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
+                  </button>
+                </div>
               </div>
             </div>
           </motion.div>

@@ -1,12 +1,13 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { motion } from 'motion/react';
 import { Play } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useI18n } from '../i18n/context';
 import Logo from '../components/ui/Logo';
 
 export default function SplashScreen() {
   const navigate = useNavigate();
-
+  const { t } = useI18n();
 
   return (
     <motion.main
@@ -28,7 +29,7 @@ export default function SplashScreen() {
           transition={{ delay: 1.2 }}
           className="text-white/80 font-body text-base"
         >
-          The Modern way for early learning.
+          {t('splash.tagline')}
         </motion.p>
 
         <motion.div
@@ -41,7 +42,7 @@ export default function SplashScreen() {
             onClick={() => navigate('/home', { replace: true })}
             className="w-full bg-white text-primary font-body font-bold px-8 py-4 rounded-xl text-base hover:bg-surface transition-colors flex items-center justify-center gap-2 shadow-md active:scale-95"
           >
-            Get Started
+            {t('splash.start')}
             <Play className="w-4 h-4 fill-current" />
           </button>
         </motion.div>

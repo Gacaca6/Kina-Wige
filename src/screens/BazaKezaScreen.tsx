@@ -5,9 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../i18n/context';
 import { useSound, useHaptic } from '../hooks/useSound';
 import { images } from '../assets/images';
-import { findOfflineAnswer, fallbackResponses, offTopicResponses } from '../data/kezaQA';
-import { askGemini } from '../services/gemini';
-import type { Language } from '../i18n/translations';
+import { findOfflineAnswer, offTopicResponses } from '../data/kezaQA';
 
 interface Message {
   id: number;
@@ -28,30 +26,29 @@ export default function BazaKezaScreen() {
   const [isThinking, setIsThinking] = useState(false);
   const [showKeyboard, setShowKeyboard] = useState(false);
   const [textInput, setTextInput] = useState('');
-  const [hasGreeted, setHasGreeted] = useState(false);
 
   const recognitionRef = useRef<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const msgIdRef = useRef(0);
+  const greetedRef = useRef(false);
 
   // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Keza's greeting on first visit
+  // Keza's greeting on first visit (ref guard so StrictMode doesn't greet twice)
   useEffect(() => {
-    if (!hasGreeted) {
-      setHasGreeted(true);
-      const greetings = {
-        KN: 'Muraho! Ndi Keza. Ubaza iki uyu munsi?',
-        EN: 'Hello! I\'m Keza. What would you like to ask today?',
-        FR: 'Bonjour! Je suis Keza. Qu\'est-ce que tu veux demander aujourd\'hui?',
-      };
-      setTimeout(() => {
-        addKezaMessage(greetings[language], '👋');
-      }, 500);
-    }
+    if (greetedRef.current) return;
+    greetedRef.current = true;
+    const greetings = {
+      KN: 'Muraho! Ndi Keza. Ubaza iki uyu munsi?',
+      EN: 'Hello! I\'m Keza. What would you like to ask today?',
+      FR: 'Bonjour! Je suis Keza. Qu\'est-ce que tu veux demander aujourd\'hui?',
+    };
+    setTimeout(() => {
+      addKezaMessage(greetings[language], '👋');
+    }, 500);
   }, []);
 
   const addKezaMessage = (text: string, emoji: string = '✨') => {
@@ -73,7 +70,7 @@ export default function BazaKezaScreen() {
     }]);
   };
 
-  // Process a question (offline first, then Gemini)
+  // Process a question — fully offline, answered from the built-in Q&A database
   const processQuestion = useCallback(async (question: string) => {
     if (!question.trim()) return;
 
@@ -93,31 +90,18 @@ export default function BazaKezaScreen() {
       isThinking: true,
     }]);
 
-    // Step 1: Try offline database
     const offlineMatch = findOfflineAnswer(question);
 
-    // Simulate a small delay so it feels like Keza is "thinking"
+    // Small delay so it feels like Keza is "thinking"
     await new Promise(r => setTimeout(r, 1000));
-
-    if (offlineMatch) {
-      // Remove thinking message, add real answer
-      setMessages(prev => prev.filter(m => m.id !== thinkingId));
-      addKezaMessage(offlineMatch.answer[language], offlineMatch.emoji);
-      play('clean_chime');
-      setIsThinking(false);
-      return;
-    }
-
-    // Step 2: Try Gemini API
-    const geminiResponse = await askGemini(question, language);
 
     setMessages(prev => prev.filter(m => m.id !== thinkingId));
 
-    if (geminiResponse) {
-      addKezaMessage(geminiResponse.text, geminiResponse.emoji);
+    if (offlineMatch) {
+      addKezaMessage(offlineMatch.answer[language], offlineMatch.emoji);
       play('clean_chime');
     } else {
-      // Step 3: Fallback — no match and no API
+      // No match — gently redirect ("ask your parent!")
       addKezaMessage(offTopicResponses[language], '🤔');
       play('tap');
     }
@@ -238,7 +222,6 @@ export default function BazaKezaScreen() {
             </p>
           </div>
         </div>
-        <div className="w-3 h-3 rounded-full bg-green-400 animate-pulse" title="Online" />
       </header>
 
       {/* Messages area */}

@@ -8,11 +8,10 @@ export default function FloatingKeza() {
   const location = useLocation();
 
   // Hide on splash, game, and baza-keza screens
-  const hiddenPaths = ['/', '/game', '/baza-keza'];
-  if (hiddenPaths.some(p => location.pathname === p || location.pathname.startsWith('/game/'))) {
+  const { pathname } = location;
+  if (pathname === '/' || pathname === '/baza-keza' || pathname.startsWith('/game/')) {
     return null;
   }
-  if (location.pathname === '/baza-keza') return null;
 
   return (
     <motion.button

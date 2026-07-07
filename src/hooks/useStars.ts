@@ -6,7 +6,8 @@ export function useStars() {
   const [stars, setStars] = useState<number>(() => {
     try {
       const stored = localStorage.getItem(STARS_KEY);
-      return stored ? parseInt(stored, 10) : 0;
+      const parsed = stored ? parseInt(stored, 10) : 0;
+      return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
     } catch {
       return 0;
     }

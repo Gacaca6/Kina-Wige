@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 import { I18nProvider } from './i18n/context';
+import { prefetchVideos } from './pwa/prefetchVideos';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -12,11 +13,10 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>,
 );
 
-// Register service worker for PWA
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {
-      // SW registration failed — app still works
-    });
-  });
+// The service worker itself is registered automatically by vite-plugin-pwa.
+// Here we only warm the video cache so episodes play offline.
+if (document.readyState === 'complete') {
+  prefetchVideos();
+} else {
+  window.addEventListener('load', () => prefetchVideos(), { once: true });
 }

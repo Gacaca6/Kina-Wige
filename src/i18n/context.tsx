@@ -1,18 +1,39 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { Language, translations } from './translations';
+import { Language, TranslationKey, translations } from './translations';
+
+const LANGUAGE_KEY = 'kina-wige-language';
 
 interface I18nContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: (key: keyof typeof translations['KN']) => string;
+  t: (key: TranslationKey) => string;
 }
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
-export function I18nProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<Language>('KN');
+function loadLanguage(): Language {
+  try {
+    const stored = localStorage.getItem(LANGUAGE_KEY);
+    if (stored === 'KN' || stored === 'EN' || stored === 'FR') return stored;
+  } catch {
+    // localStorage unavailable
+  }
+  return 'KN';
+}
 
-  const t = (key: keyof typeof translations['KN']) => {
+export function I18nProvider({ children }: { children: ReactNode }) {
+  const [language, setLanguageState] = useState<Language>(loadLanguage);
+
+  const setLanguage = (lang: Language) => {
+    setLanguageState(lang);
+    try {
+      localStorage.setItem(LANGUAGE_KEY, lang);
+    } catch {
+      // localStorage unavailable
+    }
+  };
+
+  const t = (key: TranslationKey) => {
     return translations[language][key] || translations['KN'][key] || key;
   };
 

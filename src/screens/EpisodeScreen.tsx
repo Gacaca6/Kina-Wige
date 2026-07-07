@@ -1,27 +1,34 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Star, ArrowLeft, Users } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams, Navigate } from 'react-router-dom';
 import { useI18n } from '../i18n/context';
 import { useStars } from '../hooks/useStars';
 import { images } from '../assets/images';
+import { getEpisode } from '../data/episodes';
 import BottomNav from '../components/ui/BottomNav';
 import VisualQuiz from '../components/game/VisualQuiz';
 import VideoPlayer from '../components/game/VideoPlayer';
 
 export default function EpisodeScreen() {
   const navigate = useNavigate();
-  const { t } = useI18n();
+  const { id } = useParams();
+  const { t, language } = useI18n();
   const { stars } = useStars();
+
+  const episode = getEpisode(id);
+  if (!episode) {
+    return <Navigate to="/episodes" replace />;
+  }
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-h-screen pb-24">
       <header className="bg-surface text-primary sticky top-0 z-50 flex justify-between items-center w-full px-6 py-4">
         <div className="flex items-center gap-4">
-          <button onClick={() => navigate('/home')} className="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-low hover:scale-105 transition-transform">
+          <button onClick={() => navigate('/episodes')} aria-label="Back to episodes" className="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-low hover:scale-105 transition-transform">
             <ArrowLeft className="w-6 h-6" />
           </button>
-          <h1 className="font-headline font-bold tracking-tight text-xl">{t('episode1.title')}</h1>
+          <h1 className="font-headline font-bold tracking-tight text-xl">{episode.title[language]}</h1>
         </div>
         <div className="flex items-center gap-2 bg-tertiary-fixed px-4 py-2 rounded-full">
           <Star className="w-5 h-5 text-on-tertiary-fixed-variant fill-current" />
@@ -31,7 +38,7 @@ export default function EpisodeScreen() {
 
       <main className="max-w-screen-xl mx-auto px-6 py-6 space-y-8">
         <section className="relative group">
-          <VideoPlayer />
+          <VideoPlayer clips={episode.clips} poster={episode.poster} />
           <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-secondary-container rounded-full -z-10 opacity-50 blur-xl" />
         </section>
 
@@ -40,24 +47,20 @@ export default function EpisodeScreen() {
             <span className="text-xl">{'\u{1FAE7}'}</span>
             <span>{t('episode.what_you_learn')}</span>
           </div>
-          <div className="flex items-center gap-2 bg-[#ffe8d1] text-[#774a00] px-6 py-3 rounded-full font-bold shadow-sm">
-            <span className="text-xl">{'\u{1F9E0}'}</span>
-            <span>Kwibuka</span>
-          </div>
           <div className="flex items-center gap-2 bg-[#e8ffd1] text-[#4a7700] px-6 py-3 rounded-full font-bold shadow-sm">
             <span className="text-xl">{'\u{1F91D}'}</span>
-            <span>Intambwe</span>
+            <span>{episode.category[language]}</span>
           </div>
         </section>
 
         <section className="bg-surface-container-low p-8 rounded-lg relative overflow-hidden">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
             <div className="space-y-2 text-center md:text-left">
-              <h2 className="text-3xl font-headline font-extrabold text-primary tracking-tight">Ubu tugiye gukina!</h2>
-              <p className="text-primary-container font-medium">Ereka Hirwa uburyo bwo gukaraba neza!</p>
+              <h2 className="text-3xl font-headline font-extrabold text-primary tracking-tight">{t('episode.playIntro')}</h2>
+              <p className="text-primary-container font-medium">{t('episode.playSub')}</p>
             </div>
             <button
-              onClick={() => navigate('/game/1')}
+              onClick={() => navigate('/game/karaba')}
               className="bg-primary text-on-primary px-10 py-5 rounded-full font-headline font-bold text-xl hover:scale-105 transition-transform active:scale-95 shadow-[0_12px_24px_-8px_rgba(15,82,56,0.4)] border-b-4 border-primary-fixed-variant"
             >
               {t('episode1.play')}
@@ -71,7 +74,7 @@ export default function EpisodeScreen() {
           <div className="space-y-6">
             <div className="inline-block bg-primary/10 text-primary px-4 py-1 rounded-lg text-sm font-bold uppercase tracking-widest">{t('episode.story')}</div>
             <p className="text-lg leading-relaxed text-on-surface font-medium">
-              Hirwa yari asohotse mu gikari, ariko yibagiwe gukaraba amaboko mbere yo kurya! Keza na Mama baramufasha kwibuka intambwe 7 zo gukaraba neza hakoreshejwe amazi meza n'isabune.
+              {episode.story[language]}
             </p>
           </div>
           <div className="bg-surface-container-lowest p-6 rounded-lg shadow-[0_24px_48px_-12px_rgba(0,33,19,0.06)]">
@@ -94,7 +97,7 @@ export default function EpisodeScreen() {
           </div>
         </section>
 
-        <VisualQuiz onComplete={() => {}} />
+        {episode.hasQuiz && <VisualQuiz onComplete={() => {}} />}
       </main>
 
       <BottomNav />

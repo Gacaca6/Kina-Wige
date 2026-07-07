@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../i18n/context';
 import { useStars } from '../hooks/useStars';
 import { images } from '../assets/images';
+import { episodes, upcomingEpisodes } from '../data/episodes';
 import BottomNav from '../components/ui/BottomNav';
 import Logo from '../components/ui/Logo';
 
@@ -73,80 +74,43 @@ export default function HomeScreen() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Active Episode 1 */}
-            <button
-              onClick={() => navigate('/episode/1')}
-              className="group bg-surface-container-lowest rounded-lg p-1 shadow-[0_24px_48px_-12px_rgba(0,33,19,0.06)] hover:scale-[1.02] transition-transform duration-300 text-left w-full"
-            >
-              <div className="aspect-video rounded-lg overflow-hidden relative">
-                <img src={images.episode1Thumb} alt="Karaba Amaboko" className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-primary/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <PlayCircle className="w-16 h-16 text-white" />
-                </div>
-              </div>
-              <div className="p-4">
-                <div className="flex justify-between items-start mb-2">
-                  <h4 className="font-headline font-bold text-lg text-primary">Karaba Amaboko!</h4>
-                  <div className="bg-tertiary-fixed px-3 py-1 rounded-full text-xs font-bold text-on-tertiary-fixed flex items-center gap-1">
-                    <Star className="w-3 h-3 fill-current" /> {stars > 0 ? '1/1' : '0/1'}
+            {episodes.map(ep => (
+              <button
+                key={ep.id}
+                onClick={() => navigate(`/episode/${ep.id}`)}
+                className="group bg-surface-container-lowest rounded-lg p-1 shadow-[0_24px_48px_-12px_rgba(0,33,19,0.06)] hover:scale-[1.02] transition-transform duration-300 text-left w-full"
+              >
+                <div className="aspect-video rounded-lg overflow-hidden relative">
+                  <img src={ep.thumb} alt={ep.title[language]} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-primary/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <PlayCircle className="w-16 h-16 text-white" />
                   </div>
                 </div>
-                <div className="w-full h-3 bg-surface-container rounded-full overflow-hidden relative">
-                  <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_#000_1px,_transparent_1px)] bg-[length:4px_4px]" />
-                  <div className={`h-full bg-tertiary-container rounded-full ${stars > 0 ? 'w-full' : 'w-[5%]'}`} />
+                <div className="p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <h4 className="font-headline font-bold text-lg text-primary">{ep.title[language]}</h4>
+                    <div className="bg-tertiary-fixed px-3 py-1 rounded-full text-xs font-bold text-on-tertiary-fixed flex items-center gap-1">
+                      <Star className="w-3 h-3 fill-current" /> {stars > 0 ? '1/1' : '0/1'}
+                    </div>
+                  </div>
+                  <span className="text-xs font-bold text-secondary">{ep.category[language]}</span>
                 </div>
-              </div>
-            </button>
+              </button>
+            ))}
 
-            {/* Active Episode 2 (Combined Clip) */}
-            <button
-              onClick={() => navigate('/episode/1')}
-              className="group bg-surface-container-lowest rounded-lg p-1 shadow-[0_24px_48px_-12px_rgba(0,33,19,0.06)] hover:scale-[1.02] transition-transform duration-300 text-left w-full"
-            >
-              <div className="aspect-video rounded-lg overflow-hidden relative">
-                <img src={images.episode2Thumb} alt="Gukaraba no Kurya" className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-primary/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <PlayCircle className="w-16 h-16 text-white" />
-                </div>
-              </div>
-              <div className="p-4">
-                <div className="flex justify-between items-start mb-2">
-                  <h4 className="font-headline font-bold text-lg text-primary">Gukaraba no Kurya</h4>
-                  <div className="bg-tertiary-fixed px-3 py-1 rounded-full text-xs font-bold text-on-tertiary-fixed flex items-center gap-1">
-                    <Star className="w-3 h-3 fill-current" /> 0/1
+            {upcomingEpisodes.slice(0, 2).map((ep, i) => (
+              <div key={i} className="bg-surface-container-low/50 rounded-lg p-1 border-2 border-dashed border-outline-variant/30 grayscale opacity-80">
+                <div className="aspect-video rounded-lg overflow-hidden relative bg-surface-dim flex items-center justify-center">
+                  <div className="w-10 h-10 border-4 border-outline rounded-full flex items-center justify-center">
+                    <div className="w-2 h-2 bg-outline rounded-full" />
                   </div>
                 </div>
-                <div className="w-full h-3 bg-surface-container rounded-full overflow-hidden relative">
-                  <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_#000_1px,_transparent_1px)] bg-[length:4px_4px]" />
-                  <div className="h-full bg-tertiary-container w-[0%] rounded-full" />
+                <div className="p-4">
+                  <h4 className="font-headline font-bold text-lg text-outline">{ep.title}</h4>
+                  <span className="text-xs font-bold text-outline uppercase tracking-wider">{t('coming_soon')}</span>
                 </div>
               </div>
-            </button>
-
-            {/* Locked Episodes */}
-            <div className="bg-surface-container-low/50 rounded-lg p-1 border-2 border-dashed border-outline-variant/30 grayscale opacity-80">
-              <div className="aspect-video rounded-lg overflow-hidden relative bg-surface-dim flex items-center justify-center">
-                <div className="w-10 h-10 border-4 border-outline rounded-full flex items-center justify-center">
-                  <div className="w-2 h-2 bg-outline rounded-full" />
-                </div>
-              </div>
-              <div className="p-4">
-                <h4 className="font-headline font-bold text-lg text-outline">Menya Ibiryo Byiza</h4>
-                <span className="text-xs font-bold text-outline uppercase tracking-wider">{t('coming_soon')}</span>
-              </div>
-            </div>
-
-            <div className="bg-surface-container-low/50 rounded-lg p-1 border-2 border-dashed border-outline-variant/30 grayscale opacity-80">
-              <div className="aspect-video rounded-lg overflow-hidden relative bg-surface-dim flex items-center justify-center">
-                <div className="w-10 h-10 border-4 border-outline rounded-full flex items-center justify-center">
-                  <div className="w-2 h-2 bg-outline rounded-full" />
-                </div>
-              </div>
-              <div className="p-4">
-                <h4 className="font-headline font-bold text-lg text-outline">Tubyigane!</h4>
-                <span className="text-xs font-bold text-outline uppercase tracking-wider">{t('coming_soon')}</span>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
