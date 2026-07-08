@@ -77,16 +77,23 @@ All verified working in production build.
   copy (`-c copy`), never trim them.
   Accept: new episodes play offline; attribution visible in Parent zone.
 
-- [x] **7. Expand kezaQA to ~50 entries** *(done 2026-07-08: 13 → 45 entries.
-  Added hygiene steps/bathing/cough-sneeze/toilet, health (sleep, sport,
-  malaria/mosquito nets), safety (roads, fire, strangers), nutrition
-  (vegetables/milk/sweets), body, nature (animals/rain/sun/trees), feelings
-  (happy/sad/angry/scared), family/school/manners/helping, and fun. Spot-checked
-  in 3 languages; gibberish falls back correctly. All new KN strings added to
-  Human-review queue below.)*
+- [x] **7. Expand kezaQA — now 93 entries** *(done 2026-07-08 in two passes:
+  13 → 45 → 93. Pass 2 (owner request "vast range + act as a manual") added,
+  after researching what 3–6yos actually ask: a 16-entry APP MANUAL (who is
+  Keza, what can you do, how to play/watch/get stars/change language/go
+  home/ask, per-game how-to, offline, who made it); CURIOSITY science
+  (sky/moon/birds/rainbow/thunder/seeds/clouds); EVERYDAY PROBLEMS (dark,
+  nightmares, bored, tummy/toothache, hurt, hit/bullied, missing mama, won't
+  eat, tired, school refusal, bedwetting, sharing conflict); BIG QUESTIONS
+  handled with warm parent-redirects (where babies come from, death, God,
+  skin color); more manners (sorry, lying, turns) and self-care (dressing,
+  nails, hair, wash-fruit, medicine, electricity). Verified in KN + EN in the
+  built app; app-manual, curiosity, problems, and parent-redirects all match;
+  gibberish still falls back.)*
   DECISION (owner, 2026-07-08): Baza Keza stays a pure offline database — NO
   cloud/free-tier AI. "Totally free + offline + parent-reviewable + good
   Kinyarwanda" all point here. Do not add an AI fallback; keep growing this file.
+  When new Ubongo topics land, add matching Q&A so Keza can talk about them.
 
 ## P2 — Learning depth
 
@@ -168,11 +175,15 @@ All verified working in production build.
   - episodes.ts: episode 2 `story.KN`; upcoming episode teasers
   - games.ts: all `title.KN` / `skill.KN`
   - SortingGame food names (Pome, Karoti, Umuneke, Ifanta, Donati, Bombo, Ifiriti)
-  - kezaQA.ts (task 7, 32 new `answer.KN` strings): topics hygiene-steps,
-    bathing, cough/sneeze, toilet, sleep, sport, mosquito/malaria, road safety,
-    fire safety, strangers, vegetables, milk, sweets, body, animals, rain, sun,
-    trees, happy, sad, angry, scared, family, school, manners, helping, singing,
-    app, goodbye. Spot-checked for sense but need a native speaker for phrasing.
+  - kezaQA.ts (task 7, ~80 machine-written `answer.KN` strings total across
+    both passes): hygiene/health/safety/nutrition/body/nature/feelings/
+    family/manners/self-care PLUS pass-2 app-manual answers (many contain UI
+    label references like "Imikino", "Amasomo", "Ababyeyi", "Ahabanza" — if a
+    UI label is renamed, update the matching kezaQA answer too), curiosity
+    science answers, everyday-problem answers, and the big-question
+    parent-redirects (babies/death/God/skin-colour — review the TONE of these
+    especially, they must feel warm and safe in Kinyarwanda). Spot-checked for
+    sense; need a native speaker for phrasing.
 - [ ] **D. Revoke the old Gemini API key** at https://aistudio.google.com/apikey
   (exposed in pre-2026-07-07 builds).
 - [x] **E. Hosting** — done, deployed on Vercel by owner (2026-07-08).
