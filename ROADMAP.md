@@ -47,12 +47,10 @@ All verified working in production build.
   reload; finishing memory twice shows a play count ≥ 1 for it; other cards
   remain 0/1.
 
-- [ ] **4. Deploy** *(prepared 2026-07-08: `public/_redirects` added —
-  blocked on Human-required #E for the hosting account)*
-  Netlify (or Cloudflare Pages). Connect the GitHub repo, build command
-  `npm run build`, publish dir `dist`. Owner click-through: netlify.com →
-  Add new site → Import from GitHub → pick Gacaca6/Kina-Wige → build command
-  `npm run build`, publish directory `dist` → Deploy.
+- [x] **4. Deploy** *(done 2026-07-08: owner deployed to VERCEL, running on
+  iPhone. `vercel.json` added for SPA rewrites + SW/video headers —
+  `public/_redirects` kept only in case of a move to Netlify. After every
+  push to main, Vercel redeploys automatically.)*
   Accept: public URL loads, installs as PWA on Android, second visit works
   in airplane mode including video playback.
 
@@ -163,8 +161,7 @@ All verified working in production build.
   - SortingGame food names (Pome, Karoti, Umuneke, Ifanta, Donati, Bombo, Ifiriti)
 - [ ] **D. Revoke the old Gemini API key** at https://aistudio.google.com/apikey
   (exposed in pre-2026-07-07 builds).
-- [ ] **E. Netlify/Cloudflare account** for task 4 (or hand credentials to
-  the assistant session doing the deploy).
+- [x] **E. Hosting** — done, deployed on Vercel by owner (2026-07-08).
 
 ## Definition of done (v1.0)
 
