@@ -9,6 +9,9 @@ import episode1VideoPoster from './episodes/episode1-video-poster.webp';
 import hands from './episodes/hands.webp';
 import mama from './episodes/mama.webp';
 import parentChild from './episodes/parent-child.webp';
+import alphabetThumb from './episodes/alphabet-thumb.webp';
+import twinkleThumb from './episodes/twinkle-thumb.webp';
+import letterAThumb from './episodes/letter-a-thumb.webp';
 
 export const images = {
   kezaAvatar,
@@ -21,4 +24,7 @@ export const images = {
   hands,
   mama,
   parentChild,
+  alphabetThumb,
+  twinkleThumb,
+  letterAThumb,
 };

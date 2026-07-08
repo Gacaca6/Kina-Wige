@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Star, ArrowLeft, Users } from 'lucide-react';
 import { useNavigate, useParams, Navigate } from 'react-router-dom';
@@ -7,6 +7,7 @@ import { useStars } from '../hooks/useStars';
 import { useProgress } from '../hooks/useProgress';
 import { images } from '../assets/images';
 import { getEpisode } from '../data/episodes';
+import { cacheEpisodeClips } from '../pwa/prefetchVideos';
 import BottomNav from '../components/ui/BottomNav';
 import VisualQuiz from '../components/game/VisualQuiz';
 import VideoPlayer from '../components/game/VideoPlayer';
@@ -19,6 +20,13 @@ export default function EpisodeScreen() {
   const { markEpisodeWatched } = useProgress();
 
   const episode = getEpisode(id);
+
+  // Save this episode's videos for offline use the first time it's opened.
+  // Harmless for already-prefetched episodes (cache.add is skipped if present).
+  useEffect(() => {
+    if (episode) void cacheEpisodeClips(episode.clips);
+  }, [episode]);
+
   if (!episode) {
     return <Navigate to="/episodes" replace />;
   }
@@ -59,22 +67,24 @@ export default function EpisodeScreen() {
           </div>
         </section>
 
-        <section className="bg-surface-container-low p-8 rounded-lg relative overflow-hidden">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
-            <div className="space-y-2 text-center md:text-left">
-              <h2 className="text-3xl font-headline font-extrabold text-primary tracking-tight">{t('episode.playIntro')}</h2>
-              <p className="text-primary-container font-medium">{t('episode.playSub')}</p>
+        {episode.gameId && (
+          <section className="bg-surface-container-low p-8 rounded-lg relative overflow-hidden">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+              <div className="space-y-2 text-center md:text-left">
+                <h2 className="text-3xl font-headline font-extrabold text-primary tracking-tight">{t('episode.playIntro')}</h2>
+                <p className="text-primary-container font-medium">{t('episode.playSub')}</p>
+              </div>
+              <button
+                onClick={() => navigate(`/game/${episode.gameId}`)}
+                className="bg-primary text-on-primary px-10 py-5 rounded-full font-headline font-bold text-xl hover:scale-105 transition-transform active:scale-95 shadow-[0_12px_24px_-8px_rgba(15,82,56,0.4)] border-b-4 border-primary-fixed-variant"
+              >
+                {t('episode1.play')}
+              </button>
             </div>
-            <button
-              onClick={() => navigate('/game/karaba')}
-              className="bg-primary text-on-primary px-10 py-5 rounded-full font-headline font-bold text-xl hover:scale-105 transition-transform active:scale-95 shadow-[0_12px_24px_-8px_rgba(15,82,56,0.4)] border-b-4 border-primary-fixed-variant"
-            >
-              {t('episode1.play')}
-            </button>
-          </div>
-          <div className="absolute -top-10 -left-10 w-40 h-40 bg-surface-container-highest rounded-full opacity-30" />
-          <div className="absolute top-1/2 right-1/4 w-12 h-12 bg-tertiary-fixed rounded-full opacity-40" />
-        </section>
+            <div className="absolute -top-10 -left-10 w-40 h-40 bg-surface-container-highest rounded-full opacity-30" />
+            <div className="absolute top-1/2 right-1/4 w-12 h-12 bg-tertiary-fixed rounded-full opacity-40" />
+          </section>
+        )}
 
         <section className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
           <div className="space-y-6">

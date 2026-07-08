@@ -25,11 +25,20 @@ All verified working in production build.
   Accept: total `src/assets` < 600 KB; build precache < 2 MB (excluding
   videos); all screens still show images in browser check.
 
-- [x] **2. Re-encode videos smaller** *(done 2026-07-08: ffmpeg installed via
-  winget; 9.7 MB → 2.3 MB total, 480p CRF 28, audio verified intact)*
-  `ffmpeg -i clip1.mp4 -c:v libx264 -profile:v baseline -level 3.0 -vf "scale=-2:480" -crf 28 -c:a aac -b:a 64k clip1-sm.mp4`
-  for each clip; replace files in `public/videos/` keeping the same names.
-  Accept: each clip < 1.5 MB, audio intact, plays in the built app with sound.
+- [x] **2. Re-encode videos smaller** *(done 2026-07-08. Original 3 cartoon
+  clips: 9.7 MB → 2.3 MB (480p CRF 28). Then owner added 8 content videos
+  (5 alphabet songs, Twinkle Twinkle, Letter-A, 1 Pixabay clip) totalling
+  427 MB — would have destroyed the app. Compressed all to 480p CRF 26 /
+  AAC 128k / faststart: 427 MB → 60.6 MB (86% smaller), durations + audio
+  intact, verified with ffprobe. Originals backed up in
+  Downloads/KinaWige/public/videos/originals.)*
+  Recipe used: `ffmpeg -i IN -vf "scale=-2:480" -c:v libx264 -profile:v baseline -level 3.0 -preset slow -crf 26 -pix_fmt yuv420p -c:a aac -b:a 128k -movflags +faststart OUT`
+  Long videos stay large by nature (letter-a 6.3min=20MB, twinkle 3.4min=18MB).
+  KEY MITIGATION: episodes now have a `prefetch` flag. Only small cartoon
+  clips prefetch on launch (~2.2MB); song episodes (`prefetch: false`) cache
+  LAZILY the first time opened — see `cacheEpisodeClips()` in prefetchVideos.ts,
+  called from EpisodeScreen. Needed because video Range (206) requests are
+  rejected by the SW cache, so playback alone never persists them offline.
 
 - [x] **3. Per-episode & per-game progress** *(done 2026-07-08:
   `src/hooks/useProgress.ts`, VideoPlayer `onAllClipsEnded`, all 5 games mark
@@ -68,14 +77,20 @@ All verified working in production build.
   `markGameCompleted('quiz-'+episodeId)`).
   Accept: each episode shows its own quiz; finishing a quiz grants a star.
 
-- [ ] **6. Wire in Ubongo episodes** *(blocked on Human-required #A)*
-  When MP4s appear in `public/videos/`, add registry entries with the
-  provided titles, an attribution line, and thumbnails. Add an
-  **attribution section**: new collapsible in ParentScreen listing each
-  third-party video: "© Ubongo — CC BY-NC-ND — ubongo.org". CC BY-NC-ND
-  forbids editing the videos — never re-encode Ubongo files beyond container
-  copy (`-c copy`), never trim them.
-  Accept: new episodes play offline; attribution visible in Parent zone.
+- [~] **6. Wire in content episodes + attribution** *(partly done 2026-07-08:
+  owner-supplied videos wired in as 3 new episodes — "Indirimbo y'Inyuguti"
+  (5 alphabet-song clips), "Inyenyeri Nto" (Twinkle Twinkle), "Inyuguti A mu
+  Mudugudu" (Letter A). Thumbnails auto-extracted from each video with ffmpeg
+  → src/assets/episodes/*-thumb.webp. All lazy-cached, browser-verified: open
+  episode → all its clips saved offline; plays with audio; song episodes show
+  no game button. The Pixabay no-voice clip is copied to originals but left
+  UNWIRED per owner.)*
+  STILL TODO: (a) **attribution UI** — add a collapsible in ParentScreen listing
+  each third-party video's source/licence (the `attribution` field already
+  exists on Episode; several are marked "TODO: confirm source & licence").
+  (b) **CONFIRM LICENCES** — see Human-required #F. If any Ubongo videos are
+  added later, they are CC BY-NC-ND: attribute, and re-encode by container
+  copy only (`-c copy`), never downscale/trim.
 
 - [x] **7. Expand kezaQA — now 93 entries** *(done 2026-07-08 in two passes:
   13 → 45 → 93. Pass 2 (owner request "vast range + act as a manual") added,
@@ -175,6 +190,9 @@ All verified working in production build.
   - episodes.ts: episode 2 `story.KN`; upcoming episode teasers
   - games.ts: all `title.KN` / `skill.KN`
   - SortingGame food names (Pome, Karoti, Umuneke, Ifanta, Donati, Bombo, Ifiriti)
+  - episodes.ts (task 6, new): titles + stories for the 3 content episodes —
+    "Indirimbo y'Inyuguti", "Inyenyeri Nto", "Inyuguti A mu Mudugudu" (KN
+    titles + KN story text machine-written; confirm they read naturally).
   - kezaQA.ts (task 7, ~80 machine-written `answer.KN` strings total across
     both passes): hygiene/health/safety/nutrition/body/nature/feelings/
     family/manners/self-care PLUS pass-2 app-manual answers (many contain UI
@@ -187,6 +205,14 @@ All verified working in production build.
 - [ ] **D. Revoke the old Gemini API key** at https://aistudio.google.com/apikey
   (exposed in pre-2026-07-07 builds).
 - [x] **E. Hosting** — done, deployed on Vercel by owner (2026-07-08).
+- [ ] **F. Confirm licences for the content videos** (added 2026-07-08). Owner
+  added: 5 "indirimbo y'inyuguti" alphabet songs, "twinkle-twinkle-little-star",
+  "letter-a-in-the-neighbourhood", and a no-voice Pixabay clip (75617-...).
+  Pixabay = Pixabay Content Licence (free, no attribution required). The song
+  videos' sources/licences are UNCONFIRMED — verify each is free to redistribute
+  in this app before public launch, and fill the `attribution` field in
+  episodes.ts. Twinkle melody is public domain but the specific video is not
+  necessarily. This is a legal must-do before wide release.
 
 ## Definition of done (v1.0)
 
