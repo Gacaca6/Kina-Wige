@@ -5,9 +5,10 @@ import { Play, Pause, Maximize, Minimize, Volume2, VolumeX } from 'lucide-react'
 interface VideoPlayerProps {
   clips: string[];
   poster?: string;
+  onAllClipsEnded?: () => void;
 }
 
-export default function VideoPlayer({ clips, poster }: VideoPlayerProps) {
+export default function VideoPlayer({ clips, poster, onAllClipsEnded }: VideoPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentClip, setCurrentClip] = useState(0);
   const [totalProgress, setTotalProgress] = useState(0);
@@ -132,6 +133,7 @@ export default function VideoPlayer({ clips, poster }: VideoPlayerProps) {
         setIsPlaying(false);
         setShowControls(true);
         setTotalProgress(1);
+        onAllClipsEnded?.();
       }
     };
 
@@ -150,7 +152,7 @@ export default function VideoPlayer({ clips, poster }: VideoPlayerProps) {
       video.removeEventListener('ended', onEnded);
       video.removeEventListener('loadedmetadata', onLoadedMetadata);
     };
-  }, [clips, getElapsedTime, getTotalDuration]);
+  }, [clips, getElapsedTime, getTotalDuration, onAllClipsEnded]);
 
   // Fullscreen change listener
   useEffect(() => {

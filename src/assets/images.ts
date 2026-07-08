@@ -1,14 +1,14 @@
-// Local image imports — offline-ready
-import kezaAvatar from './characters/keza-avatar.png';
-import hirwaAvatar from './characters/hirwa-avatar.png';
-import kezaFull from './characters/keza-full.png';
-import hirwaFull from './characters/hirwa-full.png';
-import episode1Thumb from './episodes/episode1-thumb.png';
-import episode2Thumb from './episodes/episode2-thumb.png';
-import episode1VideoPoster from './episodes/episode1-video-poster.png';
-import hands from './episodes/hands.png';
-import mama from './episodes/mama.png';
-import parentChild from './episodes/parent-child.png';
+// Local image imports — offline-ready, WebP-optimized (scripts/optimize-images.mjs)
+import kezaAvatar from './characters/keza-avatar.webp';
+import hirwaAvatar from './characters/hirwa-avatar.webp';
+import kezaFull from './characters/keza-full.webp';
+import hirwaFull from './characters/hirwa-full.webp';
+import episode1Thumb from './episodes/episode1-thumb.webp';
+import episode2Thumb from './episodes/episode2-thumb.webp';
+import episode1VideoPoster from './episodes/episode1-video-poster.webp';
+import hands from './episodes/hands.webp';
+import mama from './episodes/mama.webp';
+import parentChild from './episodes/parent-child.webp';
 
 export const images = {
   kezaAvatar,

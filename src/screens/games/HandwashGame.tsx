@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../../i18n/context';
 import { useSound, useHaptic } from '../../hooks/useSound';
 import { useStars } from '../../hooks/useStars';
+import { useProgress } from '../../hooks/useProgress';
 import { images } from '../../assets/images';
 
 const INITIAL_GERMS = [
@@ -23,6 +24,7 @@ export default function HandwashGame() {
   const { play } = useSound();
   const haptic = useHaptic();
   const { stars, addStar } = useStars();
+  const { markGameCompleted } = useProgress();
 
   const handleStart = () => {
     play('tap');
@@ -66,6 +68,7 @@ export default function HandwashGame() {
     setTimeout(() => {
       setGameState('celebration');
       addStar(1);
+      markGameCompleted('karaba');
       play('victory_fanfare');
       haptic.success();
       setTimeout(() => play('star_ding'), 1500);

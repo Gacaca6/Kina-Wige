@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { useI18n } from '../../i18n/context';
 import { useSound, useHaptic } from '../../hooks/useSound';
 import { useStars } from '../../hooks/useStars';
+import { useProgress } from '../../hooks/useProgress';
 import { games } from '../../data/games';
 import GameHeader from '../../components/game/GameHeader';
 import GameCelebration from '../../components/game/GameCelebration';
@@ -27,6 +28,7 @@ export default function PatternGame() {
   const { play } = useSound();
   const haptic = useHaptic();
   const { addStar } = useStars();
+  const { markGameCompleted } = useProgress();
 
   const [roundIndex, setRoundIndex] = useState(0);
   const [wrongPick, setWrongPick] = useState<string | null>(null);
@@ -47,6 +49,7 @@ export default function PatternGame() {
         if (roundIndex + 1 >= ROUNDS.length) {
           setWon(true);
           addStar(1);
+          markGameCompleted('pattern');
           play('victory_fanfare');
           haptic.success();
         } else {

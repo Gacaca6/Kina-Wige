@@ -3,14 +3,14 @@ import { motion } from 'motion/react';
 import { Star, PlayCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../i18n/context';
-import { useStars } from '../hooks/useStars';
+import { useProgress } from '../hooks/useProgress';
 import { episodes, upcomingEpisodes } from '../data/episodes';
 import BottomNav from '../components/ui/BottomNav';
 
 export default function EpisodeListScreen() {
   const navigate = useNavigate();
   const { t, language } = useI18n();
-  const { stars } = useStars();
+  const { isEpisodeWatched } = useProgress();
 
   return (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="min-h-screen pb-24">
@@ -38,7 +38,7 @@ export default function EpisodeListScreen() {
               <div className="flex justify-between items-start mb-1">
                 <h4 className="font-headline font-bold text-xl text-primary">{ep.title[language]}</h4>
                 <div className="bg-accent/20 px-2 py-1 rounded-full text-xs font-bold text-accent-warm flex items-center gap-1">
-                  <Star className="w-3 h-3 fill-current" /> {stars > 0 ? '1/1' : '0/1'}
+                  <Star className="w-3 h-3 fill-current" /> {isEpisodeWatched(ep.id) ? '1/1' : '0/1'}
                 </div>
               </div>
               <span className="text-sm font-bold text-secondary block">{ep.category[language]}</span>

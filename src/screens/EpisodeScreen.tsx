@@ -4,6 +4,7 @@ import { Star, ArrowLeft, Users } from 'lucide-react';
 import { useNavigate, useParams, Navigate } from 'react-router-dom';
 import { useI18n } from '../i18n/context';
 import { useStars } from '../hooks/useStars';
+import { useProgress } from '../hooks/useProgress';
 import { images } from '../assets/images';
 import { getEpisode } from '../data/episodes';
 import BottomNav from '../components/ui/BottomNav';
@@ -15,6 +16,7 @@ export default function EpisodeScreen() {
   const { id } = useParams();
   const { t, language } = useI18n();
   const { stars } = useStars();
+  const { markEpisodeWatched } = useProgress();
 
   const episode = getEpisode(id);
   if (!episode) {
@@ -38,7 +40,11 @@ export default function EpisodeScreen() {
 
       <main className="max-w-screen-xl mx-auto px-6 py-6 space-y-8">
         <section className="relative group">
-          <VideoPlayer clips={episode.clips} poster={episode.poster} />
+          <VideoPlayer
+            clips={episode.clips}
+            poster={episode.poster}
+            onAllClipsEnded={() => markEpisodeWatched(episode.id)}
+          />
           <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-secondary-container rounded-full -z-10 opacity-50 blur-xl" />
         </section>
 

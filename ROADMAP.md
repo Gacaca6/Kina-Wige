@@ -13,7 +13,8 @@ All verified working in production build.
 
 ## P0 — Ship blockers
 
-- [ ] **1. Compress images to WebP**
+- [x] **1. Compress images to WebP** *(done 2026-07-08: 3.4 MB → 208 KB via
+  `scripts/optimize-images.mjs`; precache now 1.29 MB)*
   Every PNG in `src/assets/` is 280–430 KB; precache is ~4.5 MB.
   Steps: `npm i -D sharp` (dev-only, remove after if preferred); write a
   one-off script `scripts/optimize-images.mjs` that converts each PNG in
@@ -24,13 +25,15 @@ All verified working in production build.
   Accept: total `src/assets` < 600 KB; build precache < 2 MB (excluding
   videos); all screens still show images in browser check.
 
-- [ ] **2. Re-encode videos smaller** *(needs ffmpeg on PATH — if missing,
-  ask owner to install or do it for him with winget `Gyan.FFmpeg`)*
+- [x] **2. Re-encode videos smaller** *(done 2026-07-08: ffmpeg installed via
+  winget; 9.7 MB → 2.3 MB total, 480p CRF 28, audio verified intact)*
   `ffmpeg -i clip1.mp4 -c:v libx264 -profile:v baseline -level 3.0 -vf "scale=-2:480" -crf 28 -c:a aac -b:a 64k clip1-sm.mp4`
   for each clip; replace files in `public/videos/` keeping the same names.
   Accept: each clip < 1.5 MB, audio intact, plays in the built app with sound.
 
-- [ ] **3. Per-episode & per-game progress (replace the global-star hack)**
+- [x] **3. Per-episode & per-game progress** *(done 2026-07-08:
+  `src/hooks/useProgress.ts`, VideoPlayer `onAllClipsEnded`, all 5 games mark
+  completion, cards + games list show real progress — browser-verified)*
   Home/episode-list cards currently show "1/1" if the child has ANY star.
   Steps: new hook `src/hooks/useProgress.ts` storing
   `{ episodesWatched: Record<string, true>, gamesCompleted: Record<string, number> }`
@@ -44,11 +47,12 @@ All verified working in production build.
   reload; finishing memory twice shows a play count ≥ 1 for it; other cards
   remain 0/1.
 
-- [ ] **4. Deploy**
-  Netlify (or Cloudflare Pages). Add `public/_redirects` containing
-  `/* /index.html 200`. Connect the GitHub repo, build command `npm run build`,
-  publish dir `dist`. If no owner credentials available, prepare everything
-  and give the owner a 5-step click-through.
+- [ ] **4. Deploy** *(prepared 2026-07-08: `public/_redirects` added —
+  blocked on Human-required #E for the hosting account)*
+  Netlify (or Cloudflare Pages). Connect the GitHub repo, build command
+  `npm run build`, publish dir `dist`. Owner click-through: netlify.com →
+  Add new site → Import from GitHub → pick Gacaca6/Kina-Wige → build command
+  `npm run build`, publish directory `dist` → Deploy.
   Accept: public URL loads, installs as PWA on Android, second visit works
   in airplane mode including video playback.
 

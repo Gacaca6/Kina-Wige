@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { useI18n } from '../../i18n/context';
 import { useSound, useHaptic } from '../../hooks/useSound';
 import { useStars } from '../../hooks/useStars';
+import { useProgress } from '../../hooks/useProgress';
 import { games } from '../../data/games';
 import GameHeader from '../../components/game/GameHeader';
 import GameCelebration from '../../components/game/GameCelebration';
@@ -42,6 +43,7 @@ export default function CountingGame() {
   const { play } = useSound();
   const haptic = useHaptic();
   const { addStar } = useStars();
+  const { markGameCompleted } = useProgress();
 
   const [roundIndex, setRoundIndex] = useState(0);
   const [round, setRound] = useState<Round>(() => makeRound(0));
@@ -62,6 +64,7 @@ export default function CountingGame() {
         if (roundIndex + 1 >= TOTAL_ROUNDS) {
           setWon(true);
           addStar(1);
+          markGameCompleted('counting');
           play('victory_fanfare');
           haptic.success();
         } else {

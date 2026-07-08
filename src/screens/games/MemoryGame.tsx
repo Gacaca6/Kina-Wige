@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { useI18n } from '../../i18n/context';
 import { useSound, useHaptic } from '../../hooks/useSound';
 import { useStars } from '../../hooks/useStars';
+import { useProgress } from '../../hooks/useProgress';
 import { games } from '../../data/games';
 import GameHeader from '../../components/game/GameHeader';
 import GameCelebration from '../../components/game/GameCelebration';
@@ -30,6 +31,7 @@ export default function MemoryGame() {
   const { play } = useSound();
   const haptic = useHaptic();
   const { addStar } = useStars();
+  const { markGameCompleted } = useProgress();
 
   const [cards, setCards] = useState<Card[]>(buildDeck);
   const [flipped, setFlipped] = useState<number[]>([]);
@@ -71,6 +73,7 @@ export default function MemoryGame() {
           setTimeout(() => {
             setWon(true);
             addStar(1);
+            markGameCompleted('memory');
             play('victory_fanfare');
             haptic.success();
           }, 600);
@@ -88,7 +91,7 @@ export default function MemoryGame() {
         setLocked(false);
       }, 900);
     }
-  }, [cards, flipped, locked, won, play, haptic, addStar]);
+  }, [cards, flipped, locked, won, play, haptic, addStar, markGameCompleted]);
 
   const restart = () => {
     setCards(buildDeck());

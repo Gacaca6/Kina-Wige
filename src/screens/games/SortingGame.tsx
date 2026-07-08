@@ -4,6 +4,7 @@ import { Check, X } from 'lucide-react';
 import { useI18n } from '../../i18n/context';
 import { useSound, useHaptic } from '../../hooks/useSound';
 import { useStars } from '../../hooks/useStars';
+import { useProgress } from '../../hooks/useProgress';
 import { games } from '../../data/games';
 import type { Language } from '../../i18n/translations';
 import GameHeader from '../../components/game/GameHeader';
@@ -40,6 +41,7 @@ export default function SortingGame() {
   const { play } = useSound();
   const haptic = useHaptic();
   const { addStar } = useStars();
+  const { markGameCompleted } = useProgress();
 
   const [items, setItems] = useState<FoodItem[]>(() => shuffle(FOOD_ITEMS));
   const [index, setIndex] = useState(0);
@@ -70,6 +72,7 @@ export default function SortingGame() {
       if (index + 1 >= items.length) {
         setWon(true);
         addStar(1);
+        markGameCompleted('sorting');
         play('victory_fanfare');
         haptic.success();
       } else {

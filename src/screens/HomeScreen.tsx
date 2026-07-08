@@ -4,6 +4,7 @@ import { Star, PlayCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../i18n/context';
 import { useStars } from '../hooks/useStars';
+import { useProgress } from '../hooks/useProgress';
 import { images } from '../assets/images';
 import { episodes, upcomingEpisodes } from '../data/episodes';
 import BottomNav from '../components/ui/BottomNav';
@@ -13,6 +14,7 @@ export default function HomeScreen() {
   const navigate = useNavigate();
   const { t, language, setLanguage } = useI18n();
   const { stars } = useStars();
+  const { isEpisodeWatched } = useProgress();
   const [activeAvatar, setActiveAvatar] = useState<'keza' | 'hirwa'>('keza');
 
   const toggleLanguage = () => {
@@ -90,7 +92,7 @@ export default function HomeScreen() {
                   <div className="flex justify-between items-start mb-2">
                     <h4 className="font-headline font-bold text-lg text-primary">{ep.title[language]}</h4>
                     <div className="bg-tertiary-fixed px-3 py-1 rounded-full text-xs font-bold text-on-tertiary-fixed flex items-center gap-1">
-                      <Star className="w-3 h-3 fill-current" /> {stars > 0 ? '1/1' : '0/1'}
+                      <Star className="w-3 h-3 fill-current" /> {isEpisodeWatched(ep.id) ? '1/1' : '0/1'}
                     </div>
                   </div>
                   <span className="text-xs font-bold text-secondary">{ep.category[language]}</span>

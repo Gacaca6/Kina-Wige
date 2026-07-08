@@ -2,12 +2,14 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../i18n/context';
+import { useProgress } from '../hooks/useProgress';
 import BottomNav from '../components/ui/BottomNav';
 import { games } from '../data/games';
 
 export default function GamesScreen() {
   const navigate = useNavigate();
   const { t, language } = useI18n();
+  const { gamePlayCount } = useProgress();
 
   return (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="min-h-screen pb-24">
@@ -31,7 +33,14 @@ export default function GamesScreen() {
               <span className="text-5xl">{game.emoji}</span>
             </div>
             <div className="flex-1">
-              <h4 className="font-headline font-bold text-xl text-primary mb-1">{game.title[language]}</h4>
+              <div className="flex items-center justify-between mb-1">
+                <h4 className="font-headline font-bold text-xl text-primary">{game.title[language]}</h4>
+                {gamePlayCount(game.id) > 0 && (
+                  <span className="bg-accent/20 text-accent-warm px-2 py-0.5 rounded-full text-xs font-bold whitespace-nowrap">
+                    ⭐ ×{gamePlayCount(game.id)}
+                  </span>
+                )}
+              </div>
               <span className="text-sm font-bold text-dark/60 block mb-3">{game.skill[language]}</span>
               <div className="bg-primary text-white text-center py-2 rounded-full font-bold text-sm group-hover:bg-primary-light transition-colors">
                 {t('games.play')}
