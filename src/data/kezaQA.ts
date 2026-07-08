@@ -163,6 +163,312 @@ export const kezaQA: QAEntry[] = [
     topic: 'characters',
   },
 
+  // === HYGIENE (MORE) ===
+  {
+    keywords: ['intambwe', 'steps', 'étapes', 'uburyo bwo gukaraba', 'how to wash'],
+    answer: {
+      KN: 'Intambwe zo gukaraba: shyiraho amazi, isabune, gosora hose, koza, hanagura! Ubikore mu masegonda 20!',
+      EN: 'Handwashing steps: wet with water, add soap, scrub everywhere, rinse, dry! Do it for 20 seconds!',
+      FR: 'Les étapes du lavage: mouille avec de l\'eau, mets du savon, frotte partout, rince, sèche! Pendant 20 secondes!',
+    },
+    emoji: '🧼',
+    topic: 'hygiene',
+  },
+  {
+    keywords: ['koga', 'kwiyuhagira', 'bath', 'shower', 'bain', 'se laver le corps'],
+    answer: {
+      KN: 'Kwiyuhagira buri munsi bituma usukura kandi umererwa neza! Koresha amazi n\'isabune.',
+      EN: 'Bathing every day keeps you clean and feeling good! Use water and soap.',
+      FR: 'Se laver chaque jour te garde propre et bien! Utilise de l\'eau et du savon.',
+    },
+    emoji: '🛁',
+    topic: 'hygiene',
+  },
+  {
+    keywords: ['inkorora', 'gukorora', 'kwitsamura', 'cough', 'sneeze', 'tousser', 'éternuer'],
+    answer: {
+      KN: 'Iyo ukorora cyangwa witsamura, pfuka umunwa n\'inkokora yawe! Bituma udupfunyi tudakwira ku bandi.',
+      EN: 'When you cough or sneeze, cover your mouth with your elbow! It stops germs from spreading to others.',
+      FR: 'Quand tu tousses ou éternues, couvre ta bouche avec ton coude! Ça empêche les microbes de se propager.',
+    },
+    emoji: '🤧',
+    topic: 'hygiene',
+  },
+  {
+    keywords: ['ubwiherero', 'toilet', 'toilettes', 'musarani'],
+    answer: {
+      KN: 'Nyuma yo gukoresha ubwiherero, karaba amaboko n\'isabune buri gihe! Ni intambwe y\'ingenzi cyane.',
+      EN: 'After using the toilet, always wash your hands with soap! It is a very important step.',
+      FR: 'Après les toilettes, lave-toi toujours les mains avec du savon! C\'est une étape très importante.',
+    },
+    emoji: '🚽',
+    topic: 'hygiene',
+  },
+
+  // === HEALTH & SAFETY ===
+  {
+    keywords: ['gusinzira', 'kuryama', 'sleep', 'dormir', 'ibitotsi', 'tired', 'night'],
+    answer: {
+      KN: 'Gusinzira neza bituma ukura kandi ugira imbaraga! Abana bakwiye gusinzira amasaha menshi buri joro.',
+      EN: 'Good sleep helps you grow and stay strong! Children need many hours of sleep every night.',
+      FR: 'Bien dormir t\'aide à grandir et à rester fort! Les enfants ont besoin de beaucoup de sommeil chaque nuit.',
+    },
+    emoji: '😴',
+    topic: 'health',
+  },
+  {
+    keywords: ['siporo', 'sport', 'kwiruka', 'run', 'courir', 'exercise', 'umupira', 'ball', 'ballon'],
+    answer: {
+      KN: 'Gukina no kwiruka bituma umubiri ukomera! Kina hanze buri munsi, ariko wibuke gukaraba amaboko nyuma!',
+      EN: 'Playing and running make your body strong! Play outside every day, but remember to wash your hands after!',
+      FR: 'Jouer et courir rendent ton corps fort! Joue dehors chaque jour, mais lave-toi les mains après!',
+    },
+    emoji: '⚽',
+    topic: 'health',
+  },
+  {
+    keywords: ['umubu', 'imibu', 'mosquito', 'moustique', 'malariya', 'malaria', 'paludisme', 'inzitiramubu'],
+    answer: {
+      KN: 'Imibu ishobora kuduha malariya! Sinzira mu nzitiramubu buri joro kugira ngo imibu itakurya.',
+      EN: 'Mosquitoes can give us malaria! Sleep under a mosquito net every night so they can\'t bite you.',
+      FR: 'Les moustiques peuvent donner le paludisme! Dors sous une moustiquaire chaque nuit pour éviter les piqûres.',
+    },
+    emoji: '🦟',
+    topic: 'health',
+  },
+  {
+    keywords: ['umuhanda', 'road', 'street', 'rue', 'route', 'imodoka', 'car', 'voiture', 'kwambuka', 'cross'],
+    answer: {
+      KN: 'Umuhanda urimo akaga! Ntukambuke wenyine — fata ukuboko k\'umuntu mukuru, urebe ibumoso n\'iburyo.',
+      EN: 'The road is dangerous! Never cross alone — hold a grown-up\'s hand and look both ways.',
+      FR: 'La route est dangereuse! Ne traverse jamais seul — tiens la main d\'un adulte et regarde des deux côtés.',
+    },
+    emoji: '🚸',
+    topic: 'safety',
+  },
+  {
+    keywords: ['umuriro', 'fire', 'feu', 'gushya', 'brûler', 'amazi ashyushye', 'hot water'],
+    answer: {
+      KN: 'Umuriro urashya! Ntukwegere umuriro cyangwa amazi ashyushye. Bibwire umuntu mukuru.',
+      EN: 'Fire is hot and dangerous! Never go near fire or hot water. Tell a grown-up.',
+      FR: 'Le feu brûle! Ne t\'approche jamais du feu ou de l\'eau chaude. Préviens un adulte.',
+    },
+    emoji: '🔥',
+    topic: 'safety',
+  },
+  {
+    keywords: ['utazi', 'stranger', 'étranger', 'inconnu', 'umuntu utazi'],
+    answer: {
+      KN: 'Ntukurikire umuntu utazi! Iyo umuntu utazi akuvugishije, bibwire ababyeyi bawe ako kanya.',
+      EN: 'Never go with someone you don\'t know! If a stranger talks to you, tell your parents right away.',
+      FR: 'Ne suis jamais quelqu\'un que tu ne connais pas! Si un inconnu te parle, préviens tes parents tout de suite.',
+    },
+    emoji: '🛑',
+    topic: 'safety',
+  },
+
+  // === NUTRITION (MORE) ===
+  {
+    keywords: ['imboga', 'vegetable', 'légume', 'karoti', 'carrot', 'carotte', 'isombe', 'dodo'],
+    answer: {
+      KN: 'Imboga zituma ukomera! Karoti, dodo, isombe... Rya imboga buri munsi kugira ngo ukure neza.',
+      EN: 'Vegetables make you strong! Carrots, greens, cassava leaves... Eat vegetables every day to grow well.',
+      FR: 'Les légumes te rendent fort! Carottes, légumes verts, feuilles de manioc... Manges-en chaque jour.',
+    },
+    emoji: '🥕',
+    topic: 'nutrition',
+  },
+  {
+    keywords: ['amata', 'milk', 'lait'],
+    answer: {
+      KN: 'Amata atanga kalisiyumu ikomeza amagufa n\'amenyo! Nywa amata kugira ngo ukure neza.',
+      EN: 'Milk gives calcium that makes bones and teeth strong! Drink milk to grow well.',
+      FR: 'Le lait donne du calcium qui rend les os et les dents forts! Bois du lait pour bien grandir.',
+    },
+    emoji: '🥛',
+    topic: 'nutrition',
+  },
+  {
+    keywords: ['bombo', 'sweets', 'candy', 'bonbon', 'isukari', 'sugar', 'sucre', 'soda', 'ifanta'],
+    answer: {
+      KN: 'Ibiryoshye byinshi byangiza amenyo! Rya bike gusa, kandi ukarabe amenyo nyuma.',
+      EN: 'Too many sweets hurt your teeth! Eat only a little, and brush your teeth after.',
+      FR: 'Trop de bonbons abîment les dents! Manges-en juste un peu, et brosse-toi les dents après.',
+    },
+    emoji: '🍬',
+    topic: 'nutrition',
+  },
+
+  // === BODY ===
+  {
+    keywords: ['umubiri', 'body', 'corps', 'amaso', 'eyes', 'yeux', 'amatwi', 'ears', 'oreilles', 'izuru', 'nose', 'nez'],
+    answer: {
+      KN: 'Umubiri wawe ni uw\'agaciro! Amaso areba, amatwi yumva, izuru rihumurirwa. Wite ku mubiri wawe buri munsi!',
+      EN: 'Your body is precious! Eyes see, ears hear, the nose smells. Take care of your body every day!',
+      FR: 'Ton corps est précieux! Les yeux voient, les oreilles entendent, le nez sent. Prends soin de ton corps!',
+    },
+    emoji: '👀',
+    topic: 'body',
+  },
+
+  // === NATURE ===
+  {
+    keywords: ['inyamaswa', 'animal', 'animaux', 'inka', 'cow', 'vache', 'ihene', 'goat', 'chèvre', 'inkoko', 'chicken', 'poule', 'imbwa', 'dog', 'chien', 'injangwe', 'cat', 'chat'],
+    answer: {
+      KN: 'Inyamaswa ni nziza! Inka itanga amata, inkoko itanga amagi. Ni iyihe nyamaswa ukunda?',
+      EN: 'Animals are wonderful! Cows give milk, chickens give eggs. Which animal do you like best?',
+      FR: 'Les animaux sont merveilleux! Les vaches donnent du lait, les poules donnent des œufs. Lequel préfères-tu?',
+    },
+    emoji: '🐄',
+    topic: 'nature',
+  },
+  {
+    keywords: ['imvura', 'rain', 'pluie'],
+    answer: {
+      KN: 'Imvura itanga amazi ku bimera no ku bantu! Iyo imvura igwa, ibihingwa birakura. Wirinde kubira imvura cyane.',
+      EN: 'Rain gives water to plants and people! When it rains, crops grow. Try not to get too wet and cold.',
+      FR: 'La pluie donne de l\'eau aux plantes et aux gens! Quand il pleut, les cultures poussent. Évite de trop te mouiller.',
+    },
+    emoji: '🌧️',
+    topic: 'nature',
+  },
+  {
+    keywords: ['izuba', 'sun', 'soleil', 'umucyo', 'ubushyuhe'],
+    answer: {
+      KN: 'Izuba ritanga umucyo n\'ubushyuhe! Rituma ibimera bikura. Ariko ntukarebe izuba n\'amaso yawe!',
+      EN: 'The sun gives light and warmth! It helps plants grow. But never look straight at the sun!',
+      FR: 'Le soleil donne la lumière et la chaleur! Il fait pousser les plantes. Mais ne le regarde jamais directement!',
+    },
+    emoji: '☀️',
+    topic: 'nature',
+  },
+  {
+    keywords: ['igiti', 'ibiti', 'tree', 'arbre', 'ibimera', 'plant', 'plante', 'indabyo', 'flower', 'fleur'],
+    answer: {
+      KN: 'Ibiti bitanga umwuka mwiza, imbuto, n\'igicucu! Dukunde ibiti kandi tubirinde.',
+      EN: 'Trees give us fresh air, fruit, and shade! Let\'s love and protect trees.',
+      FR: 'Les arbres donnent de l\'air pur, des fruits et de l\'ombre! Aimons et protégeons les arbres.',
+    },
+    emoji: '🌳',
+    topic: 'nature',
+  },
+
+  // === FEELINGS ===
+  {
+    keywords: ['kwishima', 'ibyishimo', 'happy', 'heureux', 'contente', 'joie'],
+    answer: {
+      KN: 'Kwishima ni byiza! Iyo wishimye, seka kandi ubisangize abandi. Ni iki kigushimisha uyu munsi?',
+      EN: 'Being happy is wonderful! When you\'re happy, smile and share it. What makes you happy today?',
+      FR: 'Être heureux, c\'est merveilleux! Quand tu es content, souris et partage-le. Qu\'est-ce qui te rend heureux?',
+    },
+    emoji: '😊',
+    topic: 'feelings',
+  },
+  {
+    keywords: ['kubabara', 'agahinda', 'sad', 'triste', 'kurira', 'cry', 'pleurer'],
+    answer: {
+      KN: 'Kubabara biba kuri twese rimwe na rimwe. Bibwire umubyeyi wawe cyangwa inshuti — kuvuga bituma umutima woroherwa.',
+      EN: 'Everyone feels sad sometimes. Tell your parent or a friend — talking makes your heart feel lighter.',
+      FR: 'Tout le monde est triste parfois. Parle à tes parents ou à un ami — parler fait du bien au cœur.',
+    },
+    emoji: '🤗',
+    topic: 'feelings',
+  },
+  {
+    keywords: ['kurakara', 'umujinya', 'angry', 'fâché', 'colère'],
+    answer: {
+      KN: 'Iyo urakaye, fata umwuka gatatu buhoro: rimwe... kabiri... gatatu! Hanyuma ubivugane n\'umuntu mukuru.',
+      EN: 'When you feel angry, take three slow breaths: one... two... three! Then talk to a grown-up about it.',
+      FR: 'Quand tu es fâché, respire trois fois lentement: un... deux... trois! Puis parles-en à un adulte.',
+    },
+    emoji: '😮‍💨',
+    topic: 'feelings',
+  },
+  {
+    keywords: ['ubwoba', 'gutinya', 'scared', 'afraid', 'peur'],
+    answer: {
+      KN: 'Iyo ufite ubwoba, jya ku muntu mukuru wizeye. Kuvuga ibigutera ubwoba bituma bworoha.',
+      EN: 'When you feel scared, go to a grown-up you trust. Talking about what scares you makes it smaller.',
+      FR: 'Quand tu as peur, va voir un adulte de confiance. Parler de ta peur la rend plus petite.',
+    },
+    emoji: '💛',
+    topic: 'feelings',
+  },
+
+  // === FAMILY & VALUES (MORE) ===
+  {
+    keywords: ['umuryango', 'famille', 'family', 'mama', 'mother', 'maman', 'papa', 'father', 'père'],
+    answer: {
+      KN: 'Umuryango wawe uragukunda! Umvira ababyeyi bawe kandi ufashe mu rugo.',
+      EN: 'Your family loves you! Listen to your parents and help at home.',
+      FR: 'Ta famille t\'aime! Écoute tes parents et aide à la maison.',
+    },
+    emoji: '👨‍👩‍👧‍👦',
+    topic: 'values',
+  },
+  {
+    keywords: ['ishuri', 'school', 'école', 'umwarimu', 'teacher', 'professeur'],
+    answer: {
+      KN: 'Ishuri ni ahantu heza ho kwiga no gukina n\'inshuti! Kwiga buri munsi bituma ugira ubwenge bwinshi.',
+      EN: 'School is a great place to learn and play with friends! Learning every day makes you smarter and smarter.',
+      FR: 'L\'école est un endroit génial pour apprendre et jouer avec des amis! Apprendre te rend de plus en plus fort.',
+    },
+    emoji: '🏫',
+    topic: 'learning',
+  },
+  {
+    keywords: ['murakoze', 'urakoze', 'thank', 'merci', 'ndagusabye', 'please', 'polite'],
+    answer: {
+      KN: '"Murakoze" na "ndagusabye" ni amagambo meza! Kuyavuga byerekana ko uri umwana mwiza.',
+      EN: '"Thank you" and "please" are magic words! Saying them shows you are a kind child.',
+      FR: '"Merci" et "s\'il te plaît" sont des mots magiques! Les dire montre que tu es un enfant gentil.',
+    },
+    emoji: '🙏',
+    topic: 'values',
+  },
+  {
+    keywords: ['gufasha', 'help', 'aider', 'gutabara'],
+    answer: {
+      KN: 'Gufasha abandi ni byiza cyane! Ushobora gufasha mama gutwara ibintu bito cyangwa gufasha inshuti yawe.',
+      EN: 'Helping others is wonderful! You can help mama carry small things or help your friend.',
+      FR: 'Aider les autres, c\'est merveilleux! Tu peux aider maman à porter de petites choses ou aider ton ami.',
+    },
+    emoji: '💪',
+    topic: 'values',
+  },
+
+  // === FUN ===
+  {
+    keywords: ['indirimbo', 'kuririmba', 'song', 'sing', 'chanson', 'chanter', 'umuziki', 'music', 'musique', 'kubyina', 'dance', 'danser'],
+    answer: {
+      KN: 'Kuririmba no kubyina binezeza umutima! Ririmba indirimbo ukunda mu gihe ukaraba amaboko!',
+      EN: 'Singing and dancing make the heart happy! Sing your favorite song while washing your hands!',
+      FR: 'Chanter et danser rendent le cœur joyeux! Chante ta chanson préférée en te lavant les mains!',
+    },
+    emoji: '🎵',
+    topic: 'fun',
+  },
+  {
+    keywords: ['kina wige', 'porogaramu', 'app', 'application'],
+    answer: {
+      KN: 'Kina Wige ni porogaramu yawe yo gukina no kwiga! Reba amasomo, ukine imikino, wige byinshi!',
+      EN: 'Kina Wige is your app for playing and learning! Watch episodes, play games, and learn lots!',
+      FR: 'Kina Wige est ton application pour jouer et apprendre! Regarde les épisodes, joue et apprends plein de choses!',
+    },
+    emoji: '🎮',
+    topic: 'characters',
+  },
+  {
+    keywords: ['murabeho', 'bye', 'goodbye', 'au revoir', 'tuzabonana'],
+    answer: {
+      KN: 'Murabeho! Tuzabonana vuba! Wibuke gukaraba amaboko no gusaranganya n\'inshuti!',
+      EN: 'Goodbye! See you soon! Remember to wash your hands and share with friends!',
+      FR: 'Au revoir! À bientôt! N\'oublie pas de te laver les mains et de partager avec tes amis!',
+    },
+    emoji: '👋',
+    topic: 'greeting',
+  },
+
   // === GREETINGS ===
   {
     keywords: ['muraho', 'hello', 'hi', 'bonjour', 'salut', 'amakuru', 'how are you'],
@@ -176,7 +482,7 @@ export const kezaQA: QAEntry[] = [
   },
 ];
 
-// Fallback responses when no match found (before hitting Gemini)
+// Fallback responses when no match found
 export const fallbackResponses = {
   KN: 'Ikibazo cyiza! Reka mbisubize...',
   EN: 'Great question! Let me think about that...',

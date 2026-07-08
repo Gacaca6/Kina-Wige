@@ -77,15 +77,16 @@ All verified working in production build.
   copy (`-c copy`), never trim them.
   Accept: new episodes play offline; attribution visible in Parent zone.
 
-- [ ] **7. Expand kezaQA to ~50 entries**
-  Add ~20 entries: body parts, animals, weather, safety (crossing the road,
-  strangers, fire), sleep, water safety, teeth, sharing. Follow the existing
-  entry shape; longer keywords score higher — include Kinyarwanda AND
-  English AND French keywords per entry. All new KN strings go to the
-  Human-review queue.
-  Accept: `findOfflineAnswer('inyoni')`-style spot checks return sensible
-  entries; no TypeScript errors; each topic reachable by at least 2 keywords
-  per language.
+- [x] **7. Expand kezaQA to ~50 entries** *(done 2026-07-08: 13 → 45 entries.
+  Added hygiene steps/bathing/cough-sneeze/toilet, health (sleep, sport,
+  malaria/mosquito nets), safety (roads, fire, strangers), nutrition
+  (vegetables/milk/sweets), body, nature (animals/rain/sun/trees), feelings
+  (happy/sad/angry/scared), family/school/manners/helping, and fun. Spot-checked
+  in 3 languages; gibberish falls back correctly. All new KN strings added to
+  Human-review queue below.)*
+  DECISION (owner, 2026-07-08): Baza Keza stays a pure offline database — NO
+  cloud/free-tier AI. "Totally free + offline + parent-reviewable + good
+  Kinyarwanda" all point here. Do not add an AI fallback; keep growing this file.
 
 ## P2 — Learning depth
 
@@ -143,10 +144,18 @@ All verified working in production build.
 
 ## Human-required (Godwin — the model must ask, not fake these)
 
-- [ ] **A. Download Ubongo videos**: register at https://toolkits.ubongo.org,
-  pick 3–5 Kinyarwanda episodes (hygiene/nutrition/counting), watch each one
-  fully, drop approved MP4s into `public/videos/` and tell the assistant the
-  titles. License: CC BY-NC-ND, non-commercial, attribute, no edits.
+- [ ] **A. Download Ubongo videos** — YOU must do this, not the assistant.
+  NOTE (2026-07-08): owner registered at toolkits.ubongo.org and asked whether
+  he could hand over credentials so the assistant pulls the content. Answer:
+  NO — do not share login credentials. Reasons: (1) the assistant can't hold or
+  reuse a password securely across sessions; (2) Ubongo's CC BY-NC-ND terms bind
+  YOU as the registered downloader who agreed to them and must vet each video for
+  child-appropriateness; (3) it's simply unsafe practice. Correct flow: YOU log
+  in, pick 3–5 Kinyarwanda episodes (hygiene/nutrition/counting), watch each one
+  fully, download the MP4s, drop them in `public/videos/`, and tell the assistant
+  the filenames + titles. The assistant then wires them into episodes.ts with
+  attribution (task 6). License: CC BY-NC-ND — non-commercial, attribute, NO edits
+  (container-copy re-encode only, never trim).
 - [ ] **B. Record Kinyarwanda audio**: Keza answers + quiz questions,
   phone-recorded is fine (one mp3 per entry, filenames from task 10).
 - [ ] **C. Native-speaker review of machine-written Kinyarwanda** — review
@@ -159,6 +168,11 @@ All verified working in production build.
   - episodes.ts: episode 2 `story.KN`; upcoming episode teasers
   - games.ts: all `title.KN` / `skill.KN`
   - SortingGame food names (Pome, Karoti, Umuneke, Ifanta, Donati, Bombo, Ifiriti)
+  - kezaQA.ts (task 7, 32 new `answer.KN` strings): topics hygiene-steps,
+    bathing, cough/sneeze, toilet, sleep, sport, mosquito/malaria, road safety,
+    fire safety, strangers, vegetables, milk, sweets, body, animals, rain, sun,
+    trees, happy, sad, angry, scared, family, school, manners, helping, singing,
+    app, goodbye. Spot-checked for sense but need a native speaker for phrasing.
 - [ ] **D. Revoke the old Gemini API key** at https://aistudio.google.com/apikey
   (exposed in pre-2026-07-07 builds).
 - [x] **E. Hosting** — done, deployed on Vercel by owner (2026-07-08).
