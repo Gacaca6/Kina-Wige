@@ -214,6 +214,36 @@ All verified working in production build.
   episodes.ts. Twinkle melody is public domain but the specific video is not
   necessarily. This is a legal must-do before wide release.
 
+## Future — content-pipeline ideas (evaluated 2026-07-08, owner exploring)
+
+Owner wants a stable, repeatable, licence-clean way to make kids' content.
+Assistant reported; owner chose "report only, don't build yet". Verdicts:
+
+- **Remotion (recommended).** React-based programmatic video — same stack.
+  Build ONE reusable "song video" template (Keza/Hirwa + on-screen KN lyrics
+  timed to an audio file); each new song = swap audio+lyrics+config → render
+  MP4 → existing 480p compress + lazy-cache pipeline. Output 100% owned.
+  Licence: FREE for individuals / for-profit ≤3 people (incl. commercial +
+  local render); paid only at 4+ person company. Runs at BUILD time on owner's
+  PC — does NOT violate the offline/no-API rule. Best leverage on the list.
+- **Suno (yes, with cautions).** Must be PAID plan ($10 Pro / $30 Premier) for
+  commercial rights; free plan = personal only; keep sub active + keep records;
+  no owner copyright, no indemnification. Kinyarwanda pronunciation is weak →
+  use Suno for EN/FR songs + instrumentals, but do KN vocals with a REAL voice.
+- **Internet Archive cartoons (advised against as a pipeline).** Licences are
+  per-item and inconsistent; old public-domain cartoons often contain racist/
+  violent/scary content = unsafe + off-brand; English/American/old = poor fit.
+  Vetting minefield. Use Ubongo Toolkits instead for ready-made KN video.
+- **Comic books (recommended).** New content type: `comics.ts` registry +
+  `ComicReader` screen (tap/swipe panels + tap-to-hear narration, trilingual)
+  + home section + offline cache. Tiny/offline-cheap (WebP panels + text vs
+  MB of video), licence-clean if owner-drawn, strong pre-literacy value.
+  Reuses the episodes/games registry pattern.
+
+Cross-cutting: all generated content still needs a child-safety pass + native
+KN review; AI-made music/art needs a "made with…" note on the credits screen
+(the same attribution screen owed for task 6 / Human-required F).
+
 ## Definition of done (v1.0)
 
 Installable PWA on a public URL that, after one online visit, works fully in
