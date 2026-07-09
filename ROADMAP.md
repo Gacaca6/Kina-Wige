@@ -139,16 +139,25 @@ All verified working in production build.
 
 ## P3 — Polish & hardening
 
-- [ ] **11. Self-host fonts** — download Fredoka + Nunito woff2 (Google Fonts
-  helper or fontsource `@fontsource/fredoka`, `@fontsource/nunito`), replace
-  the CSS `@import` in `src/index.css`, drop the two Google-fonts runtime
-  cache routes from `vite.config.ts`. Accept: build has zero references to
-  fonts.googleapis.com; text renders with correct fonts offline on FIRST load.
-- [ ] **12. Proper maskable icon** — generate a padded 512px maskable variant
-  (safe zone: content within inner 80%), add as separate manifest entry with
-  `purpose: 'maskable'`, change the existing 512 entry to `purpose: 'any'`.
-  Accept: icon not cropped in Chrome DevTools → Application → Manifest preview.
-- [ ] **13. Parent-zone gate** — simple "hold 3 seconds" or year-of-birth
+- [x] **11. Self-host fonts** *(done 2026-07-08: `@fontsource/fredoka` +
+  `@fontsource/nunito` imported in main.tsx (weights 400/500/600/700 and
+  400/600/700/800); removed the CSS `@import` and both Google-fonts runtime
+  routes from vite.config. Verified: built bundle has ZERO fonts.googleapis/
+  gstatic references, woff2 precached (offline first-load), Fredoka + Nunito
+  render locally. NOTE: leftover empty google-fonts-cache/gstatic-fonts-cache
+  from the old SW linger harmlessly on already-installed devices.)*
+- [x] **12. Proper maskable icon** *(done 2026-07-08: generated
+  public/maskable-{192,512}.png — icon scaled to 80% and centered on a solid
+  green (#2D6A4F) safe zone; added as separate manifest entries purpose
+  'maskable'; changed icon-512 from 'any maskable' to 'any'. Verified manifest
+  has 2 maskable icons, no mixed any-maskable.)*
+- [x] **13. Parent-zone gate** *(done 2026-07-08: `ParentGate` component wraps
+  the /parents route with a simple randomized addition question (a+b, 3
+  options) — trivial for an adult, a barrier for a toddler. Unlock persists per
+  session (sessionStorage 'kina-wige-parent-unlocked'). Trilingual (gate.*).
+  Browser-verified: wrong answer stays locked, correct unlocks, no re-gate on
+  return within the session.)*
+  ORIGINAL NOTE — simple "hold 3 seconds" or year-of-birth
   question before ParentScreen (standard kids-app pattern, no password).
   Accept: bottom-nav Parents tap shows gate; passing it once per session
   (sessionStorage) opens the zone.
@@ -197,6 +206,7 @@ All verified working in production build.
     (KN); translations.ts comic.* / comics.* / nav.comics ("Ibitabo").
   - comics.ts "Umusatsi Wanjye Udasanzwe" (My Special Hair): title + 11 panel
     captions (KN) — original telling synced to Book Dash art; check phrasing.
+  - translations.ts gate.* (KN "Ku Babyeyi gusa" / instruction / wrong).
   - kezaQA.ts (task 7, ~80 machine-written `answer.KN` strings total across
     both passes): hygiene/health/safety/nutrition/body/nature/feelings/
     family/manners/self-care PLUS pass-2 app-manual answers (many contain UI

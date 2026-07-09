@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'motion/react';
 import FloatingKeza from './components/ui/FloatingKeza';
+import ParentGate from './components/ui/ParentGate';
 
 const SplashScreen = lazy(() => import('./screens/SplashScreen'));
 const HomeScreen = lazy(() => import('./screens/HomeScreen'));
@@ -33,7 +34,7 @@ function AnimatedRoutes() {
           <Route path="/home" element={<HomeScreen />} />
           <Route path="/episode/:id" element={<EpisodeScreen />} />
           <Route path="/game/:id" element={<GameScreen />} />
-          <Route path="/parents" element={<ParentScreen />} />
+          <Route path="/parents" element={<ParentGate><ParentScreen /></ParentGate>} />
           <Route path="/episodes" element={<EpisodeListScreen />} />
           <Route path="/games" element={<GamesScreen />} />
           <Route path="/comics" element={<ComicsScreen />} />
