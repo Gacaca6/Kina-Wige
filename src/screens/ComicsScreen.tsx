@@ -45,7 +45,10 @@ export default function ComicsScreen() {
                   </span>
                 )}
               </div>
-              <span className="text-sm font-bold text-secondary block mb-2">{comic.category[language]}</span>
+              <span className="text-sm font-bold text-secondary block mb-1">{comic.category[language]}</span>
+              {comic.attribution && (
+                <span className="text-[10px] text-dark/40 block mb-2 leading-tight">{comic.attribution}</span>
+              )}
               <div className="bg-primary text-white text-center py-2 rounded-full font-bold text-sm group-hover:bg-primary-light transition-colors flex items-center justify-center gap-2">
                 <BookOpen className="w-4 h-4" /> {t('comics.read')}
               </div>

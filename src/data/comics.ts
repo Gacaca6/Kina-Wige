@@ -14,6 +14,7 @@
 
 import type { Language } from '../i18n/translations';
 import { images } from '../assets/images';
+import { mySpecialHair } from '../assets/comics/mySpecialHair';
 
 export interface ComicPanel {
   image: string;
@@ -26,6 +27,7 @@ export interface Comic {
   category: Record<Language, string>;
   cover: string;
   panels: ComicPanel[];
+  attribution?: string; // shown on the card/reader; required for CC-licensed art
 }
 
 export interface UpcomingComic {
@@ -34,6 +36,107 @@ export interface UpcomingComic {
 }
 
 export const comics: Comic[] = [
+  {
+    id: 'my-special-hair',
+    title: {
+      KN: 'Umusatsi Wanjye Udasanzwe',
+      EN: 'My Special Hair',
+      FR: 'Mes Cheveux Spéciaux',
+    },
+    category: { KN: '💛 Kwikunda', EN: '💛 Self-love', FR: "💛 S'aimer" },
+    cover: mySpecialHair.cover,
+    attribution: 'Illustrations: Book Dash (bookdash.org) · CC BY 4.0',
+    panels: [
+      {
+        image: mySpecialHair.p04,
+        text: {
+          KN: "Muraho! Ndi njye n'inshuti yanjye Bobi. Reba umusatsi wanjye udasanzwe!",
+          EN: "Hello! This is me and my friend Bobi. Look at my special hair!",
+          FR: "Bonjour! Voici moi et mon ami Bobi. Regarde mes cheveux spéciaux!",
+        },
+      },
+      {
+        image: mySpecialHair.p05,
+        text: {
+          KN: 'Umusatsi wanjye ni munini kandi woroshye. Bobi arawukunda cyane!',
+          EN: 'My hair is big and soft and bouncy. Bobi loves it so much!',
+          FR: 'Mes cheveux sont grands, doux et rebondis. Bobi les adore!',
+        },
+      },
+      {
+        image: mySpecialHair.p08,
+        text: {
+          KN: 'Rimwe na rimwe, n\'inyoni nto zishaka kuwuturamo!',
+          EN: 'Sometimes, even little birds want to make a home in it!',
+          FR: 'Parfois, même de petits oiseaux veulent y faire leur nid!',
+        },
+      },
+      {
+        image: mySpecialHair.p06,
+        text: {
+          KN: 'Ku zuba, umusatsi wanjye untera igicucu cyiza. Turuhukira munsi yawo!',
+          EN: 'In the sun, my hair makes cool shade. We relax underneath it!',
+          FR: 'Au soleil, mes cheveux font une belle ombre. On se repose dessous!',
+        },
+      },
+      {
+        image: mySpecialHair.p07,
+        text: {
+          KN: "Mu mbeho, umusatsi wanjye untera ubushyuhe nk'ingofero nini!",
+          EN: 'When it is cold, my hair keeps me warm like a big cozy hat!',
+          FR: 'Quand il fait froid, mes cheveux me tiennent chaud comme un grand chapeau!',
+        },
+      },
+      {
+        image: mySpecialHair.p09,
+        text: {
+          KN: "Iyo umuyaga uhuha, umusatsi wanjye uraguruka nk'ibendera ryiza!",
+          EN: 'When the wind blows, my hair flies out like a beautiful flag!',
+          FR: 'Quand le vent souffle, mes cheveux volent comme un beau drapeau!',
+        },
+      },
+      {
+        image: mySpecialHair.p11,
+        text: {
+          KN: 'Ndashobora no kubika amakarayo yanjye muri wo mu gihe nshushanya!',
+          EN: 'I can even keep my crayons in it while I draw!',
+          FR: 'Je peux même y ranger mes crayons pendant que je dessine!',
+        },
+      },
+      {
+        image: mySpecialHair.p13,
+        text: {
+          KN: 'Ku minsi mikuru, ndawushyiramo amabara yose meza!',
+          EN: 'On party days, I fill it with all the happy colours!',
+          FR: 'Les jours de fête, j\'y mets toutes les jolies couleurs!',
+        },
+      },
+      {
+        image: mySpecialHair.p12,
+        text: {
+          KN: 'Bobi na we awukunda cyane — ni ahantu heza ho guhoberana!',
+          EN: 'Bobi loves it too — it is the best place for a big hug!',
+          FR: 'Bobi les aime aussi — c\'est le meilleur endroit pour un câlin!',
+        },
+      },
+      {
+        image: mySpecialHair.p14,
+        text: {
+          KN: 'Umusatsi wanjye ni uwanjye jyenyine. Nta wundi umeze nkawo ku isi.',
+          EN: 'My hair is all my own. There is no other hair like it in the world.',
+          FR: 'Mes cheveux sont bien à moi. Il n\'y en a pas d\'autres comme eux au monde.',
+        },
+      },
+      {
+        image: mySpecialHair.p15,
+        text: {
+          KN: 'Umusatsi wanjye ni mwiza. Ndawukunda uko ungana! Nawe wikunde uko uri.',
+          EN: 'My hair is beautiful. I love it just the way it is! You are wonderful too.',
+          FR: "Mes cheveux sont magnifiques. Je les aime comme ils sont! Toi aussi, tu es merveilleux.",
+        },
+      },
+    ],
+  },
   {
     id: 'clean-hands',
     title: {

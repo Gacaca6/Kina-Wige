@@ -195,6 +195,8 @@ All verified working in production build.
     titles + KN story text machine-written; confirm they read naturally).
   - comics.ts (comic feature): "Amaboko Meza ya Hirwa" title + 6 panel captions
     (KN); translations.ts comic.* / comics.* / nav.comics ("Ibitabo").
+  - comics.ts "Umusatsi Wanjye Udasanzwe" (My Special Hair): title + 11 panel
+    captions (KN) — original telling synced to Book Dash art; check phrasing.
   - kezaQA.ts (task 7, ~80 machine-written `answer.KN` strings total across
     both passes): hygiene/health/safety/nutrition/body/nature/feelings/
     family/manners/self-care PLUS pass-2 app-manual answers (many contain UI
@@ -248,6 +250,14 @@ Assistant reported; owner chose "report only, don't build yet". Verdicts:
   read through, star awarded, read-badge persists, no console errors.
   FOLLOW-UPS: (a) real illustrated panels; (b) more comics; (c) KN narration
   audio (ties into task 10 audio hooks); (d) new KN strings → review queue.
+  UPDATE 2026-07-08: added a 2nd, real comic "Umusatsi Wanjye Udasanzwe /
+  My Special Hair" — owner supplied the no-text illustration set from Book Dash
+  (bookdash.org, CC BY 4.0) in the shim folder; assistant picked 11 panels,
+  optimized them to WebP (~495 KB total) in src/assets/comics/, and wrote an
+  ORIGINAL trilingual telling synced to the art (self-love / natural-hair
+  theme — girl + dog Bobi across the seasons). Comic type gained `attribution`,
+  shown on the card (CC BY compliance). Browser-verified end to end. NOTE: for
+  full CC BY, add the specific Book Dash author/illustrator names (see F).
 
 Cross-cutting: all generated content still needs a child-safety pass + native
 KN review; AI-made music/art needs a "made with…" note on the credits screen
