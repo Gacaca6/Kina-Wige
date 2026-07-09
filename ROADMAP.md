@@ -193,6 +193,8 @@ All verified working in production build.
   - episodes.ts (task 6, new): titles + stories for the 3 content episodes —
     "Indirimbo y'Inyuguti", "Inyenyeri Nto", "Inyuguti A mu Mudugudu" (KN
     titles + KN story text machine-written; confirm they read naturally).
+  - comics.ts (comic feature): "Amaboko Meza ya Hirwa" title + 6 panel captions
+    (KN); translations.ts comic.* / comics.* / nav.comics ("Ibitabo").
   - kezaQA.ts (task 7, ~80 machine-written `answer.KN` strings total across
     both passes): hygiene/health/safety/nutrition/body/nature/feelings/
     family/manners/self-care PLUS pass-2 app-manual answers (many contain UI
@@ -234,11 +236,18 @@ Assistant reported; owner chose "report only, don't build yet". Verdicts:
   per-item and inconsistent; old public-domain cartoons often contain racist/
   violent/scary content = unsafe + off-brand; English/American/old = poor fit.
   Vetting minefield. Use Ubongo Toolkits instead for ready-made KN video.
-- **Comic books (recommended).** New content type: `comics.ts` registry +
-  `ComicReader` screen (tap/swipe panels + tap-to-hear narration, trilingual)
-  + home section + offline cache. Tiny/offline-cheap (WebP panels + text vs
-  MB of video), licence-clean if owner-drawn, strong pre-literacy value.
-  Reuses the episodes/games registry pattern.
+- **Comic books — ✅ BUILT 2026-07-08.** New content type shipped:
+  `src/data/comics.ts` registry, `ComicsScreen` (/comics) list, `ComicReader`
+  (/comic/:id) tap-through reader with progress dots, tap-to-hear narration
+  (speechSynthesis EN/FR; KN falls back — swap in recorded audio later),
+  completion → +1 star + `markComicRead` (useProgress extended with
+  `comicsRead`/`isComicRead`). Added 5th bottom-nav item "Ibitabo/Books/Livres".
+  First sample comic "Amaboko Meza ya Hirwa" (6 panels) reuses existing WebP
+  character art as placeholder panels — SWAP IN real comic illustrations when
+  available (registry makes it a data-only change). Browser-verified end to end:
+  read through, star awarded, read-badge persists, no console errors.
+  FOLLOW-UPS: (a) real illustrated panels; (b) more comics; (c) KN narration
+  audio (ties into task 10 audio hooks); (d) new KN strings → review queue.
 
 Cross-cutting: all generated content still needs a child-safety pass + native
 KN review; AI-made music/art needs a "made with…" note on the credits screen

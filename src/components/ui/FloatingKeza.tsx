@@ -7,9 +7,9 @@ export default function FloatingKeza() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Hide on splash, game, and baza-keza screens
+  // Hide on splash, game, comic reader, and baza-keza screens
   const { pathname } = location;
-  if (pathname === '/' || pathname === '/baza-keza' || pathname.startsWith('/game/')) {
+  if (pathname === '/' || pathname === '/baza-keza' || pathname.startsWith('/game/') || pathname.startsWith('/comic/')) {
     return null;
   }
 

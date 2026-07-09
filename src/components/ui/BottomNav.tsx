@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, PlayCircle, Gamepad2, Users } from 'lucide-react';
+import { Home, PlayCircle, Gamepad2, BookOpen, Users } from 'lucide-react';
 import { useI18n } from '../../i18n/context';
 
 function NavButton({ icon, label, isActive, onClick }: { icon: React.ReactNode; label: string; isActive: boolean; onClick: () => void }) {
@@ -47,6 +47,12 @@ export default function BottomNav() {
           label={t('nav.games')}
           isActive={path === '/games' || path.startsWith('/game')}
           onClick={() => navigate('/games')}
+        />
+        <NavButton
+          icon={<BookOpen className="w-6 h-6" />}
+          label={t('nav.comics')}
+          isActive={path === '/comics' || path.startsWith('/comic')}
+          onClick={() => navigate('/comics')}
         />
         <NavButton
           icon={<Users className="w-6 h-6" />}

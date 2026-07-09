@@ -8,9 +8,10 @@ const PROGRESS_KEY = 'kina-wige-progress';
 interface Progress {
   episodesWatched: Record<string, true>;
   gamesCompleted: Record<string, number>;
+  comicsRead: Record<string, true>;
 }
 
-const emptyProgress: Progress = { episodesWatched: {}, gamesCompleted: {} };
+const emptyProgress: Progress = { episodesWatched: {}, gamesCompleted: {}, comicsRead: {} };
 
 function loadProgress(): Progress {
   try {
@@ -20,6 +21,7 @@ function loadProgress(): Progress {
     return {
       episodesWatched: parsed.episodesWatched ?? {},
       gamesCompleted: parsed.gamesCompleted ?? {},
+      comicsRead: parsed.comicsRead ?? {},
     };
   } catch {
     return emptyProgress;
@@ -60,6 +62,18 @@ export function useProgress() {
     });
   }, []);
 
+  const markComicRead = useCallback((id: string) => {
+    setProgress(prev => {
+      if (prev.comicsRead[id]) return prev;
+      const next = {
+        ...prev,
+        comicsRead: { ...prev.comicsRead, [id]: true as const },
+      };
+      saveProgress(next);
+      return next;
+    });
+  }, []);
+
   const isEpisodeWatched = useCallback(
     (id: string) => !!progress.episodesWatched[id],
     [progress],
@@ -70,5 +84,10 @@ export function useProgress() {
     [progress],
   );
 
-  return { markEpisodeWatched, markGameCompleted, isEpisodeWatched, gamePlayCount };
+  const isComicRead = useCallback(
+    (id: string) => !!progress.comicsRead[id],
+    [progress],
+  );
+
+  return { markEpisodeWatched, markGameCompleted, markComicRead, isEpisodeWatched, gamePlayCount, isComicRead };
 }
