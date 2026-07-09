@@ -12,7 +12,7 @@ export default function SplashScreen() {
   return (
     <motion.main
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-      className="storybook-canvas min-h-screen flex flex-col items-center justify-center p-6 text-white relative overflow-hidden"
+      className="fixed inset-0 bg-primary flex flex-col items-center justify-center p-6 text-white overflow-hidden"
     >
       <div className="relative z-10 flex flex-col items-center text-center space-y-8 max-w-md mx-auto w-full">
         <motion.div
