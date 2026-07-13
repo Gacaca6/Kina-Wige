@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Star, PlayCircle } from 'lucide-react';
+import { Star, PlayCircle, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../i18n/context';
 import { useStars } from '../hooks/useStars';
@@ -12,16 +12,10 @@ import Logo from '../components/ui/Logo';
 
 export default function HomeScreen() {
   const navigate = useNavigate();
-  const { t, language, setLanguage } = useI18n();
+  const { t, language } = useI18n();
   const { stars } = useStars();
   const { isEpisodeWatched } = useProgress();
   const [activeAvatar, setActiveAvatar] = useState<'keza' | 'hirwa'>('keza');
-
-  const toggleLanguage = () => {
-    const langs: ('KN' | 'EN' | 'FR')[] = ['KN', 'EN', 'FR'];
-    const nextLang = langs[(langs.indexOf(language) + 1) % langs.length];
-    setLanguage(nextLang);
-  };
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-h-screen flex flex-col pb-24">
@@ -45,8 +39,8 @@ export default function HomeScreen() {
         <div className="absolute left-1/2 -translate-x-1/2">
           <Logo variant="header" />
         </div>
-        <button onClick={toggleLanguage} className="text-primary font-headline font-bold hover:scale-105 transition-transform active:scale-95 px-4 py-2 bg-secondary-container rounded-full text-sm">
-          {language}
+        <button onClick={() => navigate('/settings')} aria-label={t('settings.title')} className="w-10 h-10 flex items-center justify-center text-primary hover:scale-105 transition-transform active:scale-95 bg-secondary-container rounded-full">
+          <Settings className="w-5 h-5" />
         </button>
       </header>
 

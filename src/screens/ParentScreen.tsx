@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { ArrowLeft, Sparkles, Home, Eye, Target, Check, Hourglass } from 'lucide-react';
+import { ArrowLeft, Sparkles, Home, Eye, Target, Check, Hourglass, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../i18n/context';
 import { useParentData } from '../hooks/useParentData';
@@ -9,14 +9,8 @@ import BottomNav from '../components/ui/BottomNav';
 
 export default function ParentScreen() {
   const navigate = useNavigate();
-  const { t, language, setLanguage } = useI18n();
+  const { t } = useI18n();
   const { activities, weeklyDays, toggleActivity, toggleDay, progressKey, progressPercent } = useParentData();
-
-  const toggleLanguage = () => {
-    const langs: ('KN' | 'EN' | 'FR')[] = ['KN', 'EN', 'FR'];
-    const nextLang = langs[(langs.indexOf(language) + 1) % langs.length];
-    setLanguage(nextLang);
-  };
 
   const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -32,8 +26,8 @@ export default function ParentScreen() {
               {t('parents.title')}
             </h1>
           </div>
-          <button onClick={toggleLanguage} className="flex items-center gap-2 bg-surface-container-low px-3 py-1.5 rounded-full">
-            <span className="text-xs font-bold text-primary">{language}</span>
+          <button onClick={() => navigate('/settings')} aria-label={t('settings.title')} className="w-9 h-9 flex items-center justify-center bg-surface-container-low rounded-full text-primary active:scale-95 transition-transform">
+            <Settings className="w-5 h-5" />
           </button>
         </div>
         <div className="bg-[#cdffe2] h-[1px] opacity-15" />
