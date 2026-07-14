@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Play, Pause, Maximize, Minimize, Volume2, VolumeX } from 'lucide-react';
+import { Play, Pause, Maximize, Minimize, Volume2, VolumeX, RotateCcw, RotateCw } from 'lucide-react';
 
 interface VideoPlayerProps {
   clips: string[];
@@ -60,13 +60,19 @@ export default function VideoPlayer({ clips, poster, onAllClipsEnded }: VideoPla
   };
 
   const toggleFullscreen = async () => {
-    if (!containerRef.current) return;
-    if (!document.fullscreenElement) {
-      await containerRef.current.requestFullscreen().catch(() => {});
-      setIsFullscreen(true);
-    } else {
+    const container = containerRef.current;
+    const video = videoRef.current as HTMLVideoElement & { webkitEnterFullscreen?: () => void };
+    if (document.fullscreenElement) {
       await document.exitFullscreen().catch(() => {});
-      setIsFullscreen(false);
+      return;
+    }
+    if (container?.requestFullscreen) {
+      // state syncs via the fullscreenchange listener (never set manually —
+      // a blocked request would desync the icon)
+      await container.requestFullscreen().catch(() => {});
+    } else if (video?.webkitEnterFullscreen) {
+      // iOS Safari: only the <video> element itself can go fullscreen
+      video.webkitEnterFullscreen();
     }
   };
 
@@ -161,19 +167,17 @@ export default function VideoPlayer({ clips, poster, onAllClipsEnded }: VideoPla
     return () => document.removeEventListener('fullscreenchange', handler);
   }, []);
 
-  // Handle progress bar click/seek
-  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-    const rect = e.currentTarget.getBoundingClientRect();
-    const fraction = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-    const targetTime = fraction * getTotalDuration();
+  // Seek to an absolute time across all clips (handles clip switching)
+  const seekToTime = (targetTime: number) => {
+    const total = getTotalDuration();
+    if (total <= 0) return;
+    const clamped = Math.max(0, Math.min(targetTime, total - 0.1));
 
-    // Find which clip and position
     let accumulated = 0;
     for (let i = 0; i < clips.length; i++) {
       const clipDur = durations.current[i] || 0;
-      if (accumulated + clipDur > targetTime) {
-        const posInClip = targetTime - accumulated;
+      if (accumulated + clipDur > clamped || i === clips.length - 1) {
+        const posInClip = clamped - accumulated;
         if (i !== currentClipRef.current) {
           setCurrentClip(i);
           const video = videoRef.current;
@@ -193,6 +197,21 @@ export default function VideoPlayer({ clips, poster, onAllClipsEnded }: VideoPla
       }
       accumulated += clipDur;
     }
+  };
+
+  // Skip forward/backward by n seconds
+  const skip = (deltaSeconds: number) => {
+    seekToTime(getElapsedTime() + deltaSeconds);
+    setShowControls(true);
+    if (isPlaying) hideControlsDelayed();
+  };
+
+  // Handle progress bar click/seek
+  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    const rect = e.currentTarget.getBoundingClientRect();
+    const fraction = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    seekToTime(fraction * getTotalDuration());
   };
 
   return (
@@ -242,8 +261,16 @@ export default function VideoPlayer({ clips, poster, onAllClipsEnded }: VideoPla
             transition={{ duration: 0.2 }}
             className="absolute inset-0 z-20 flex flex-col justify-end bg-gradient-to-t from-black/70 via-transparent to-transparent"
           >
-            {/* Center play/pause (large, tap-friendly) */}
-            <div className="absolute inset-0 flex items-center justify-center">
+            {/* Center controls: skip back / play-pause / skip forward */}
+            <div className="absolute inset-0 flex items-center justify-center gap-8">
+              <button
+                onClick={(e) => { e.stopPropagation(); skip(-10); }}
+                aria-label="Back 10 seconds"
+                className="relative w-12 h-12 bg-white/20 backdrop-blur-sm text-white rounded-full flex items-center justify-center hover:bg-white/30 transition-colors active:scale-90"
+              >
+                <RotateCcw className="w-6 h-6" />
+                <span className="absolute inset-0 flex items-center justify-center text-[8px] font-bold mt-0.5">10</span>
+              </button>
               <button
                 onClick={(e) => { e.stopPropagation(); togglePlay(); }}
                 aria-label={isPlaying ? 'Pause' : 'Play'}
@@ -253,6 +280,14 @@ export default function VideoPlayer({ clips, poster, onAllClipsEnded }: VideoPla
                   ? <Pause className="w-8 h-8 fill-current" />
                   : <Play className="w-8 h-8 fill-current ml-1" />
                 }
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); skip(10); }}
+                aria-label="Forward 10 seconds"
+                className="relative w-12 h-12 bg-white/20 backdrop-blur-sm text-white rounded-full flex items-center justify-center hover:bg-white/30 transition-colors active:scale-90"
+              >
+                <RotateCw className="w-6 h-6" />
+                <span className="absolute inset-0 flex items-center justify-center text-[8px] font-bold mt-0.5">10</span>
               </button>
             </div>
 
