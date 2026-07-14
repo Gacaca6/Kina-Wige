@@ -60,19 +60,31 @@ export default function VideoPlayer({ clips, poster, onAllClipsEnded }: VideoPla
   };
 
   const toggleFullscreen = async () => {
-    const container = containerRef.current;
-    const video = videoRef.current as HTMLVideoElement & { webkitEnterFullscreen?: () => void };
-    if (document.fullscreenElement) {
-      await document.exitFullscreen().catch(() => {});
+    const container = containerRef.current as (HTMLDivElement & { webkitRequestFullscreen?: () => void }) | null;
+    const video = videoRef.current as (HTMLVideoElement & { webkitEnterFullscreen?: () => void }) | null;
+    const doc = document as Document & { webkitFullscreenElement?: Element; webkitExitFullscreen?: () => void };
+
+    if (doc.fullscreenElement || doc.webkitFullscreenElement) {
+      if (doc.exitFullscreen) await doc.exitFullscreen().catch(() => {});
+      else doc.webkitExitFullscreen?.();
       return;
     }
+    // state syncs via the fullscreenchange listener (never set manually —
+    // a blocked request would desync the icon)
     if (container?.requestFullscreen) {
-      // state syncs via the fullscreenchange listener (never set manually —
-      // a blocked request would desync the icon)
       await container.requestFullscreen().catch(() => {});
+    } else if (container?.webkitRequestFullscreen) {
+      // older Safari (iPad): prefixed element fullscreen
+      container.webkitRequestFullscreen();
     } else if (video?.webkitEnterFullscreen) {
-      // iOS Safari: only the <video> element itself can go fullscreen
-      video.webkitEnterFullscreen();
+      // iPhone Safari: only the <video> element itself can go fullscreen,
+      // and it throws if the video has no data yet
+      try {
+        if (video.paused) await video.play().catch(() => {});
+        video.webkitEnterFullscreen();
+      } catch {
+        // not ready yet — user can try again once playing
+      }
     }
   };
 
@@ -160,11 +172,16 @@ export default function VideoPlayer({ clips, poster, onAllClipsEnded }: VideoPla
     };
   }, [clips, getElapsedTime, getTotalDuration, onAllClipsEnded]);
 
-  // Fullscreen change listener
+  // Fullscreen change listener (standard + webkit-prefixed for Safari)
   useEffect(() => {
-    const handler = () => setIsFullscreen(!!document.fullscreenElement);
+    const doc = document as Document & { webkitFullscreenElement?: Element };
+    const handler = () => setIsFullscreen(!!(doc.fullscreenElement || doc.webkitFullscreenElement));
     document.addEventListener('fullscreenchange', handler);
-    return () => document.removeEventListener('fullscreenchange', handler);
+    document.addEventListener('webkitfullscreenchange', handler);
+    return () => {
+      document.removeEventListener('fullscreenchange', handler);
+      document.removeEventListener('webkitfullscreenchange', handler);
+    };
   }, []);
 
   // Seek to an absolute time across all clips (handles clip switching)
@@ -261,12 +278,15 @@ export default function VideoPlayer({ clips, poster, onAllClipsEnded }: VideoPla
             transition={{ duration: 0.2 }}
             className="absolute inset-0 z-20 flex flex-col justify-end bg-gradient-to-t from-black/70 via-transparent to-transparent"
           >
-            {/* Center controls: skip back / play-pause / skip forward */}
-            <div className="absolute inset-0 flex items-center justify-center gap-8">
+            {/* Center controls: skip back / play-pause / skip forward.
+                pointer-events-none on the full-size wrapper so it never
+                swallows taps meant for the bottom bar (mute/fullscreen/seek);
+                the buttons themselves re-enable pointer events. */}
+            <div className="absolute inset-0 flex items-center justify-center gap-8 pointer-events-none">
               <button
                 onClick={(e) => { e.stopPropagation(); skip(-10); }}
                 aria-label="Back 10 seconds"
-                className="relative w-12 h-12 bg-white/20 backdrop-blur-sm text-white rounded-full flex items-center justify-center hover:bg-white/30 transition-colors active:scale-90"
+                className="pointer-events-auto relative w-12 h-12 bg-white/20 backdrop-blur-sm text-white rounded-full flex items-center justify-center hover:bg-white/30 transition-colors active:scale-90"
               >
                 <RotateCcw className="w-6 h-6" />
                 <span className="absolute inset-0 flex items-center justify-center text-[8px] font-bold mt-0.5">10</span>
@@ -274,7 +294,7 @@ export default function VideoPlayer({ clips, poster, onAllClipsEnded }: VideoPla
               <button
                 onClick={(e) => { e.stopPropagation(); togglePlay(); }}
                 aria-label={isPlaying ? 'Pause' : 'Play'}
-                className="w-16 h-16 bg-white/20 backdrop-blur-sm text-white rounded-full flex items-center justify-center hover:bg-white/30 transition-colors active:scale-90"
+                className="pointer-events-auto w-16 h-16 bg-white/20 backdrop-blur-sm text-white rounded-full flex items-center justify-center hover:bg-white/30 transition-colors active:scale-90"
               >
                 {isPlaying
                   ? <Pause className="w-8 h-8 fill-current" />
@@ -284,7 +304,7 @@ export default function VideoPlayer({ clips, poster, onAllClipsEnded }: VideoPla
               <button
                 onClick={(e) => { e.stopPropagation(); skip(10); }}
                 aria-label="Forward 10 seconds"
-                className="relative w-12 h-12 bg-white/20 backdrop-blur-sm text-white rounded-full flex items-center justify-center hover:bg-white/30 transition-colors active:scale-90"
+                className="pointer-events-auto relative w-12 h-12 bg-white/20 backdrop-blur-sm text-white rounded-full flex items-center justify-center hover:bg-white/30 transition-colors active:scale-90"
               >
                 <RotateCw className="w-6 h-6" />
                 <span className="absolute inset-0 flex items-center justify-center text-[8px] font-bold mt-0.5">10</span>
