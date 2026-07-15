@@ -269,6 +269,28 @@ Assistant reported; owner chose "report only, don't build yet". Verdicts:
   shown on the card (CC BY compliance). Browser-verified end to end. NOTE: for
   full CC BY, add the specific Book Dash author/illustrator names (see F).
 
+Round 2 (owner research, evaluated 2026-07-08):
+- **HyperFrames (STRONG YES — likely supersedes the Remotion idea).** HeyGen's
+  open-source (Apache 2.0, no seat/render limits) HTML→MP4 renderer, released
+  May 2026, built specifically to be driven by AI agents like Claude Code:
+  scenes are plain HTML files with data-start/data-duration attributes,
+  animated with CSS/GSAP/Lottie/Three.js, rendered deterministically via
+  headless Chrome + FFmpeg (Node 22+; ffmpeg already installed on this
+  machine). Workflow: describe video → agent writes HTML using existing
+  Keza/Hirwa WebP art + owner's audio → `npx hyperframes render` → existing
+  480p-compress + lazy-cache pipeline. Runs at BUILD time = no offline-rule
+  violation. Simpler than Remotion (no React video framework, no 3-person
+  licence cap). Caveats: 2D motion-graphics style (fine for songs/alphabet/
+  counting), young project (maturity risk). NEXT STEP when owner says go:
+  pilot one 30s Kinyarwanda counting video.
+- **Blender Vault (NO as a pipeline).** = Blender Studio's production archive
+  (€11.50/mo for full repos; the Storm/Rain/Spring/Huginn character rigs are
+  CC-BY with attribution). Assets are licence-clean, but full 3D animation in
+  Blender is weeks-per-minute solo work with a steep learning curve and heavy
+  renders — the opposite of "stable scaling" for one person. Also the Studio
+  rigs are not Rwandan children / not Keza & Hirwa. Skip for production;
+  optional future source of a single CC-BY asset or learning material.
+
 Cross-cutting: all generated content still needs a child-safety pass + native
 KN review; AI-made music/art needs a "made with…" note on the credits screen
 (the same attribution screen owed for task 6 / Human-required F).
