@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Frame 3 — f3 · vowel E · span_sec [23.5, 34.9] · duration 11.4s · frame-local t = track_t − 23.5 -->
+    <!-- g1 [0 → 6.5]: giant "E e" hero — braam slam at 0, stroke-outline→solid-fill resolve at 4.5 (track 28.0) -->
+    <!-- g2 [6.5 → 11.4]: peak celebration — keza pop + pastel confetti + one soft bounce-shake at 7.5 (track 31.0, energy 0.95) -->
+  </head>
+  <body>
+    <template>
+      <style>
+        /* Bundled rounded font (see assets/fonts/fredoka.woff2) */
+        @font-face { font-family: "Fredoka One"; src: url("assets/fonts/fredoka.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+        @font-face { font-family: "Fredoka"; src: url("assets/fonts/fredoka.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+        @font-face { font-family: "Baloo 2"; src: url("assets/fonts/fredoka.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+        @font-face { font-family: "Comic Sans MS"; src: url("assets/fonts/fredoka.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+        @font-face { font-family: "Arial Rounded MT Bold"; src: url("assets/fonts/fredoka.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+
+        /* Daisy Days atoms (frame.md): cream ground, butter scene, Fredoka One display,
+           charcoal outlines + hard offset shadows, ornament wreath. CSS is scoped to
+           [data-composition-id="03-f3"] at render; root is styled inline (scoper caveat). */
+        .blob {
+          position: absolute;
+          border-radius: 50%;
+          will-change: transform;
+        }
+        .orn {
+          position: absolute;
+          z-index: 1;
+          will-change: transform;
+        }
+        .orn svg {
+          display: block;
+          overflow: visible;
+        }
+        .grp {
+          position: absolute;
+          inset: 0;
+          z-index: 2;
+        }
+        .hero {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding-bottom: 70px;
+          will-change: transform;
+        }
+        .letter-stack {
+          position: relative;
+          font-family: "Fredoka One", "Fredoka", "Comic Sans MS", sans-serif;
+          font-weight: 400;
+          font-size: 460px;
+          line-height: 1;
+          letter-spacing: 0.02em;
+          word-spacing: 34px;
+          white-space: nowrap;
+        }
+        .lyr {
+          position: absolute;
+          top: 0;
+          left: 0;
+        }
+        .spacer {
+          color: transparent;
+        }
+        .l-shadow {
+          color: #2d2d2d;
+          -webkit-text-stroke: 12px #2d2d2d;
+          transform: translate(16px, 16px);
+        }
+        .l-stroke {
+          color: transparent;
+          -webkit-text-stroke: 12px #2d2d2d;
+        }
+        .l-fill {
+          color: #fde68a;
+          -webkit-text-stroke: 12px #2d2d2d;
+        }
+        #f3_g1_shadow {
+          opacity: 0;
+        }
+        #f3_g1_fill {
+          clip-path: inset(100% 0% 0% 0%);
+          will-change: clip-path;
+        }
+        #f3_g2 {
+          opacity: 0;
+          visibility: hidden;
+        }
+        /* soft butter pulse ring behind the letter (no CSS transform: GSAP owns transform) */
+        .pulse {
+          position: absolute;
+          left: 50%;
+          top: 44%;
+          width: 920px;
+          height: 920px;
+          margin: -460px 0 0 -460px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(253, 230, 138, 0.95) 0%, rgba(253, 230, 138, 0) 62%);
+          opacity: 0;
+          will-change: transform, opacity;
+        }
+        #f3_g2_shake {
+          position: absolute;
+          inset: 0;
+          will-change: transform;
+        }
+        /* keza companion — sticker circle per Daisy atoms (art has a solid teal ground) */
+        .keza-card {
+          position: absolute;
+          right: 80px;
+          bottom: -26px;
+          width: 360px;
+          height: 360px;
+          z-index: 4;
+          border-radius: 50%;
+          border: 4px solid #2d2d2d;
+          box-shadow: 10px 10px 0 #2d2d2d;
+          overflow: hidden;
+          background: #7ecdc0;
+          opacity: 0;
+          will-change: transform, opacity;
+        }
+        .keza-card img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+        .burst {
+          position: absolute;
+          width: 0;
+          height: 0;
+          z-index: 3;
+          opacity: 0;
+        }
+        .cf {
+          position: absolute;
+          left: 0;
+          top: 0;
+          border: 2px solid #2d2d2d;
+          opacity: 0;
+          will-change: transform, opacity;
+        }
+      </style>
+
+      <div
+        id="stage"
+        data-composition-id="03-f3"
+        data-width="1920"
+        data-height="1080"
+        data-duration="11.4"
+        style="position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; background: #f5f0e6"
+      >
+        <!-- ── shared scene bed: butter blob field (bg-flow-field, pastel realization) + ornament wreath ── -->
+        <div id="f3_bg" style="position: absolute; inset: 0; z-index: 0">
+          <div class="blob" style="left: 420px; top: -40px; width: 1080px; height: 1080px; background: radial-gradient(circle, rgba(253, 230, 138, 0.55) 0%, rgba(253, 230, 138, 0) 68%)"></div>
+          <div class="blob" style="right: -180px; top: 120px; width: 640px; height: 640px; background: radial-gradient(circle, rgba(253, 230, 138, 0.42) 0%, rgba(253, 230, 138, 0) 68%)"></div>
+          <div class="blob" style="left: -160px; top: 560px; width: 540px; height: 540px; background: radial-gradient(circle, rgba(253, 230, 138, 0.42) 0%, rgba(253, 230, 138, 0) 68%)"></div>
+          <div class="blob" style="left: 1180px; top: 640px; width: 700px; height: 700px; background: radial-gradient(circle, rgba(253, 230, 138, 0.45) 0%, rgba(253, 230, 138, 0) 68%)"></div>
+
+          <!-- ornament wreath: hand-drawn SVGs, 2.1px charcoal stroke, cropping past edges -->
+          <div class="orn" style="left: -34px; top: -28px; width: 170px">
+            <svg viewBox="0 0 120 120" style="transform: rotate(-15deg)" fill="none" stroke="#2D2D2D" stroke-width="2.1">
+              <g fill="#FFFFFF">
+                <ellipse cx="60" cy="28" rx="13" ry="22" />
+                <ellipse cx="60" cy="28" rx="13" ry="22" transform="rotate(45 60 60)" />
+                <ellipse cx="60" cy="28" rx="13" ry="22" transform="rotate(90 60 60)" />
+                <ellipse cx="60" cy="28" rx="13" ry="22" transform="rotate(135 60 60)" />
+                <ellipse cx="60" cy="28" rx="13" ry="22" transform="rotate(180 60 60)" />
+                <ellipse cx="60" cy="28" rx="13" ry="22" transform="rotate(225 60 60)" />
+                <ellipse cx="60" cy="28" rx="13" ry="22" transform="rotate(270 60 60)" />
+                <ellipse cx="60" cy="28" rx="13" ry="22" transform="rotate(315 60 60)" />
+              </g>
+              <circle cx="60" cy="60" r="16" fill="#FDE68A" />
+            </svg>
+          </div>
+          <div class="orn" style="right: -48px; top: -56px; width: 210px">
+            <svg viewBox="0 0 140 140" fill="none" stroke="#2D2D2D" stroke-width="2.1" stroke-linecap="round">
+              <circle cx="70" cy="70" r="32" fill="#FDE68A" />
+              <line x1="70" y1="24" x2="70" y2="10" />
+              <line x1="70" y1="116" x2="70" y2="130" />
+              <line x1="24" y1="70" x2="10" y2="70" />
+              <line x1="116" y1="70" x2="130" y2="70" />
+              <line x1="37" y1="37" x2="27" y2="27" />
+              <line x1="103" y1="103" x2="113" y2="113" />
+              <line x1="103" y1="37" x2="113" y2="27" />
+              <line x1="37" y1="103" x2="27" y2="113" />
+            </svg>
+          </div>
+          <div class="orn" style="left: -26px; top: 480px; width: 120px">
+            <svg viewBox="0 0 100 100" style="transform: rotate(12deg)" fill="#FDE68A" stroke="#2D2D2D" stroke-width="2.1" stroke-linejoin="round">
+              <path d="M50 8 L60 36.2 L89.9 37 L66.2 55.3 L74.7 84 L50 67 L25.3 84 L33.8 55.3 L10.1 37 L40 36.2 Z" />
+            </svg>
+          </div>
+          <div class="orn" style="left: 70px; bottom: -34px; width: 230px">
+            <svg viewBox="0 0 160 100" fill="#FFFFFF" stroke="#2D2D2D" stroke-width="2.1" stroke-linejoin="round">
+              <path d="M30 78 Q12 78 12 62 Q12 48 26 46 Q28 28 46 26 Q52 10 72 12 Q92 8 100 26 Q118 24 124 40 Q142 42 142 60 Q142 78 124 78 Z" />
+            </svg>
+          </div>
+          <div class="orn" style="left: 1210px; top: -30px; width: 96px">
+            <svg viewBox="0 0 120 120" style="transform: rotate(20deg)" fill="none" stroke="#2D2D2D" stroke-width="2.1">
+              <g fill="#FFFFFF">
+                <ellipse cx="60" cy="28" rx="13" ry="22" />
+                <ellipse cx="60" cy="28" rx="13" ry="22" transform="rotate(60 60 60)" />
+                <ellipse cx="60" cy="28" rx="13" ry="22" transform="rotate(120 60 60)" />
+                <ellipse cx="60" cy="28" rx="13" ry="22" transform="rotate(180 60 60)" />
+                <ellipse cx="60" cy="28" rx="13" ry="22" transform="rotate(240 60 60)" />
+                <ellipse cx="60" cy="28" rx="13" ry="22" transform="rotate(300 60 60)" />
+              </g>
+              <circle cx="60" cy="60" r="15" fill="#F7C8D4" />
+            </svg>
+          </div>
+          <div class="orn" style="right: 40px; bottom: 30px; width: 100px">
+            <svg viewBox="0 0 100 100" style="transform: rotate(-18deg)" fill="#FDE68A" stroke="#2D2D2D" stroke-width="2.1" stroke-linejoin="round">
+              <path d="M50 8 L60 36.2 L89.9 37 L66.2 55.3 L74.7 84 L50 67 L25.3 84 L33.8 55.3 L10.1 37 L40 36.2 Z" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- ── g1 · vowel E hero: braam slam + outline-to-fill [local 0 → 6.5] ── -->
+        <div id="f3_g1" class="grp">
+          <div id="f3_g1_pulse" class="pulse"></div>
+          <div id="f3_g1_hero" class="hero">
+            <div class="letter-stack">
+              <span class="spacer">E e</span>
+              <span id="f3_g1_shadow" class="lyr l-shadow" aria-hidden="true">E e</span>
+              <span id="f3_g1_stroke" class="lyr l-stroke" aria-hidden="true">E e</span>
+              <span id="f3_g1_fill" class="lyr l-fill">E e</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── g2 · E peak celebration: keza pop + confetti + soft bounce-shake [local 6.5 → 11.4] ── -->
+        <div id="f3_g2" class="grp">
+          <div id="f3_g2_shake">
+            <div id="f3_g2_pulse" class="pulse"></div>
+            <div id="f3_g2_hero" class="hero">
+              <div class="letter-stack">
+                <span class="spacer">E e</span>
+                <span class="lyr l-shadow" aria-hidden="true">E e</span>
+                <span class="lyr l-fill">E e</span>
+              </div>
+            </div>
+            <div id="f3_g2_burst1" class="burst" style="left: 1560px; top: 780px"></div>
+            <div id="f3_g2_burst2" class="burst" style="left: 520px; top: 320px"></div>
+            <div id="f3_g2_keza" class="keza-card">
+              <img src="assets/public/keza-full.webp" alt="Keza" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        (function () {
+          window.__timelines = window.__timelines || {};
+          var R = document.querySelector('[data-composition-id="03-f3"]');
+          var $ = function (id) {
+            return R.querySelector("#" + id);
+          };
+          var DUR = 11.4; // frame span length (34.9 − 23.5)
+          var tl = gsap.timeline({ paused: true });
+
+          var g1 = $("f3_g1"),
+            g2 = $("f3_g2"),
+            g1hero = $("f3_g1_hero"),
+            g1fill = $("f3_g1_fill"),
+            g1shadow = $("f3_g1_shadow"),
+            g1pulse = $("f3_g1_pulse"),
+            g2hero = $("f3_g2_hero"),
+            g2pulse = $("f3_g2_pulse"),
+            shake = $("f3_g2_shake"),
+            keza = $("f3_g2_keza"),
+            burst1 = $("f3_g2_burst1"),
+            burst2 = $("f3_g2_burst2");
+
+          // ── group visibility: 0ms group→group cut at local 6.5 (track 30.0) ──
+          tl.set(g1, { autoAlpha: 1 }, 0);
+          tl.set(g2, { autoAlpha: 0 }, 0);
+          tl.set(burst1, { autoAlpha: 0 }, 0);
+          tl.set(burst2, { autoAlpha: 0 }, 0);
+          tl.set(g1, { autoAlpha: 0 }, 6.5);
+          tl.set(g2, { autoAlpha: 1 }, 6.5);
+
+          // ── scene bed: blob field drifts the whole frame (deterministic single tweens) ──
+          var blobs = R.querySelectorAll(".blob");
+          var drift = [
+            { x: 40, y: 24, scale: 1.05 },
+            { x: -50, y: 30, scale: 1.04 },
+            { x: 36, y: -26, scale: 1.06 },
+            { x: -30, y: -20, scale: 1.07 },
+          ];
+          blobs.forEach(function (b, i) {
+            var d = drift[i % drift.length];
+            tl.to(b, { x: d.x, y: d.y, scale: d.scale, duration: DUR, ease: "sine.inOut" }, 0);
+          });
+
+          // ornaments bob gently; finite yoyo repeats sized to fill 11.4s exactly
+          var orns = R.querySelectorAll(".orn");
+          var obDur = [1.9, 2.28, 1.425, 2.85, 1.9, 2.28];
+          orns.forEach(function (el, i) {
+            var d = obDur[i % obDur.length];
+            var rep = Math.max(0, Math.round(DUR / d) - 1);
+            tl.to(
+              el,
+              {
+                y: i % 2 ? -10 : 9,
+                rotation: i % 2 ? 4 : -4,
+                duration: d,
+                ease: "sine.inOut",
+                yoyo: true,
+                repeat: rep,
+              },
+              0,
+            );
+          });
+
+          // gentle beat pulse helper (letters breathe on the grid — soft, 3-6yo audience)
+          function pulse(el, t, amt) {
+            tl.to(el, { scale: amt, duration: 0.12, ease: "power2.out" }, t);
+            tl.to(el, { scale: 1, duration: 0.3, ease: "power2.inOut" }, t + 0.12);
+          }
+
+          // ═══ g1 — letter slam (braam-punch, soft/no-strobe) at local 0 (track 23.5) ═══
+          tl.fromTo(
+            g1hero,
+            { scale: 0.55, autoAlpha: 0 },
+            { scale: 1.14, autoAlpha: 1, duration: 0.18, ease: "power3.out" },
+            0,
+          );
+          tl.to(g1hero, { scale: 1, duration: 0.85, ease: "elastic.out(1, 0.45)" }, 0.18);
+          tl.fromTo(
+            g1pulse,
+            { scale: 0.5, autoAlpha: 0.9 },
+            { scale: 1.55, autoAlpha: 0, duration: 0.7, ease: "power2.out" },
+            0.03,
+          );
+
+          // beat pulses (track beats 24.961 / 26.192 downbeat / 26.912 → local)
+          pulse(g1hero, 1.461, 1.04);
+          pulse(g1hero, 2.692, 1.05);
+          pulse(g1hero, 3.412, 1.035);
+
+          // outline→fill resolve at local 4.5 (track 28.0 phase edge): butter fill rises,
+          // hard offset shadow lands with it
+          tl.fromTo(
+            g1fill,
+            { clipPath: "inset(100% 0% 0% 0%)" },
+            { clipPath: "inset(0% 0% 0% 0%)", duration: 0.9, ease: "expo.out" },
+            4.5,
+          );
+          tl.fromTo(g1shadow, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5, ease: "power2.out" }, 4.62);
+          tl.to(g1hero, { scale: 1.06, duration: 0.14, ease: "power3.out" }, 4.5);
+          tl.to(g1hero, { scale: 1, duration: 0.55, ease: "elastic.out(1, 0.55)" }, 4.64);
+          tl.fromTo(
+            g1pulse,
+            { scale: 0.6, autoAlpha: 0.7 },
+            { scale: 1.45, autoAlpha: 0, duration: 0.6, ease: "power2.out" },
+            4.5,
+          );
+          pulse(g1hero, 5.595, 1.04); // downbeat 29.095
+
+          // ═══ g2 — held letter + THE peak celebration (track 31.0, energy 0.95) ═══
+          pulse(g2hero, 7.034, 1.035); // beat 30.534 building in
+
+          // 7.5: letter hits big + butter pulse ring
+          tl.to(g2hero, { scale: 1.09, duration: 0.14, ease: "power3.out" }, 7.5);
+          tl.to(g2hero, { scale: 1, duration: 0.7, ease: "elastic.out(1, 0.5)" }, 7.64);
+          tl.fromTo(
+            g2pulse,
+            { scale: 0.5, autoAlpha: 0.9 },
+            { scale: 1.7, autoAlpha: 0, duration: 0.8, ease: "power2.out" },
+            7.5,
+          );
+
+          // keza pops bottom-right (overlay-pop: back.out overshoot)
+          tl.fromTo(
+            keza,
+            { scale: 0, autoAlpha: 0, rotation: -16 },
+            {
+              scale: 1,
+              autoAlpha: 1,
+              rotation: -5,
+              duration: 0.55,
+              ease: "back.out(1.8)",
+              transformOrigin: "50% 85%",
+            },
+            7.5,
+          );
+
+          // ONE soft playful bounce-shake (screen-shake, small amplitude, never aggressive)
+          tl.to(shake, { y: 14, duration: 0.1, ease: "power2.out" }, 7.52);
+          tl.to(shake, { y: -9, duration: 0.13, ease: "power1.inOut" }, 7.62);
+          tl.to(shake, { y: 4, duration: 0.13, ease: "power1.inOut" }, 7.75);
+          tl.to(shake, { y: 0, duration: 0.35, ease: "elastic.out(1, 0.6)" }, 7.88);
+
+          // pastel confetti (particle-burst): deterministic golden-angle spread, outlined
+          // pastel dots + strips, no flashes
+          var CF_COLORS = ["#7ECDC0", "#F7C8D4", "#A8E6CF", "#D4A5E8", "#FFCBA4", "#A8D8F0", "#FFFFFF"];
+          function burst(container, n, t, rBase) {
+            for (var i = 0; i < n; i++) {
+              var p = document.createElement("div");
+              p.className = "cf";
+              var strip = i % 3 === 0;
+              var sz = 12 + (i % 4) * 5;
+              p.style.background = CF_COLORS[i % CF_COLORS.length];
+              if (strip) {
+                p.style.width = "10px";
+                p.style.height = "20px";
+                p.style.borderRadius = "5px";
+                p.style.margin = "-10px 0 0 -5px";
+              } else {
+                p.style.width = sz + "px";
+                p.style.height = sz + "px";
+                p.style.borderRadius = "50%";
+                p.style.margin = -sz / 2 + "px 0 0 " + -sz / 2 + "px";
+              }
+              container.appendChild(p);
+              var ang = (i / n) * Math.PI * 2 + i * 0.137;
+              var rad = rBase + (i % 5) * 95 + (i % 3) * 55;
+              var tx = Math.cos(ang) * rad;
+              var ty = Math.sin(ang) * rad - 90; // slight upward lift
+              var dur = 1.15 + (i % 5) * 0.09;
+              tl.fromTo(
+                p,
+                { x: 0, y: 0, scale: 1, autoAlpha: 1, rotation: (i * 53) % 180 },
+                {
+                  x: tx,
+                  y: ty,
+                  scale: 0.25,
+                  autoAlpha: 0,
+                  rotation: ((i * 53) % 180) + (i % 2 ? 200 : -200),
+                  duration: dur,
+                  ease: "expo.out",
+                },
+                t + (i % 6) * 0.015,
+              );
+            }
+          }
+          tl.set(burst1, { autoAlpha: 1 }, 7.5);
+          burst(burst1, 48, 7.5, 300);
+          tl.set(burst1, { autoAlpha: 0 }, 9.4);
+
+          // second, smaller sprinkle on the downbeat (track 31.974 → local 8.474)
+          pulse(g2hero, 8.474, 1.05);
+          tl.set(burst2, { autoAlpha: 1 }, 8.474);
+          burst(burst2, 26, 8.474, 220);
+          tl.set(burst2, { autoAlpha: 0 }, 10.3);
+
+          // riding the HIGH: soft pulses on beats 32.717 / 33.46, settling by 34.0
+          pulse(g2hero, 9.217, 1.03);
+          pulse(g2hero, 9.96, 1.025);
+
+          // keza bobs gently, resting by 10.8 for the settle into the cut
+          tl.to(keza, { y: -12, duration: 0.6, ease: "sine.inOut", yoyo: true, repeat: 3 }, 8.4);
+
+          window.__timelines["03-f3"] = tl;
+          tl.seek(0);
+        })();
+      </script>
+    </template>
+  </body>
+</html>

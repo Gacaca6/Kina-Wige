@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="rw">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Frame 1 — f1 · Indirimbo y'Inyajwi title card + vowel A hero
+         span_sec [0.0, 11.91] · frame-local == track time (frame starts at 0)
+         Daisy Days preset (frame.md) · audience 3-6yo: soft bounces only -->
+  </head>
+  <body>
+    <template>
+      <style>
+        /* Bundled rounded font (see assets/fonts/fredoka.woff2) */
+        @font-face { font-family: "Fredoka One"; src: url("assets/fonts/fredoka.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+        @font-face { font-family: "Fredoka"; src: url("assets/fonts/fredoka.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+        @font-face { font-family: "Baloo 2"; src: url("assets/fonts/fredoka.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+        @font-face { font-family: "Comic Sans MS"; src: url("assets/fonts/fredoka.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+        @font-face { font-family: "Arial Rounded MT Bold"; src: url("assets/fonts/fredoka.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+
+
+        /* ---------- groups ---------- */
+        #g1,
+        #g2 {
+          position: absolute;
+          inset: 0;
+          width: 1920px;
+          height: 1080px;
+          overflow: hidden;
+        }
+        #g1 {
+          background: #7ecdc0; /* turquoise cover ground */
+        }
+        #g2 {
+          background: #f5f0e6; /* cream scene ground */
+          opacity: 0;
+          visibility: hidden;
+        }
+
+        /* ---------- g1 · title card ---------- */
+        .g1_center {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 56px;
+        }
+        .g1_title {
+          font-family: "Fredoka One", "Fredoka", sans-serif;
+          font-weight: 600;
+          font-size: 176px;
+          line-height: 1.1;
+          letter-spacing: 0.02em;
+          color: #ffffff;
+          text-align: center;
+          will-change: transform;
+        }
+        .g1_line {
+          display: block;
+          white-space: nowrap;
+        }
+        .g1_char {
+          display: inline-block;
+          text-shadow: 3px 3px 0 #2d2d2d; /* headline shadow on saturated surface */
+          will-change: transform, opacity;
+        }
+        .g1_pill {
+          font-family: "Fredoka One", "Fredoka", sans-serif;
+          font-weight: 600;
+          font-size: 64px;
+          letter-spacing: 0.02em;
+          color: #2d2d2d; /* dark on butter */
+          background: #fde68a;
+          border: 3px solid #2d2d2d;
+          border-radius: 50px;
+          padding: 18px 58px;
+          box-shadow: 4px 4px 0 #2d2d2d;
+          white-space: nowrap;
+          will-change: transform, opacity;
+        }
+        .g1_ring {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 1000px;
+          height: 1000px;
+          margin: -500px 0 0 -500px;
+          border-radius: 50%;
+          background: #ffffff;
+          opacity: 0;
+          will-change: transform, opacity;
+        }
+
+        /* ---------- g2 · vowel A hero ---------- */
+        .g2_blob {
+          position: absolute;
+          background: #7ecdc0;
+          will-change: transform;
+        }
+        .g2_center {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .g2_pair {
+          display: flex;
+          align-items: baseline;
+          gap: 72px;
+          font-family: "Fredoka One", "Fredoka", sans-serif;
+          font-weight: 600;
+          font-size: 540px;
+          line-height: 1;
+          letter-spacing: 0.02em;
+          color: #7ecdc0;
+          -webkit-text-stroke: 3px #2d2d2d; /* charcoal outline per frame.md */
+          text-shadow: 6px 6px 0 #2d2d2d; /* hard offset shadow, no blur */
+          will-change: transform, opacity;
+        }
+        .g2_ring {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 1100px;
+          height: 1100px;
+          margin: -550px 0 0 -550px;
+          border-radius: 50%;
+          background: #7ecdc0;
+          opacity: 0;
+          will-change: transform, opacity;
+        }
+        #g2_keza {
+          position: absolute;
+          right: 70px;
+          bottom: -6px;
+          height: 460px;
+          width: auto;
+          transform-origin: 50% 100%;
+          will-change: transform, opacity;
+        }
+
+        /* ---------- ornaments (hand-drawn sticker layer) ---------- */
+        .orn {
+          position: absolute;
+          z-index: 1;
+          will-change: transform;
+        }
+        .orn svg {
+          display: block;
+          overflow: visible;
+        }
+        .g1_center,
+        .g2_center,
+        #g2_keza {
+          z-index: 2;
+        }
+        .g1_ring,
+        .g2_ring,
+        .g2_blob {
+          z-index: 0;
+        }
+      </style>
+
+      <div
+        id="stage"
+        data-composition-id="01-f1"
+        data-width="1920"
+        data-height="1080"
+        data-duration="11.91"
+        style="
+          position: absolute;
+          inset: 0;
+          width: 1920px;
+          height: 1080px;
+          overflow: hidden;
+          background: #f5f0e6;
+        "
+      >
+        <!-- ================= g1 · title card [0 → 4.0] ================= -->
+        <div id="g1">
+          <div class="g1_ring" id="g1_ring"></div>
+
+          <!-- ornament wreath (5, cropping past edges) -->
+          <div class="orn g1_orn" style="left: -46px; top: -52px">
+            <svg width="220" height="220" viewBox="0 0 100 100" style="transform: rotate(-14deg)">
+              <g stroke="#2d2d2d" stroke-width="2.1" stroke-linejoin="round">
+                <ellipse cx="50" cy="24" rx="10" ry="17" fill="#ffffff" />
+                <ellipse cx="50" cy="76" rx="10" ry="17" fill="#ffffff" />
+                <ellipse cx="24" cy="50" rx="17" ry="10" fill="#ffffff" />
+                <ellipse cx="76" cy="50" rx="17" ry="10" fill="#ffffff" />
+                <ellipse cx="31" cy="31" rx="12" ry="12" fill="#ffffff" />
+                <ellipse cx="69" cy="31" rx="12" ry="12" fill="#ffffff" />
+                <ellipse cx="31" cy="69" rx="12" ry="12" fill="#ffffff" />
+                <ellipse cx="69" cy="69" rx="12" ry="12" fill="#ffffff" />
+                <circle cx="50" cy="50" r="14" fill="#fde68a" />
+              </g>
+            </svg>
+          </div>
+          <div class="orn g1_orn" style="right: 90px; top: 60px">
+            <svg width="130" height="130" viewBox="0 0 100 100" style="transform: rotate(12deg)">
+              <path
+                d="M50 5 L61 38 L96 38 L68 59 L79 92 L50 71 L21 92 L32 59 L4 38 L39 38 Z"
+                fill="#fde68a"
+                stroke="#2d2d2d"
+                stroke-width="2.1"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <div class="orn g1_orn" style="left: 70px; bottom: 80px">
+            <svg width="230" height="160" viewBox="0 0 100 70" style="transform: rotate(-4deg)">
+              <path
+                d="M20 58 Q16 44 32 42 Q36 26 52 30 Q68 24 72 42 Q88 44 84 56 Q82 66 68 66 L32 66 Q22 66 20 58 Z"
+                fill="#ffffff"
+                stroke="#2d2d2d"
+                stroke-width="2.1"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <div class="orn g1_orn" style="right: -60px; bottom: -70px">
+            <svg width="240" height="240" viewBox="0 0 100 100" style="transform: rotate(10deg)">
+              <g stroke="#2d2d2d" stroke-width="2.1" stroke-linecap="round">
+                <circle cx="50" cy="50" r="20" fill="#fde68a" />
+                <line x1="50" y1="18" x2="50" y2="6" />
+                <line x1="50" y1="82" x2="50" y2="94" />
+                <line x1="18" y1="50" x2="6" y2="50" />
+                <line x1="82" y1="50" x2="94" y2="50" />
+                <line x1="27" y1="27" x2="19" y2="19" />
+                <line x1="73" y1="27" x2="81" y2="19" />
+                <line x1="27" y1="73" x2="19" y2="81" />
+                <line x1="73" y1="73" x2="81" y2="81" />
+              </g>
+            </svg>
+          </div>
+          <div class="orn g1_orn" style="left: 320px; top: 90px">
+            <svg width="80" height="80" viewBox="0 0 100 100" style="transform: rotate(-18deg)">
+              <path
+                d="M50 5 L61 38 L96 38 L68 59 L79 92 L50 71 L21 92 L32 59 L4 38 L39 38 Z"
+                fill="#f7c8d4"
+                stroke="#2d2d2d"
+                stroke-width="2.1"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+
+          <div class="g1_center">
+            <div class="g1_title" id="g1_title">
+              <span class="g1_line"
+                ><span class="g1_char">I</span><span class="g1_char">n</span
+                ><span class="g1_char">d</span><span class="g1_char">i</span
+                ><span class="g1_char">r</span><span class="g1_char">i</span
+                ><span class="g1_char">m</span><span class="g1_char">b</span
+                ><span class="g1_char">o</span></span
+              >
+              <span class="g1_line"
+                ><span class="g1_char">y</span><span class="g1_char">&#8217;</span
+                ><span class="g1_char">I</span><span class="g1_char">n</span
+                ><span class="g1_char">y</span><span class="g1_char">a</span
+                ><span class="g1_char">j</span><span class="g1_char">w</span
+                ><span class="g1_char">i</span></span
+              >
+            </div>
+            <div class="g1_pill" id="g1_pill">A &#183; I &#183; E &#183; O &#183; U</div>
+          </div>
+        </div>
+
+        <!-- ================= g2 · vowel A hero [4.0 → 11.91] ================= -->
+        <div id="g2">
+          <!-- soft turquoise blob field (borderless wash, low opacity) -->
+          <div
+            class="g2_blob"
+            id="g2_blob1"
+            style="
+              left: -220px;
+              top: -260px;
+              width: 720px;
+              height: 640px;
+              opacity: 0.22;
+              border-radius: 46% 54% 52% 48% / 48% 46% 54% 52%;
+            "
+          ></div>
+          <div
+            class="g2_blob"
+            id="g2_blob2"
+            style="
+              right: -200px;
+              top: 90px;
+              width: 540px;
+              height: 500px;
+              opacity: 0.18;
+              border-radius: 55% 45% 48% 52% / 46% 55% 45% 54%;
+            "
+          ></div>
+          <div
+            class="g2_blob"
+            id="g2_blob3"
+            style="
+              left: -180px;
+              bottom: -230px;
+              width: 640px;
+              height: 580px;
+              opacity: 0.2;
+              border-radius: 50% 50% 44% 56% / 55% 47% 53% 45%;
+            "
+          ></div>
+          <div
+            class="g2_blob"
+            id="g2_blob4"
+            style="
+              right: -260px;
+              bottom: -300px;
+              width: 800px;
+              height: 700px;
+              opacity: 0.16;
+              border-radius: 48% 52% 55% 45% / 52% 48% 46% 54%;
+            "
+          ></div>
+
+          <div class="g2_ring" id="g2_ring"></div>
+
+          <!-- ornament wreath (5) -->
+          <div class="orn g2_orn" id="g2_orn1" style="left: -40px; top: -46px">
+            <svg width="200" height="200" viewBox="0 0 100 100" style="transform: rotate(-12deg)">
+              <g stroke="#2d2d2d" stroke-width="2.1" stroke-linejoin="round">
+                <ellipse cx="50" cy="24" rx="10" ry="17" fill="#ffffff" />
+                <ellipse cx="50" cy="76" rx="10" ry="17" fill="#ffffff" />
+                <ellipse cx="24" cy="50" rx="17" ry="10" fill="#ffffff" />
+                <ellipse cx="76" cy="50" rx="17" ry="10" fill="#ffffff" />
+                <ellipse cx="31" cy="31" rx="12" ry="12" fill="#ffffff" />
+                <ellipse cx="69" cy="31" rx="12" ry="12" fill="#ffffff" />
+                <ellipse cx="31" cy="69" rx="12" ry="12" fill="#ffffff" />
+                <ellipse cx="69" cy="69" rx="12" ry="12" fill="#ffffff" />
+                <circle cx="50" cy="50" r="14" fill="#fde68a" />
+              </g>
+            </svg>
+          </div>
+          <div class="orn g2_orn" id="g2_orn2" style="right: -56px; top: -60px">
+            <svg width="230" height="230" viewBox="0 0 100 100" style="transform: rotate(14deg)">
+              <g stroke="#2d2d2d" stroke-width="2.1" stroke-linecap="round">
+                <circle cx="50" cy="50" r="20" fill="#fde68a" />
+                <line x1="50" y1="18" x2="50" y2="6" />
+                <line x1="50" y1="82" x2="50" y2="94" />
+                <line x1="18" y1="50" x2="6" y2="50" />
+                <line x1="82" y1="50" x2="94" y2="50" />
+                <line x1="27" y1="27" x2="19" y2="19" />
+                <line x1="73" y1="27" x2="81" y2="19" />
+                <line x1="27" y1="73" x2="19" y2="81" />
+                <line x1="73" y1="73" x2="81" y2="81" />
+              </g>
+            </svg>
+          </div>
+          <div class="orn g2_orn" id="g2_orn3" style="left: 110px; top: 420px">
+            <svg width="96" height="96" viewBox="0 0 100 100" style="transform: rotate(-16deg)">
+              <path
+                d="M50 5 L61 38 L96 38 L68 59 L79 92 L50 71 L21 92 L32 59 L4 38 L39 38 Z"
+                fill="#f7c8d4"
+                stroke="#2d2d2d"
+                stroke-width="2.1"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <div class="orn g2_orn" id="g2_orn4" style="left: 60px; bottom: 70px">
+            <svg width="220" height="150" viewBox="0 0 100 70" style="transform: rotate(4deg)">
+              <path
+                d="M20 58 Q16 44 32 42 Q36 26 52 30 Q68 24 72 42 Q88 44 84 56 Q82 66 68 66 L32 66 Q22 66 20 58 Z"
+                fill="#ffffff"
+                stroke="#2d2d2d"
+                stroke-width="2.1"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <div class="orn g2_orn" id="g2_orn5" style="right: 430px; top: 90px">
+            <svg width="84" height="84" viewBox="0 0 100 100" style="transform: rotate(20deg)">
+              <path
+                d="M50 5 L61 38 L96 38 L68 59 L79 92 L50 71 L21 92 L32 59 L4 38 L39 38 Z"
+                fill="#fde68a"
+                stroke="#2d2d2d"
+                stroke-width="2.1"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+
+          <!-- giant letter-pair hero -->
+          <div class="g2_center">
+            <div class="g2_pair" id="g2_pair"><span>A</span><span>a</span></div>
+          </div>
+
+          <!-- companion: keza pops in bottom-right at 7.0 -->
+          <img id="g2_keza" src="assets/public/keza-full.webp" alt="" />
+        </div>
+      </div>
+
+      <script>
+        window.__timelines = window.__timelines || {};
+        (function () {
+          const tl = gsap.timeline({ paused: true });
+          const END = 11.91; // frame span length (frame-local; span starts at track 0.0)
+
+          /* ============ group visibility (0ms group→group cut) ============ */
+          tl.set("#g1", { autoAlpha: 1 }, 0);
+          tl.set("#g2", { autoAlpha: 0 }, 0);
+          tl.set("#g1", { autoAlpha: 0 }, 4.0);
+          tl.set("#g2", { autoAlpha: 1 }, 4.0);
+
+          /* ================= g1 · title card [0 → 4.0] ================= */
+          // ornaments pop in on the intro fill
+          tl.fromTo(
+            ".g1_orn",
+            { scale: 0, autoAlpha: 0 },
+            {
+              scale: 1,
+              autoAlpha: 1,
+              duration: 0.4,
+              stagger: 0.06,
+              ease: "back.out(2.2)",
+              transformOrigin: "50% 50%",
+            },
+            0.05,
+          );
+
+          // kinetic-letter-in: title chars bounce up on the 0.3 phrase start
+          tl.fromTo(
+            ".g1_char",
+            { y: 90, autoAlpha: 0 },
+            { y: 0, autoAlpha: 1, duration: 0.55, stagger: 0.045, ease: "back.out(2)" },
+            0.3,
+          );
+
+          // braam-punch on the 2.0 HIGH hit — soft ring bloom (no flash: young kids)
+          tl.fromTo(
+            "#g1_ring",
+            { scale: 0.4, autoAlpha: 0.35 },
+            { scale: 1.7, autoAlpha: 0, duration: 0.8, ease: "power2.out" },
+            2.0,
+          );
+          // subtitle pill punches in
+          tl.fromTo(
+            "#g1_pill",
+            { scale: 0.5, autoAlpha: 0 },
+            { scale: 1.16, autoAlpha: 1, duration: 0.16, ease: "power3.out" },
+            2.0,
+          );
+          tl.to("#g1_pill", { scale: 1, duration: 0.7, ease: "elastic.out(1, 0.5)" }, 2.16);
+          // title gives a soft sympathetic bump
+          tl.to("#g1_title", { scale: 1.04, duration: 0.12, ease: "power2.out" }, 2.0);
+          tl.to("#g1_title", { scale: 1, duration: 0.45, ease: "power2.inOut" }, 2.12);
+
+          /* ================= g2 · vowel A hero [4.0 → 11.91] ================= */
+          // braam-punch letter slam on the 4.0 phase edge
+          tl.fromTo(
+            "#g2_pair",
+            { scale: 2.5, autoAlpha: 0 },
+            { scale: 0.94, autoAlpha: 1, duration: 0.2, ease: "power3.in" },
+            4.0,
+          );
+          tl.to("#g2_pair", { scale: 1.12, duration: 0.12, ease: "power4.out" }, 4.2);
+          tl.to("#g2_pair", { scale: 1, duration: 0.6, ease: "elastic.out(1, 0.5)" }, 4.32);
+
+          // ornaments pop in just after the slam
+          tl.fromTo(
+            ".g2_orn",
+            { scale: 0, autoAlpha: 0 },
+            {
+              scale: 1,
+              autoAlpha: 1,
+              duration: 0.4,
+              stagger: 0.06,
+              ease: "back.out(2.2)",
+              transformOrigin: "50% 50%",
+            },
+            4.1,
+          );
+
+          // soft blob field drifts through the scene (bg-flow-field, brand-soft realization)
+          // deterministic per-index offsets, one long tween each — no randomness
+          const blobDrift = [
+            { sel: "#g2_blob1", x: 60, y: 44 },
+            { sel: "#g2_blob2", x: -52, y: 60 },
+            { sel: "#g2_blob3", x: 48, y: -56 },
+            { sel: "#g2_blob4", x: -64, y: -40 },
+          ];
+          blobDrift.forEach(function (b) {
+            tl.fromTo(
+              b.sel,
+              { x: 0, y: 0 },
+              { x: b.x, y: b.y, duration: 7.8, ease: "sine.inOut" },
+              4.05,
+            );
+          });
+
+          // gentle ornament sway (finite yoyo, even leg counts end at rest)
+          // legs: floor((11.91-4.1)/1.3)-1 = 5 repeats → 6 legs, ends 11.9
+          tl.fromTo(
+            "#g2_orn1",
+            { rotation: -4 },
+            { rotation: 4, duration: 1.3, ease: "sine.inOut", yoyo: true, repeat: 5 },
+            4.1,
+          );
+          // legs: floor((11.91-4.2)/1.55)-1 = 3 repeats → 4 legs, ends 10.4
+          tl.fromTo(
+            "#g2_orn5",
+            { rotation: 4 },
+            { rotation: -4, duration: 1.55, ease: "sine.inOut", yoyo: true, repeat: 3 },
+            4.2,
+          );
+
+          // soft ring pulses on the beat anchors (impact echo + 5.0 / 9.0 / 10.0)
+          [4.2, 5.0, 9.0, 10.0].forEach(function (t) {
+            tl.fromTo(
+              "#g2_ring",
+              { scale: 0.45, autoAlpha: 0.3 },
+              { scale: 1.8, autoAlpha: 0, duration: 0.75, ease: "power2.out" },
+              t,
+            );
+          });
+
+          // soft letter pulses on 5.0 / 9.0 / 10.0 (sequential, no scale-tween overlap)
+          [5.0, 9.0, 10.0].forEach(function (t) {
+            tl.to("#g2_pair", { scale: 1.05, duration: 0.15, ease: "power2.out" }, t);
+            tl.to("#g2_pair", { scale: 1, duration: 0.4, ease: "power2.inOut" }, t + 0.15);
+          });
+
+          // overlay-pop: keza pops in bottom-right on the 7.0 phase edge
+          tl.fromTo(
+            "#g2_keza",
+            { scale: 0, rotation: -10, autoAlpha: 0 },
+            { scale: 1, rotation: 0, autoAlpha: 1, duration: 0.5, ease: "back.out(1.7)" },
+            7.0,
+          );
+          // then bobs gently: legs floor((11.91-7.62)/0.85)-1 = 4 repeats → 5 legs, ends 11.87
+          tl.fromTo(
+            "#g2_keza",
+            { y: 0 },
+            { y: -14, duration: 0.85, ease: "sine.inOut", yoyo: true, repeat: 4 },
+            7.62,
+          );
+
+          // pad to the exact frame span so the timeline runs 0 … 11.91
+          tl.set({}, {}, END);
+
+          window.__timelines["01-f1"] = tl;
+          tl.seek(0);
+        })();
+      </script>
+    </template>
+  </body>
+</html>

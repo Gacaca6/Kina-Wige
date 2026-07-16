@@ -269,6 +269,33 @@ Assistant reported; owner chose "report only, don't build yet". Verdicts:
   shown on the card (CC BY compliance). Browser-verified end to end. NOTE: for
   full CC BY, add the specific Book Dash author/illustrator names (see F).
 
+### HyperFrames PILOT — IN PROGRESS (`video-factory/`)
+Owner supplied `a-i-e-o-u.mp3` (65.411s Kinyarwanda vowels song) → building a
+full vowels video with HyperFrames. Project lives in `video-factory/` (its own
+npm project, NOT part of the PWA build; only the rendered MP4 ships).
+- Plan: `STORYBOARD.md` (6 frames, spans derived from `audiomap.json` beat/energy
+  analysis — 83 BPM, HIGH hits at 2/17/31/46/60, hard stops at 44 + 62, silent
+  tail 63.4→65.4). One vowel per frame in its own scene colour on cream:
+  f1 title+A (turquoise), f2 I (pink), f3 E (butter), f4 O (mint), f5 U (sky),
+  f6 recap A-I-E-O-U + end card. Keza/Hirwa art pops in as companions.
+- Frames: all 6 built in `compositions/frames/` (parallel subagents; f1–f4 agents
+  hit a session limit but their files were written and pass lint).
+- Assembly (done this session): `index.html` stitches the 6 frames via
+  `data-composition-src` at their span offsets + `<audio id="bgm">` full track.
+  Gotchas fixed: (1) `<audio>` needs an `id` or the render is SILENT;
+  (2) each sub-comp host needs `data-composition-id`; (3) frames declared
+  Fredoka One / Baloo 2 / Comic Sans with no @font-face → would fall back to a
+  generic font, so a real Fredoka woff2 is bundled at `assets/fonts/fredoka.woff2`
+  and every declared family maps to it (Google Fonts @import removed — render
+  must not depend on network).
+- KNOWN FALSE POSITIVE: layout check reports `text_not_painted` for f3 "E e" —
+  that letter is intentionally layered (transparent `.spacer` + `color:transparent`
+  outline layer with a 12px `-webkit-text-stroke`, then a butter fill wipes in at
+  28s). It IS visible; do not "fix" it.
+- Status: lint/runtime/motion clean → `npm run render`. NEXT: verify rendered
+  frames, compress with the 480p recipe (task 2), wire into `episodes.ts` as a
+  new episode (prefetch:false, lazy-cached), commit.
+
 Round 2 (owner research, evaluated 2026-07-08):
 - **HyperFrames (STRONG YES — likely supersedes the Remotion idea).** HeyGen's
   open-source (Apache 2.0, no seat/render limits) HTML→MP4 renderer, released

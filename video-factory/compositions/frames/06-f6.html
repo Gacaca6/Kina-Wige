@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Frame 6 — f6 · recap A I E O U + quiet end card · span [57.66, 65.411] (7.751s, frame-local) -->
+  </head>
+  <body>
+    <template>
+      <style>
+        /* Bundled rounded font (see assets/fonts/fredoka.woff2) */
+        @font-face { font-family: "Fredoka One"; src: url("assets/fonts/fredoka.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+        @font-face { font-family: "Fredoka"; src: url("assets/fonts/fredoka.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+        @font-face { font-family: "Baloo 2"; src: url("assets/fonts/fredoka.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+        @font-face { font-family: "Comic Sans MS"; src: url("assets/fonts/fredoka.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+        @font-face { font-family: "Arial Rounded MT Bold"; src: url("assets/fonts/fredoka.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+
+        #root {
+          position: absolute;
+          inset: 0;
+          width: 1920px;
+          height: 1080px;
+          overflow: hidden;
+          background: #f5f0e6; /* cream */
+          font-family: "Fredoka One", "Fredoka", "Arial Rounded MT Bold", "Comic Sans MS", sans-serif;
+        }
+
+        /* ---------- group containers ---------- */
+        .g1_group,
+        .g2_group {
+          position: absolute;
+          inset: 0;
+        }
+        #g2 {
+          opacity: 0;
+          visibility: hidden;
+        }
+
+        /* ---------- g1 · all-vowels recap ---------- */
+        #g1_row {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 58px;
+          z-index: 2;
+        }
+        .g1_vowel {
+          font-size: 340px;
+          line-height: 1;
+          letter-spacing: 0.02em;
+          -webkit-text-stroke: 7px #2d2d2d; /* charcoal outline */
+          paint-order: stroke fill;
+          text-shadow: 10px 10px 0 #2d2d2d; /* hard offset shadow, no blur */
+          opacity: 0;
+          will-change: transform, opacity;
+        }
+        #g1_vA { color: #7ecdc0; } /* turquoise */
+        #g1_vI { color: #f7c8d4; } /* soft-pink */
+        #g1_vE { color: #fde68a; } /* butter */
+        #g1_vO { color: #a8e6cf; } /* mint */
+        #g1_vU { color: #a8d8f0; } /* sky */
+
+        #g1_confetti {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          pointer-events: none;
+          z-index: 1;
+        }
+        .g1_dot {
+          position: absolute;
+          border-radius: 50%;
+          border: 2px solid #2d2d2d;
+          opacity: 0;
+          will-change: transform, opacity;
+        }
+
+        /* ---------- ornaments (hand-drawn sticker layer) ---------- */
+        .orn {
+          position: absolute;
+          z-index: 1;
+        }
+        .orn svg {
+          display: block;
+        }
+
+        /* ---------- g2 · quiet end card ---------- */
+        #g2_card {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 44px;
+          z-index: 2;
+          will-change: transform, opacity, filter;
+        }
+        #g2_avatars {
+          display: flex;
+          gap: 44px;
+        }
+        .g2_avatar {
+          width: 150px;
+          height: 150px;
+          border-radius: 50%;
+          border: 3px solid #2d2d2d;
+          background: #ffffff;
+          box-shadow: 4px 4px 0 #2d2d2d;
+          object-fit: cover;
+        }
+        #g2_headline {
+          font-size: 128px;
+          line-height: 1.1;
+          letter-spacing: 0.02em;
+          color: #2d2d2d; /* flat charcoal on cream */
+          text-align: center;
+          max-width: 1500px;
+        }
+        #g2_wordmark {
+          font-size: 54px;
+          letter-spacing: 0.02em;
+          color: #2d2d2d;
+          background: #fde68a; /* butter badge-pill */
+          border: 3px solid #2d2d2d;
+          border-radius: 50px;
+          box-shadow: 4px 4px 0 #2d2d2d;
+          padding: 16px 56px;
+          white-space: nowrap;
+        }
+      </style>
+
+      <div id="root" data-composition-id="06-f6" data-width="1920" data-height="1080" data-duration="7.751">
+        <!-- ============ g1 · RECAP: A I E O U cascade [local 0 → 4.34] ============ -->
+        <div id="g1" class="g1_group">
+          <!-- ornament wreath (static, cropping past edges) -->
+          <div class="orn" style="top: -34px; left: -30px">
+            <svg width="220" height="220" viewBox="0 0 120 120" fill="none">
+              <g stroke="#2d2d2d" stroke-width="2.1">
+                <ellipse cx="60" cy="30" rx="13" ry="20" fill="#ffffff" />
+                <ellipse cx="60" cy="90" rx="13" ry="20" fill="#ffffff" />
+                <ellipse cx="30" cy="60" rx="20" ry="13" fill="#ffffff" />
+                <ellipse cx="90" cy="60" rx="20" ry="13" fill="#ffffff" />
+                <ellipse cx="39" cy="39" rx="15" ry="15" fill="#ffffff" />
+                <ellipse cx="81" cy="39" rx="15" ry="15" fill="#ffffff" />
+                <ellipse cx="39" cy="81" rx="15" ry="15" fill="#ffffff" />
+                <ellipse cx="81" cy="81" rx="15" ry="15" fill="#ffffff" />
+                <circle cx="60" cy="60" r="16" fill="#fde68a" />
+              </g>
+            </svg>
+          </div>
+          <div class="orn" style="top: -20px; right: -18px">
+            <svg width="170" height="170" viewBox="0 0 100 100" fill="none">
+              <path
+                d="M50 8 L59 37 L90 38 L65 56 L74 87 L50 68 L26 87 L35 56 L10 38 L41 37 Z"
+                fill="#fde68a"
+                stroke="#2d2d2d"
+                stroke-width="2.1"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <div class="orn" style="bottom: -46px; left: -40px">
+            <svg width="230" height="230" viewBox="0 0 120 120" fill="none">
+              <g stroke="#2d2d2d" stroke-width="2.1">
+                <circle cx="60" cy="60" r="26" fill="#ffcba4" />
+                <path d="M60 18 V4 M60 116 V102 M18 60 H4 M116 60 H102 M31 31 L21 21 M99 99 L89 89 M89 31 L99 21 M21 99 L31 89" stroke-linecap="round" />
+              </g>
+            </svg>
+          </div>
+          <div class="orn" style="bottom: 24px; right: -54px">
+            <svg width="260" height="150" viewBox="0 0 160 90" fill="none">
+              <path
+                d="M38 70 a22 22 0 0 1 6 -43 a26 26 0 0 1 50 -8 a22 22 0 0 1 30 20 a18 18 0 0 1 -6 31 Z"
+                fill="#ffffff"
+                stroke="#2d2d2d"
+                stroke-width="2.1"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <div class="orn" style="top: 100px; right: 250px">
+            <svg width="70" height="70" viewBox="0 0 100 100" fill="none">
+              <path
+                d="M50 12 L57 40 L86 42 L63 58 L71 86 L50 70 L29 86 L37 58 L14 42 L43 40 Z"
+                fill="#f7c8d4"
+                stroke="#2d2d2d"
+                stroke-width="2.1"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+
+          <div id="g1_confetti"></div>
+
+          <div id="g1_row">
+            <div class="g1_vowel" id="g1_vA">A</div>
+            <div class="g1_vowel" id="g1_vI">I</div>
+            <div class="g1_vowel" id="g1_vE">E</div>
+            <div class="g1_vowel" id="g1_vO">O</div>
+            <div class="g1_vowel" id="g1_vU">U</div>
+          </div>
+        </div>
+
+        <!-- ============ g2 · quiet end card [local 4.34 → 7.751] ============ -->
+        <div id="g2" class="g2_group">
+          <!-- two faint, quiet ornaments -->
+          <div class="orn" style="top: 60px; left: 90px; opacity: 0.55">
+            <svg width="90" height="90" viewBox="0 0 120 120" fill="none">
+              <g stroke="#2d2d2d" stroke-width="2.1">
+                <ellipse cx="60" cy="30" rx="13" ry="20" fill="#ffffff" />
+                <ellipse cx="60" cy="90" rx="13" ry="20" fill="#ffffff" />
+                <ellipse cx="30" cy="60" rx="20" ry="13" fill="#ffffff" />
+                <ellipse cx="90" cy="60" rx="20" ry="13" fill="#ffffff" />
+                <circle cx="60" cy="60" r="15" fill="#fde68a" />
+              </g>
+            </svg>
+          </div>
+          <div class="orn" style="bottom: 80px; right: 110px; opacity: 0.55">
+            <svg width="80" height="80" viewBox="0 0 100 100" fill="none">
+              <path
+                d="M50 10 L58 38 L88 40 L64 57 L72 87 L50 70 L28 87 L36 57 L12 40 L42 38 Z"
+                fill="#a8d8f0"
+                stroke="#2d2d2d"
+                stroke-width="2.1"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+
+          <div id="g2_card">
+            <div id="g2_avatars">
+              <img class="g2_avatar" src="assets/public/keza-avatar.webp" alt="" />
+              <img class="g2_avatar" src="assets/public/hirwa-avatar.webp" alt="" />
+            </div>
+            <div id="g2_headline">Wabikoze neza! &#11088;</div>
+            <div id="g2_wordmark">Kina Wige</div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        window.__timelines = window.__timelines || {};
+        const tl = gsap.timeline({ paused: true });
+
+        /* Frame-local clock: local_t = track_t - 57.66
+           g1 span: 0 → 4.34   (track 57.66 → 62.0, hard_stop at 62)
+           g2 span: 4.34 → 7.751 (silent tail) */
+        const CUT = 4.34;
+        const END = 7.751;
+
+        /* ---------- group visibility (0ms group→group cut) ---------- */
+        tl.set("#g1", { autoAlpha: 1 }, 0);
+        tl.set("#g2", { autoAlpha: 0 }, 0);
+        tl.set("#g1", { autoAlpha: 0 }, CUT);
+        tl.set("#g2", { autoAlpha: 1 }, CUT);
+
+        /* ---------- g1 · vowel cascade, one per beat anchor ----------
+           Track anchors 58 / 59 / 60 / 61 → local 0.34 / 1.34 / 2.34 / 3.34.
+           The fifth anchor (track 62 = local 4.34) collides with the hard cut,
+           so U slams in just ahead of it and settles exactly on the stop. */
+        const vowels = ["#g1_vA", "#g1_vI", "#g1_vE", "#g1_vO", "#g1_vU"];
+        const anchors = [0.34, 1.34, 2.34, 3.34, 3.99];
+
+        vowels.forEach((sel, i) => {
+          tl.fromTo(
+            sel,
+            { y: -170, scale: 0.2, rotation: i % 2 === 0 ? -8 : 8, opacity: 0 },
+            {
+              y: 0,
+              scale: 1,
+              rotation: 0,
+              opacity: 1,
+              duration: 0.42,
+              ease: "back.out(2.2)",
+            },
+            anchors[i],
+          );
+        });
+
+        /* each new landing makes the already-landed letters do a tiny happy bounce */
+        for (let i = 1; i < vowels.length; i++) {
+          for (let j = 0; j < i; j++) {
+            tl.to(vowels[j], { scale: 1.07, duration: 0.13, ease: "power2.out" }, anchors[i]);
+            tl.to(vowels[j], { scale: 1.0, duration: 0.22, ease: "back.out(3)" }, anchors[i] + 0.13);
+          }
+        }
+
+        /* ---------- g1 · pastel confetti on the 60-62 HIGH ----------
+           Deterministic golden-angle bursts (particle-burst recipe) at
+           local 2.34 (track 60 SURGE) and local 3.34 (track 61). */
+        const pastels = ["#7ecdc0", "#f7c8d4", "#fde68a", "#a8e6cf", "#a8d8f0", "#d4a5e8", "#ffcba4"];
+        const N = 56; // 28 per burst
+        const holder = document.getElementById("g1_confetti");
+        const dots = [];
+        for (let i = 0; i < N; i++) {
+          const d = document.createElement("div");
+          d.className = "g1_dot";
+          const sz = 12 + (i % 4) * 5;
+          d.style.width = sz + "px";
+          d.style.height = sz + "px";
+          d.style.background = pastels[i % pastels.length];
+          holder.appendChild(d);
+          dots.push(d);
+        }
+        const burstStarts = [2.34, 3.34];
+        dots.forEach((d, i) => {
+          const burst = i < 28 ? 0 : 1;
+          const k = i % 28;
+          const angle = (k / 28) * Math.PI * 2 + k * 0.137; // golden-angle jitter
+          const radius = 330 + (k % 5) * 105 + (k % 3) * 48;
+          const tx = Math.cos(angle) * radius;
+          const ty = Math.sin(angle) * radius * 0.62; // flatten to frame
+          const dur = 0.9 + (k % 5) * 0.07;
+          tl.fromTo(
+            d,
+            { x: 0, y: 0, scale: 1, opacity: 1 },
+            { x: tx, y: ty, scale: 0, opacity: 0, duration: dur, ease: "expo.out" },
+            burstStarts[burst] + (k % 6) * 0.012,
+          );
+        });
+
+        /* ---------- g2 · quiet end card over the silent tail ----------
+           blur-resolve in on the hard cut, then a gentle fade toward cream. */
+        tl.fromTo(
+          "#g2_card",
+          { filter: "blur(26px)", scale: 1.05, opacity: 0 },
+          { filter: "blur(0px)", scale: 1, opacity: 1, duration: 0.85, ease: "power2.out" },
+          CUT,
+        );
+
+        /* negative-space hold through the silence, then fade to cream by the very end */
+        tl.to("#g2_card", { opacity: 0, duration: 1.1, ease: "power1.inOut" }, 6.6);
+        tl.set("#g2_card", { opacity: 0 }, END); // pads timeline to the exact frame span
+
+        window.__timelines["06-f6"] = tl;
+        tl.seek(0);
+      </script>
+    </template>
+  </body>
+</html>

@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Frame 4 — f4 · vowel O · span [34.9, 46.51] (11.61s, frame-local = track − 34.9)
+         g1 [0 → 7.1]   giant "O o" hero, iris (circular clip) reveal at 0.1, breathing rings, calm LOW verse
+         g2 [7.1 → 11.61] hirwa pops bottom-left at 7.1; FREEZE 9.1 → 11.1 (hard_stop @44); release at 11.1 -->
+  </head>
+  <body>
+    <template>
+      <style>
+        /* Bundled rounded font (see assets/fonts/fredoka.woff2) */
+        @font-face { font-family: "Fredoka One"; src: url("assets/fonts/fredoka.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+        @font-face { font-family: "Fredoka"; src: url("assets/fonts/fredoka.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+        @font-face { font-family: "Baloo 2"; src: url("assets/fonts/fredoka.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+        @font-face { font-family: "Comic Sans MS"; src: url("assets/fonts/fredoka.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+        @font-face { font-family: "Arial Rounded MT Bold"; src: url("assets/fonts/fredoka.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+
+        /* Root is styled inline on #stage (scoper-safe). Everything below is descendants only. */
+        .layer {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+        }
+        .center-flex {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        /* ── shared vowel hero — Daisy Days atoms: Fredoka One, charcoal outline + hard offset shadow ── */
+        .vowel-hero {
+          display: flex;
+          align-items: baseline;
+          gap: 48px;
+          font-family: "Fredoka One", "Fredoka", "Baloo 2", "Comic Sans MS", cursive;
+          font-weight: 600;
+          letter-spacing: 0.02em;
+          line-height: 1;
+          color: #a8e6cf;
+          -webkit-text-stroke: 12px #2d2d2d;
+          paint-order: stroke fill;
+          text-shadow: 14px 14px 0 #2d2d2d;
+          will-change: transform;
+        }
+        .vowel-hero .vw-up {
+          font-size: 460px;
+        }
+        .vowel-hero .vw-lo {
+          font-size: 320px;
+        }
+        /* ── soft concentric rings (round motif echoing the O) — solid mint tints, no rgba ── */
+        .bg-ring {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          border-radius: 50%;
+          will-change: transform;
+        }
+        /* ── drifting blob field (calm bg-flow-field, Daisy Days pastel realization) ── */
+        .bg-blob {
+          position: absolute;
+          border-radius: 50%;
+          will-change: transform;
+        }
+        /* ── hand-drawn ornament layer (3–7 per frame, cropping past edges) ── */
+        .orn {
+          position: absolute;
+        }
+        /* ── g1 iris wrap: the letter O IS a circle — reveal with a circular clip ── */
+        .g1-iris {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          clip-path: circle(0% at 50% 50%);
+          will-change: clip-path;
+        }
+        .g1-ring-echo {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 260px;
+          height: 260px;
+          margin-left: -130px;
+          margin-top: -130px;
+          border-radius: 50%;
+          border: 10px solid #7ecdc0;
+          opacity: 0;
+          will-change: transform, opacity;
+        }
+        /* ── g2: hirwa companion, bottom-left, never covering the letter ── */
+        .g2-hirwa {
+          position: absolute;
+          left: 64px;
+          bottom: -28px;
+          height: 590px;
+          transform-origin: 50% 100%;
+          will-change: transform;
+        }
+        .g2-spark {
+          position: absolute;
+          will-change: transform, opacity;
+        }
+      </style>
+
+      <div
+        id="stage"
+        data-composition-id="04-f4"
+        data-width="1920"
+        data-height="1080"
+        data-duration="11.61"
+        style="
+          position: absolute;
+          inset: 0;
+          width: 1920px;
+          height: 1080px;
+          overflow: hidden;
+          background: #f5f0e6;
+        "
+      >
+        <!-- ═══ persistent ground: rings + blob field + ornament wreath (identical under both groups) ═══ -->
+        <div id="bg_layer" class="layer" style="z-index: 1">
+          <!-- breathing concentric rings behind the letter -->
+          <div
+            id="bg_ring1"
+            class="bg-ring"
+            style="width: 640px; height: 640px; margin: -320px 0 0 -320px; border: 8px solid #bdedd6"
+          ></div>
+          <div
+            id="bg_ring2"
+            class="bg-ring"
+            style="width: 880px; height: 880px; margin: -440px 0 0 -440px; border: 7px solid #cff3e2"
+          ></div>
+          <div
+            id="bg_ring3"
+            class="bg-ring"
+            style="width: 1120px; height: 1120px; margin: -560px 0 0 -560px; border: 6px solid #e0f8ec"
+          ></div>
+
+          <!-- calm drifting mint blobs (flow-field, pastel and slow) -->
+          <div id="bg_blob1" class="bg-blob" style="left: 210px; top: 180px; width: 46px; height: 46px; background: #c5f0dd"></div>
+          <div id="bg_blob2" class="bg-blob" style="left: 1660px; top: 250px; width: 34px; height: 34px; background: #daf6e9"></div>
+          <div id="bg_blob3" class="bg-blob" style="left: 300px; top: 800px; width: 58px; height: 58px; background: #bcebd5"></div>
+          <div id="bg_blob4" class="bg-blob" style="left: 1560px; top: 830px; width: 40px; height: 40px; background: #c5f0dd"></div>
+          <div id="bg_blob5" class="bg-blob" style="left: 940px; top: 120px; width: 28px; height: 28px; background: #daf6e9"></div>
+          <div id="bg_blob6" class="bg-blob" style="left: 1150px; top: 920px; width: 32px; height: 32px; background: #bcebd5"></div>
+
+          <!-- ornament wreath — 5 hand-drawn SVGs, 2.1px charcoal stroke, cropping past edges -->
+          <svg class="orn" style="left: -46px; top: -50px" width="220" height="220" viewBox="0 0 100 100">
+            <g stroke="#2d2d2d" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+              <ellipse cx="50" cy="26" rx="10" ry="15" fill="#ffffff" transform="rotate(4 50 26)" />
+              <ellipse cx="68" cy="36" rx="10" ry="15" fill="#ffffff" transform="rotate(56 68 36)" />
+              <ellipse cx="66" cy="60" rx="10" ry="15" fill="#ffffff" transform="rotate(115 66 60)" />
+              <ellipse cx="50" cy="72" rx="10" ry="15" fill="#ffffff" transform="rotate(183 50 72)" />
+              <ellipse cx="33" cy="61" rx="10" ry="15" fill="#ffffff" transform="rotate(238 33 61)" />
+              <ellipse cx="32" cy="37" rx="10" ry="15" fill="#ffffff" transform="rotate(305 32 37)" />
+              <circle cx="50" cy="49" r="12" fill="#fde68a" />
+            </g>
+          </svg>
+          <svg class="orn" style="right: -58px; top: 44px" width="240" height="140" viewBox="0 0 120 70">
+            <path
+              d="M18 52 Q8 52 8 42 Q8 32 19 32 Q21 18 36 18 Q47 8 60 15 Q76 8 84 22 Q100 22 102 36 Q112 38 110 48 Q108 56 96 55 Z"
+              fill="#ffffff"
+              stroke="#2d2d2d"
+              stroke-width="2.1"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <svg class="orn" style="right: -60px; top: 44%" width="180" height="180" viewBox="0 0 100 100">
+            <g stroke="#2d2d2d" stroke-width="2.1" stroke-linecap="round">
+              <circle cx="50" cy="50" r="20" fill="#fde68a" />
+              <path d="M50 20 L50 8 M71 29 L80 20 M80 50 L92 50 M71 71 L80 80 M50 80 L50 92 M29 71 L20 80 M20 50 L8 50 M29 29 L20 20" fill="none" />
+            </g>
+          </svg>
+          <svg class="orn" style="right: 110px; bottom: 52px" width="110" height="110" viewBox="0 0 60 60">
+            <path
+              d="M30 5 L36 22 L54 23 L40 34 L45 52 L30 42 L15 52 L20 34 L6 23 L24 22 Z"
+              fill="#fde68a"
+              stroke="#2d2d2d"
+              stroke-width="2.1"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <svg class="orn" style="left: 52px; bottom: 40px" width="120" height="120" viewBox="0 0 100 100">
+            <g stroke="#2d2d2d" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+              <ellipse cx="50" cy="30" rx="8" ry="12" fill="#f7c8d4" transform="rotate(6 50 30)" />
+              <ellipse cx="66" cy="42" rx="8" ry="12" fill="#f7c8d4" transform="rotate(78 66 42)" />
+              <ellipse cx="60" cy="62" rx="8" ry="12" fill="#f7c8d4" transform="rotate(150 60 62)" />
+              <ellipse cx="40" cy="62" rx="8" ry="12" fill="#f7c8d4" transform="rotate(215 40 62)" />
+              <ellipse cx="34" cy="42" rx="8" ry="12" fill="#f7c8d4" transform="rotate(290 34 42)" />
+              <circle cx="50" cy="47" r="9" fill="#ffffff" />
+            </g>
+          </svg>
+        </div>
+
+        <!-- ═══ g1 — vowel O gentle hero · frame-local [0 → 7.1] ═══ -->
+        <div id="g1_root" class="layer" style="z-index: 2">
+          <div id="g1_iris" class="g1-iris">
+            <div id="g1_ring_echo" class="g1-ring-echo"></div>
+            <div id="g1_hero" class="vowel-hero">
+              <span class="vw-up">O</span><span class="vw-lo">o</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ g2 — held O + hirwa · frame-local [7.1 → 11.61] · freeze 9.1 → 11.1 ═══ -->
+        <div id="g2_root" class="layer" style="z-index: 2; opacity: 0; visibility: hidden">
+          <div class="layer center-flex">
+            <div id="g2_hero" class="vowel-hero">
+              <span class="vw-up">O</span><span class="vw-lo">o</span>
+            </div>
+          </div>
+          <img id="g2_hirwa" class="g2-hirwa" src="assets/public/hirwa-full.webp" alt="" />
+          <svg id="g2_spark1" class="g2-spark" style="left: 420px; top: 380px; opacity: 0; visibility: hidden" width="70" height="70" viewBox="0 0 40 40">
+            <path
+              d="M20 3 L24 16 L37 20 L24 24 L20 37 L16 24 L3 20 L16 16 Z"
+              fill="#fde68a"
+              stroke="#2d2d2d"
+              stroke-width="2.1"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <svg id="g2_spark2" class="g2-spark" style="left: 560px; top: 300px; opacity: 0; visibility: hidden" width="48" height="48" viewBox="0 0 40 40">
+            <path
+              d="M20 3 L24 16 L37 20 L24 24 L20 37 L16 24 L3 20 L16 16 Z"
+              fill="#f7c8d4"
+              stroke="#2d2d2d"
+              stroke-width="2.1"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+      </div>
+
+      <script>
+        window.__timelines = window.__timelines || {};
+        const tl = gsap.timeline({ paused: true });
+
+        /* ───────── group visibility — 0ms group→group cut at local 7.1 ───────── */
+        tl.set("#g1_root", { autoAlpha: 1 }, 0);
+        tl.set("#g2_root", { autoAlpha: 0 }, 0);
+        tl.set(["#g2_spark1", "#g2_spark2"], { autoAlpha: 0 }, 0);
+        tl.set("#g1_root", { autoAlpha: 0 }, 7.1);
+        tl.set("#g2_root", { autoAlpha: 1 }, 7.1);
+
+        /* ═══ g1 · calm verse [0 → 7.1] ═══ */
+
+        /* iris reveal — the O is a circle, so the mask is one (track 35.0 = local 0.1) */
+        tl.set("#g1_iris", { clipPath: "circle(0% at 50% 50%)" }, 0);
+        tl.to(
+          "#g1_iris",
+          { clipPath: "circle(75% at 50% 50%)", duration: 1.0, ease: "power2.inOut" },
+          0.1
+        );
+        tl.fromTo(
+          "#g1_ring_echo",
+          { scale: 0.4, opacity: 0.85 },
+          { scale: 4.2, opacity: 0, duration: 1.1, ease: "expo.out" },
+          0.15
+        );
+        tl.fromTo(
+          "#g1_hero",
+          { scale: 0.9 },
+          { scale: 1, duration: 1.1, ease: "sine.out" },
+          0.1
+        );
+
+        /* gentle letter pulses on the frame's downbeats (track 37.802, 40.681) */
+        [2.902, 5.781].forEach((t) => {
+          tl.to("#g1_hero", { scale: 1.035, duration: 0.16, ease: "power2.out" }, t);
+          tl.to("#g1_hero", { scale: 1, duration: 0.3, ease: "sine.inOut" }, t + 0.16);
+        });
+
+        /* rings breathe slowly through the LOW stretch — finite repeats, end well before the freeze */
+        ["#bg_ring1", "#bg_ring2", "#bg_ring3"].forEach((id, i) => {
+          tl.fromTo(
+            id,
+            { scale: 1 },
+            {
+              scale: 1.05 - i * 0.008,
+              duration: 1.451, /* two beats at 83.4 BPM */
+              ease: "sine.inOut",
+              yoyo: true,
+              repeat: 3, /* 4 legs → ends at scale 1 */
+            },
+            0.4 + i * 0.484
+          );
+        });
+
+        /* blob field — one slow deterministic drift each, all done before the freeze */
+        [
+          { id: "#bg_blob1", dx: 26, dy: -20 },
+          { id: "#bg_blob2", dx: -22, dy: 16 },
+          { id: "#bg_blob3", dx: 20, dy: -26 },
+          { id: "#bg_blob4", dx: -26, dy: -14 },
+          { id: "#bg_blob5", dx: 14, dy: 18 },
+          { id: "#bg_blob6", dx: -16, dy: -18 },
+        ].forEach((b, i) => {
+          tl.fromTo(
+            b.id,
+            { x: 0, y: 0 },
+            { x: b.dx, y: b.dy, duration: 8.0, ease: "sine.inOut" },
+            0.3 + i * 0.1
+          );
+        });
+
+        /* ═══ g2 · lift, freeze, release [7.1 → 11.61] ═══ */
+
+        /* overlay-pop — hirwa pops bottom-left on the 42.0 lift (local 7.1) */
+        tl.fromTo(
+          "#g2_hirwa",
+          { scale: 0, y: 40, rotation: -6 },
+          { scale: 1, y: 0, rotation: 0, duration: 0.55, ease: "back.out(1.6)" },
+          7.1
+        );
+        /* gentle bob — odd leg count so the 9.1 freeze catches hirwa mid-hop */
+        tl.fromTo(
+          "#g2_hirwa",
+          { y: 0 },
+          { y: -16, duration: 0.28, ease: "sine.inOut", yoyo: true, repeat: 4 },
+          7.7
+        );
+
+        /* held letter pulse on the 43.607 downbeat (local 8.707), done before the freeze */
+        tl.to("#g2_hero", { scale: 1.04, duration: 0.14, ease: "power2.out" }, 8.707);
+        tl.to("#g2_hero", { scale: 1, duration: 0.24, ease: "sine.inOut" }, 8.847);
+
+        /* freeze-hold — hard_stop at track 44.0 (local 9.1): NO tweens live in [9.1, 11.1].
+           Every element simply holds its 9.1 pose. Two instant sets mark the caught moment. */
+        tl.set("#g2_hirwa", { rotation: 4 }, 9.1);
+        tl.set(["#g2_spark1", "#g2_spark2"], { autoAlpha: 1 }, 9.1);
+
+        /* release — track 46.0 (local 11.1): everything wakes with one happy bounce */
+        tl.to("#g2_hirwa", { y: 0, rotation: 0, duration: 0.42, ease: "bounce.out" }, 11.1);
+        tl.to("#g2_hero", { scale: 1.06, duration: 0.16, ease: "power2.out" }, 11.1);
+        tl.to("#g2_hero", { scale: 1, duration: 0.3, ease: "sine.inOut" }, 11.26);
+        tl.to(["#g2_spark1", "#g2_spark2"], { autoAlpha: 0, duration: 0.28, ease: "power1.in" }, 11.12);
+        tl.fromTo(
+          ".bg-ring",
+          { scale: 1 },
+          { scale: 1.045, duration: 0.25, ease: "sine.inOut", yoyo: true, repeat: 1 },
+          11.1
+        );
+
+        window.__timelines["04-f4"] = tl;
+        tl.seek(0);
+      </script>
+    </template>
+  </body>
+</html>

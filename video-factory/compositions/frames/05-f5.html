@@ -1,0 +1,474 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Frame 5 — f5 · vowel U (Uu) — Daisy Days</title>
+    <!-- head is source-file metadata only; the runtime clones <template> contents -->
+  </head>
+  <body>
+    <template>
+      <style>
+        /* Bundled rounded font (see assets/fonts/fredoka.woff2) */
+        @font-face { font-family: "Fredoka One"; src: url("assets/fonts/fredoka.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+        @font-face { font-family: "Fredoka"; src: url("assets/fonts/fredoka.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+        @font-face { font-family: "Baloo 2"; src: url("assets/fonts/fredoka.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+        @font-face { font-family: "Comic Sans MS"; src: url("assets/fonts/fredoka.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+        @font-face { font-family: "Arial Rounded MT Bold"; src: url("assets/fonts/fredoka.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+
+        /* ── Daisy Days tokens (frame.md) ─────────────────────────────
+           cream #F5F0E6 · sky #A8D8F0 · butter #FDE68A · soft-pink #F7C8D4
+           charcoal #2D2D2D · white #FFFFFF — no ninth color            */
+
+        #stage * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        /* layers */
+        .layer {
+          position: absolute;
+          inset: 0;
+          width: 1920px;
+          height: 1080px;
+        }
+        #bg {
+          z-index: 1;
+        }
+        #g1,
+        #g2 {
+          z-index: 2;
+        }
+        /* g2 starts hidden; timeline flips visibility at the 0ms cut */
+        #g2 {
+          opacity: 0;
+          visibility: hidden;
+        }
+
+        /* ── soft sky blob field (bg-flow-field, Daisy Days pastel adaptation) ── */
+        .blob {
+          position: absolute;
+          border-radius: 50%;
+          background: #a8d8f0;
+          will-change: transform;
+        }
+
+        /* ── hand-drawn ornament layer (3–7 per frame, cropping past edges) ── */
+        .orn {
+          position: absolute;
+          will-change: transform;
+        }
+        .orn svg {
+          display: block;
+          overflow: visible;
+        }
+
+        /* ── giant letter-pair hero "U u" ── */
+        .letterWrap {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .letterFloat {
+          will-change: transform;
+        }
+        .letterScale {
+          will-change: transform;
+        }
+        .letter {
+          font-family: "Fredoka One", "Fredoka", "Baloo 2", "Comic Sans MS", sans-serif;
+          font-weight: 600;
+          font-size: 430px;
+          line-height: 1;
+          letter-spacing: 0.02em;
+          white-space: nowrap;
+          color: #a8d8f0;
+          -webkit-text-stroke: 8px #2d2d2d;
+          paint-order: stroke fill;
+          text-shadow: 14px 14px 0 #2d2d2d;
+          transform: translateY(-60px);
+        }
+        .letter .ch {
+          display: inline-block;
+          will-change: transform, opacity;
+        }
+        .letter .gap {
+          display: inline-block;
+          width: 0.22em;
+        }
+        /* g1 entrance chars start hidden so t=0 renders clean */
+        #g1_letter .ch {
+          opacity: 0;
+          visibility: hidden;
+        }
+
+        /* soft pulse ring behind the letter (braam-punch, gentled for 3-6yo) */
+        #g1_ring {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 820px;
+          height: 820px;
+          margin: -470px 0 0 -410px; /* centered on the letter (letter sits 60px up) */
+          border-radius: 50%;
+          background: #a8d8f0;
+          opacity: 0;
+          visibility: hidden;
+          will-change: transform, opacity;
+        }
+
+        /* ── companions (overlay-pop): keza bottom-right, hirwa bottom-left ── */
+        .companion {
+          position: absolute;
+          bottom: -18px;
+          height: 470px;
+          width: auto;
+          transform-origin: 50% 100%;
+          opacity: 0;
+          visibility: hidden;
+          will-change: transform, opacity;
+        }
+        .companionBob {
+          will-change: transform;
+        }
+        #g2_kezaBob {
+          position: absolute;
+          right: 70px;
+          bottom: 0;
+          z-index: 3;
+        }
+        #g2_hirwaBob {
+          position: absolute;
+          left: 70px;
+          bottom: 0;
+          z-index: 3;
+        }
+        #g2_keza,
+        #g2_hirwa {
+          position: relative;
+          bottom: auto;
+          left: auto;
+          right: auto;
+        }
+      </style>
+
+      <div
+        id="stage"
+        data-composition-id="05-f5"
+        data-width="1920"
+        data-height="1080"
+        data-duration="11.15"
+        style="
+          position: absolute;
+          inset: 0;
+          width: 1920px;
+          height: 1080px;
+          overflow: hidden;
+          background: #f5f0e6;
+        "
+      >
+        <!-- ── persistent background: sky blob field + ornament wreath ── -->
+        <div id="bg" class="layer">
+          <div class="blob" id="bg_b0" style="width: 340px; height: 340px; left: -80px; top: 120px; opacity: 0.38"></div>
+          <div class="blob" id="bg_b1" style="width: 500px; height: 500px; left: 1560px; top: 420px; opacity: 0.30"></div>
+          <div class="blob" id="bg_b2" style="width: 280px; height: 280px; left: 260px; top: 700px; opacity: 0.34"></div>
+          <div class="blob" id="bg_b3" style="width: 380px; height: 380px; left: 1180px; top: -110px; opacity: 0.32"></div>
+          <div class="blob" id="bg_b4" style="width: 240px; height: 240px; left: 820px; top: 840px; opacity: 0.28"></div>
+          <div class="blob" id="bg_b5" style="width: 300px; height: 300px; left: 40px; top: 430px; opacity: 0.30"></div>
+
+          <!-- ornaments: hand-drawn SVG, 2.1-weight charcoal stroke, cropping past edges -->
+          <div class="orn" id="bg_o0" style="left: -34px; top: -36px; width: 200px; height: 200px">
+            <svg viewBox="0 0 120 120" width="200" height="200">
+              <g fill="#ffffff" stroke="#2d2d2d" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                <ellipse cx="60" cy="24" rx="13" ry="20" />
+                <ellipse cx="60" cy="96" rx="13" ry="20" />
+                <ellipse cx="24" cy="60" rx="20" ry="13" />
+                <ellipse cx="96" cy="60" rx="20" ry="13" />
+                <ellipse cx="35" cy="35" rx="14" ry="14" />
+                <ellipse cx="85" cy="35" rx="14" ry="14" />
+                <ellipse cx="35" cy="85" rx="14" ry="14" />
+                <ellipse cx="85" cy="85" rx="14" ry="14" />
+              </g>
+              <circle cx="60" cy="60" r="18" fill="#FDE68A" stroke="#2d2d2d" stroke-width="4" />
+            </svg>
+          </div>
+          <div class="orn" id="bg_o1" style="right: -50px; top: -54px; width: 230px; height: 230px">
+            <svg viewBox="0 0 140 140" width="230" height="230">
+              <g stroke="#2d2d2d" stroke-width="4.5" stroke-linecap="round">
+                <line x1="70" y1="6" x2="70" y2="26" />
+                <line x1="70" y1="114" x2="70" y2="134" />
+                <line x1="6" y1="70" x2="26" y2="70" />
+                <line x1="114" y1="70" x2="134" y2="70" />
+                <line x1="25" y1="25" x2="39" y2="39" />
+                <line x1="101" y1="101" x2="115" y2="115" />
+                <line x1="25" y1="115" x2="39" y2="101" />
+                <line x1="101" y1="39" x2="115" y2="25" />
+              </g>
+              <circle cx="70" cy="70" r="34" fill="#FDE68A" stroke="#2d2d2d" stroke-width="4.5" />
+            </svg>
+          </div>
+          <div class="orn" id="bg_o2" style="left: 42px; top: 46%; width: 110px; height: 110px">
+            <svg viewBox="0 0 100 100" width="110" height="110">
+              <path
+                d="M50 8 L60 38 L92 38 L66 57 L76 88 L50 69 L24 88 L34 57 L8 38 L40 38 Z"
+                fill="#F7C8D4"
+                stroke="#2d2d2d"
+                stroke-width="4"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <div class="orn" id="bg_o3" style="right: 44px; top: 38%; width: 210px; height: 130px">
+            <svg viewBox="0 0 160 100" width="210" height="130">
+              <path
+                d="M36 78 Q14 78 14 60 Q14 44 30 42 Q32 24 52 24 Q66 12 84 20 Q104 10 116 28 Q142 28 144 50 Q146 72 122 76 Q118 84 104 82 Z"
+                fill="#ffffff"
+                stroke="#2d2d2d"
+                stroke-width="4"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <div class="orn" id="bg_o4" style="left: 190px; bottom: -44px; width: 170px; height: 170px">
+            <svg viewBox="0 0 120 120" width="170" height="170">
+              <g fill="#ffffff" stroke="#2d2d2d" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                <ellipse cx="60" cy="24" rx="13" ry="20" />
+                <ellipse cx="60" cy="96" rx="13" ry="20" />
+                <ellipse cx="24" cy="60" rx="20" ry="13" />
+                <ellipse cx="96" cy="60" rx="20" ry="13" />
+                <ellipse cx="35" cy="35" rx="14" ry="14" />
+                <ellipse cx="85" cy="35" rx="14" ry="14" />
+                <ellipse cx="35" cy="85" rx="14" ry="14" />
+                <ellipse cx="85" cy="85" rx="14" ry="14" />
+              </g>
+              <circle cx="60" cy="60" r="18" fill="#F7C8D4" stroke="#2d2d2d" stroke-width="4" />
+            </svg>
+          </div>
+          <div class="orn" id="bg_o5" style="right: 230px; bottom: 54px; width: 130px; height: 130px">
+            <svg viewBox="0 0 100 100" width="130" height="130">
+              <path
+                d="M50 8 L60 38 L92 38 L66 57 L76 88 L50 69 L24 88 L34 57 L8 38 L40 38 Z"
+                fill="#FDE68A"
+                stroke="#2d2d2d"
+                stroke-width="4"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+        </div>
+
+        <!-- ── g1 · vowel U hero: slam on the 46.51 HIGH, pulses at 48.0 / 50.0 ── -->
+        <div id="g1" class="layer">
+          <div id="g1_ring"></div>
+          <div class="letterWrap">
+            <div class="letterFloat" id="g1_float">
+              <div class="letterScale" id="g1_scale">
+                <div class="letter" id="g1_letter">
+                  <span class="ch" id="g1_chA">U</span><span class="gap"></span><span class="ch" id="g1_chB">u</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── g2 · held U u + BOTH companions (finale approaching) ── -->
+        <div id="g2" class="layer">
+          <div class="letterWrap">
+            <div class="letterFloat" id="g2_float">
+              <div class="letterScale" id="g2_scale">
+                <div class="letter" id="g2_letter">
+                  <span class="ch">U</span><span class="gap"></span><span class="ch">u</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="companionBob" id="g2_kezaBob">
+            <img class="companion" id="g2_keza" src="assets/public/keza-full.webp" alt="" />
+          </div>
+          <div class="companionBob" id="g2_hirwaBob">
+            <img class="companion" id="g2_hirwa" src="assets/public/hirwa-full.webp" alt="" />
+          </div>
+        </div>
+      </div>
+
+      <script>
+        (function () {
+          window.__timelines = window.__timelines || {};
+          var tl = gsap.timeline({ paused: true });
+
+          var DUR = 11.15; // frame span 46.51 → 57.66
+          // frame-LOCAL anchors: local_t = track_t − 46.51
+          var A_SLAM = 0.0; //  46.51 HIGH — letter slams
+          var A_P1 = 1.49; //   48.0  phase edge — pulse
+          var A_P2 = 3.49; //   50.0  phase edge — pulse
+          var A_CUT = 6.49; //  53.0  g1 → g2 cut; keza pops (SURGE)
+          var A_HIRWA = 8.49; // 55.0 hirwa pops
+
+          // finite yoyo repeat per determinism-rules: floor, never ceil, never -1
+          function rep(windowSec, half) {
+            return Math.max(0, Math.floor(windowSec / half) - 1);
+          }
+
+          /* ── group visibility: 0ms cuts ── */
+          tl.set("#g1", { autoAlpha: 1 }, 0);
+          tl.set("#g2", { autoAlpha: 0 }, 0);
+          tl.set("#g1", { autoAlpha: 0 }, A_CUT);
+          tl.set("#g2", { autoAlpha: 1 }, A_CUT);
+
+          /* ── g1 · letter slam on the HIGH (kinetic-letter-in + braam-punch, softened) ── */
+          tl.fromTo(
+            "#g1_letter .ch",
+            { y: 130, autoAlpha: 0 },
+            { y: 0, autoAlpha: 1, duration: 0.55, stagger: 0.12, ease: "back.out(1.8)" },
+            0.02
+          );
+          tl.fromTo("#g1_scale", { scale: 0.88 }, { scale: 1.16, duration: 0.14, ease: "power3.out" }, 0.16);
+          tl.to("#g1_scale", { scale: 1.0, duration: 0.75, ease: "elastic.out(1, 0.5)" }, 0.3);
+
+          // soft sky pulse ring instead of a white flash (no strobe for young children)
+          tl.fromTo(
+            "#g1_ring",
+            { scale: 0.5, autoAlpha: 0.55 },
+            { scale: 1.35, autoAlpha: 0, duration: 0.7, ease: "power2.out" },
+            A_SLAM
+          );
+
+          /* ── g1 · pulses on the 48.0 / 50.0 phase edges ── */
+          tl.to("#g1_scale", { scale: 1.07, duration: 0.16, ease: "power2.out" }, A_P1);
+          tl.to("#g1_scale", { scale: 1.0, duration: 0.5, ease: "elastic.out(1, 0.6)" }, A_P1 + 0.16);
+          tl.fromTo(
+            "#g1_ring",
+            { scale: 0.7, autoAlpha: 0.35 },
+            { scale: 1.2, autoAlpha: 0, duration: 0.5, ease: "power2.out" },
+            A_P1
+          );
+
+          tl.to("#g1_scale", { scale: 1.07, duration: 0.16, ease: "power2.out" }, A_P2);
+          tl.to("#g1_scale", { scale: 1.0, duration: 0.5, ease: "elastic.out(1, 0.6)" }, A_P2 + 0.16);
+          tl.fromTo(
+            "#g1_ring",
+            { scale: 0.7, autoAlpha: 0.35 },
+            { scale: 1.2, autoAlpha: 0, duration: 0.5, ease: "power2.out" },
+            A_P2
+          );
+
+          // gentle idle float on the letter between pulses (separate element: no property overlap)
+          var g1FloatStart = 0.9;
+          var g1Half = 1.1;
+          tl.fromTo(
+            "#g1_float",
+            { y: 0 },
+            {
+              y: -10,
+              duration: g1Half,
+              ease: "sine.inOut",
+              yoyo: true,
+              repeat: rep(A_CUT - g1FloatStart, g1Half),
+            },
+            g1FloatStart
+          );
+
+          /* ── g2 · held letter keeps the same gentle float ── */
+          tl.fromTo(
+            "#g2_float",
+            { y: 0 },
+            {
+              y: -10,
+              duration: g1Half,
+              ease: "sine.inOut",
+              yoyo: true,
+              repeat: rep(DUR - A_CUT, g1Half),
+            },
+            A_CUT
+          );
+
+          /* ── g2 · overlay-pop: keza bottom-right on 53.0, hirwa bottom-left on 55.0 ── */
+          tl.fromTo(
+            "#g2_keza",
+            { scale: 0, autoAlpha: 0 },
+            { scale: 1, autoAlpha: 1, duration: 0.6, ease: "back.out(1.6)" },
+            A_CUT
+          );
+          tl.fromTo(
+            "#g2_hirwa",
+            { scale: 0, autoAlpha: 0 },
+            { scale: 1, autoAlpha: 1, duration: 0.6, ease: "back.out(1.6)" },
+            A_HIRWA
+          );
+
+          // gentle bobbing after each pop (bob wrapper ≠ pop img: no transform overlap)
+          var bobHalf = 0.7;
+          var kezaBobStart = A_CUT + 0.71;
+          tl.fromTo(
+            "#g2_kezaBob",
+            { y: 0 },
+            {
+              y: -12,
+              duration: bobHalf,
+              ease: "sine.inOut",
+              yoyo: true,
+              repeat: rep(DUR - kezaBobStart, bobHalf),
+            },
+            kezaBobStart
+          );
+          var hirwaBobStart = A_HIRWA + 0.71;
+          tl.fromTo(
+            "#g2_hirwaBob",
+            { y: 0 },
+            {
+              y: -12,
+              duration: bobHalf,
+              ease: "sine.inOut",
+              yoyo: true,
+              repeat: rep(DUR - hirwaBobStart, bobHalf),
+            },
+            hirwaBobStart
+          );
+
+          /* ── background · sky blob field drifts slowly all frame (bg-flow-field spirit) ── */
+          var blobIds = ["#bg_b0", "#bg_b1", "#bg_b2", "#bg_b3", "#bg_b4", "#bg_b5"];
+          for (var i = 0; i < blobIds.length; i++) {
+            var dx = (i % 2 === 0 ? 1 : -1) * (26 + (i % 3) * 9); // variation from index only
+            var dy = (i % 3 === 0 ? -1 : 1) * (16 + (i % 2) * 8);
+            var hx = 2.3 + (i % 2) * 0.4;
+            var hy = 2.0 + (i % 3) * 0.35;
+            tl.fromTo(
+              blobIds[i],
+              { x: 0 },
+              { x: dx, duration: hx, ease: "sine.inOut", yoyo: true, repeat: rep(DUR, hx) },
+              0
+            );
+            tl.fromTo(
+              blobIds[i],
+              { y: 0 },
+              { y: dy, duration: hy, ease: "sine.inOut", yoyo: true, repeat: rep(DUR, hy) },
+              0
+            );
+          }
+
+          /* ── background · ornaments sway gently ── */
+          var ornIds = ["#bg_o0", "#bg_o1", "#bg_o2", "#bg_o3", "#bg_o4", "#bg_o5"];
+          for (var j = 0; j < ornIds.length; j++) {
+            var rot = (j % 2 === 0 ? 1 : -1) * (4 + (j % 3));
+            var hr = 1.5 + (j % 3) * 0.25;
+            tl.fromTo(
+              ornIds[j],
+              { rotation: 0 },
+              { rotation: rot, duration: hr, ease: "sine.inOut", yoyo: true, repeat: rep(DUR, hr) },
+              0
+            );
+          }
+
+          // pin the timeline to the exact frame span
+          tl.set("#stage", { autoAlpha: 1 }, DUR);
+
+          window.__timelines["05-f5"] = tl;
+          tl.seek(0);
+        })();
+      </script>
+    </template>
+  </body>
+</html>
