@@ -1,0 +1,70 @@
+name: Render vowels video
+
+# Build-time render of the Kina Wige vowels song video on a dedicated Linux
+# runner (16 GB RAM), because the local dev machine (8 GB, ~0.6 GB free) cannot
+# software-render 1080p. Only the authoring step runs in CI; the shipped app
+# stays fully offline. Output MP4 is uploaded as a downloadable artifact.
+
+on:
+  workflow_dispatch:
+    inputs:
+      fps:
+        description: "Frame rate"
+        default: "30"
+        required: false
+      quality:
+        description: "draft | standard | high"
+        default: "standard"
+        required: false
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install headless Chromium system libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 \
+            libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 \
+            libgbm1 libasound2t64 libpango-1.0-0 libcairo2 fonts-liberation \
+            || sudo apt-get install -y libasound2
+
+      - name: Render video
+        working-directory: video-factory
+        run: |
+          npx --yes hyperframes@0.7.58 render \
+            --fps "${{ github.event.inputs.fps }}" \
+            -q "${{ github.event.inputs.quality }}" \
+            2>&1 | tee render-ci.log
+
+      - name: List output
+        if: always()
+        working-directory: video-factory
+        run: ls -la renders/ || echo "no renders dir"
+
+      - name: Upload MP4
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vowels-video
+          path: video-factory/renders/*.mp4
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload render log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: render-log
+          path: video-factory/render-ci.log
+          if-no-files-found: ignore

@@ -3,3 +3,4 @@ out/
 renders/
 .hyperframes/
 capture/
+*.log
