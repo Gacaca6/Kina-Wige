@@ -28,16 +28,18 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
 
-      - name: Install headless Chromium system libraries
+      - name: Install ffmpeg + headless Chromium system libraries
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
+          sudo apt-get install -y ffmpeg \
             libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 \
             libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 \
             libgbm1 libasound2t64 libpango-1.0-0 libcairo2 fonts-liberation \
-            || sudo apt-get install -y libasound2
+            || sudo apt-get install -y ffmpeg libasound2
+          ffmpeg -version | head -1
+          ffprobe -version | head -1
 
       - name: Render video
         working-directory: video-factory
@@ -47,10 +49,15 @@ jobs:
             -q "${{ github.event.inputs.quality }}" \
             2>&1 | tee render-ci.log
 
-      - name: List output
-        if: always()
+      - name: Verify MP4 was produced
         working-directory: video-factory
-        run: ls -la renders/ || echo "no renders dir"
+        run: |
+          ls -la renders/ || { echo "no renders dir"; exit 1; }
+          if ! ls renders/*.mp4 >/dev/null 2>&1; then
+            echo "::error::render produced no MP4 — see render-ci.log artifact"
+            exit 1
+          fi
+          echo "MP4 present:"; ls -la renders/*.mp4
 
       - name: Upload MP4
         if: always()
