@@ -31,8 +31,28 @@ on low-cost Android phones, often shared between siblings.
 BRAND
 Kina Wige means "Play and Learn". Warm, culturally proud, calm, trustworthy.
 Tagline: "Growing curious minds through stories, play and culture."
-Characters: Keza and Hirwa (children the child picks as "me"), Ngabo (a friendly
-monkey guide who celebrates), Inyoni (a wise bird who gives hints, never scolds).
+
+THE CAST — three tiers, three jobs, NO OVERLAP
+- MASCOT: Ngabo, a golden monkey (endemic to Rwanda's Volcanoes NP). He lives in
+  the app UI. Flat, rigged, elastic, extremely expressive. He greets, points,
+  demonstrates, celebrates. Duolingo's Duo in craft — but never guilt-inducing.
+- CAST: Keza, Hirwa, family and community are HUMAN characters who live inside
+  the videos. They may appear in the app ONLY as a video thumbnail or a clearly
+  framed portrait — NEVER as UI chrome, buttons or a floating companion.
+  (Rendered humans used as interface furniture is what read as "AI-generated".)
+- ME: the child's own avatar, BUILT by them in three taps from a designed parts
+  kit. This is the child's identity in the app.
+
+SIGNATURE — what makes this unmistakably Kina Wige. Use exactly ONE per screen.
+- Imigongo geometry (Rwandan traditional relief art: nested diamonds, spirals,
+  zigzags) as a tiled pattern at 4-8% opacity in green-800. Geometry only,
+  recoloured into our palette — never the traditional black/white/red/ochre.
+- Agaseke (Rwandan peace basket, conical lid, woven zigzag) as the vessel that
+  holds what the child has collected — it FILLS, it never counts down.
+- The thousand hills: a soft layered rolling-hill silhouette as the recurring
+  structural shape (screen base, sheet top, backdrop behind an avatar).
+Test every screen: would it be recognisably Kina Wige with the logo removed?
+If no, it lacks its signature. If five elements are fighting, it is overdressed.
 
 WHAT "PREMIUM" MEANS HERE
 Premium = restraint, craft and calm. NOT more colour, sparkle or animation.
@@ -121,20 +141,107 @@ Arrange as a calm, well-spaced specimen sheet with section labels in
 green-800 Fredoka. Show the ramps and the type scale along the bottom.
 ```
 
-### 1.2 Character sheet (Ngabo)
+### 1.2 Ngabo — mascot design sheet
 
 ```
-Design a character sheet for Ngabo — a friendly monkey who guides Kina Wige's
-onboarding and celebrates with the child.
+Design Ngabo, the Kina Wige mascot: a GOLDEN MONKEY (Cercopithecus kandti,
+endemic to Rwanda's Volcanoes National Park). He is the app's guide — he greets,
+points, demonstrates and celebrates. Think Duolingo's Duo in craft and
+expressiveness, but warm and never guilt-inducing.
 
-Style: flat vector, thick consistent line weight, rounded friendly shapes, large
-head and expressive eyes, simple hands. Warm and safe — never scary, never
-over-detailed. Must read clearly at 56px and survive export as SVG under 40KB.
-Palette from the Kina Wige system; warm browns permitted for the character.
+STYLE
+Flat vector. Thick, consistent line weight in deep green (#1B4D1F). Large head,
+big expressive eyes, strong brows, simple four-finger hands. Golden-orange coat
+with a distinct GOLDEN CREST TUFT — the crest is the memorable silhouette hook.
+Warm and safe: never toothy, never realistic, never scary.
 
-Show: (1) neutral standing, (2) waving hello, (3) celebrating with arms up,
-(4) pointing to guide attention, (5) a head-only 64px avatar crop.
-Place on #FAFAF7 with generous spacing. No text, no background scenery.
+HARD REQUIREMENTS
+- Must be recognisable as a SOLID BLACK SILHOUETTE at 20px. Show that test.
+- Must be buildable as ONE rigged SVG under 40KB — so: simple shapes, flat fills,
+  no gradients, no texture, no fur detail, no fine linework.
+- Body parts must be separable for rigging: tail, body, left arm, right arm,
+  head, ears, crest, brows, eyes, pupils, eyelids, mouth.
+
+SHOW ON ONE SHEET (#FAFAF7, generous spacing, small labels):
+1. Neutral standing (the idle pose)
+2. Waving hello
+3. Pointing at something — arm extended, head following, brows raised
+4. Celebrating — jump, arms up, crest overshooting
+5. Amazed — eyes large, mouth in an "o", body recoiling
+6. Encouraging after a mistake — warm, open-handed, gentle. NOT sad, NOT scolding
+7. Dozing — eyes closed, head dipped
+8. Head-only crop at 64px
+9. The 20px silhouette test
+
+No background scenery. No text in the artwork.
+```
+
+### 1.3 Ngabo — rig part breakdown
+
+```
+Take the approved Ngabo design and produce a RIG SHEET showing every part
+separated and labelled, as it would be structured in an SVG for animation:
+
+tail · body · arm-left · arm-right · head · ear-left · ear-right · crest ·
+brow-left · brow-right · eye-left · eye-right · pupil-left · pupil-right ·
+eyelid-left · eyelid-right · mouth (4 swappable shapes: neutral, smile, open, o)
+
+Lay the parts out exploded, each labelled, with its pivot point marked as a small
+cross. Show the four mouth shapes side by side.
+Flat colours only, no shading. This sheet is a build document, not a poster.
+```
+
+### 1.4 Avatar parts kit
+
+```
+Design the Kina Wige AVATAR PARTS KIT — the pieces a child combines in three taps
+to make "me". This must look like real Rwandan children, NOT a generic avatar
+set. Generic parts are exactly the failure we are correcting.
+
+Same flat vector style as Ngabo: thick #1B4D1F linework, flat fills, no gradients.
+Every part must ship as small SVG — the whole kit under 60KB.
+
+PRODUCE FOUR ROWS:
+1. FACES (6) — a genuine, accurate range of Rwandan skin tones from light-brown
+   to deep-brown, with slight face-shape variation. Warm and true. Do NOT put a
+   light face first or make it the default.
+2. HAIR (8) — textured and specific, this carries the most identity:
+   coils · short afro · twists · cornrows · braids with beads · bantu knots ·
+   low fade · locs. Never generic "long hair / short hair".
+3. TOPS (6) — 3 with kitenge-inspired geometric prints (simple, tileable, in our
+   palette) and 3 plain. Prints must read clearly at 96px.
+4. ACCESSORIES (6, optional) — headwrap · beaded necklace · glasses ·
+   football shirt · flower · cap.
+
+Show one fully assembled example avatar at 96px in a circular frame at the end.
+Lay out on #FAFAF7 with row labels in green-800 Fredoka.
+```
+
+### 1.5 Signature elements
+
+```
+Design Kina Wige's three signature visual elements. These make the app
+recognisably Rwandan without being costume-y. RESTRAINT IS THE POINT.
+
+1. IMIGONGO PATTERN TILES — three seamless tiles inspired by Rwandan imigongo
+   geometric art: the nested diamond, the spiral, the zigzag band. Use the
+   GEOMETRY ONLY, drawn in a single colour (green-800) intended to sit at 4-8%
+   opacity behind content. Do NOT use the traditional black/white/red/ochre
+   palette — it fights our green. Each tile must be seamless and under 2KB.
+   Show each tile twice: at full strength, and tiled at 6% opacity behind a
+   sample card.
+
+2. AGASEKE — the Rwandan peace basket (conical lid, woven zigzag) used as the
+   child's collection vessel, replacing a star counter. Draw it in four fill
+   states: empty · a third full · two thirds · full and glowing with gold stars.
+   Flat vector, our palette, readable at 64px.
+
+3. THOUSAND HILLS — a soft, layered rolling-hill silhouette in three depths
+   (green-100, green-300, green-400) usable as a screen base, a sheet top and a
+   backdrop behind an avatar. Show all three uses.
+
+Flat vector only. Nothing photographic. Nothing at full-strength opacity behind
+text.
 ```
 
 ---
@@ -215,17 +322,34 @@ Also show a quiet link to "What we store" (everything is local; can be deleted).
 Trustworthy, calm, uncluttered. This screen earns the parent's trust.
 ```
 
-### 2.6 Child profile — pick your buddy
+### 2.6 Make me — the avatar builder (three screens)
 
 ```
-Design "Who's playing?" — where ownership transfers to the child.
-Back in the CHILD lane: green/gold, warm, wordless.
+Design the Kina Wige avatar builder as THREE sequential screens. This is where
+the child makes "me" — the single most important ownership moment in the app.
+Child lane: green/gold, warm, wordless. NO TYPING ANYWHERE.
 
-Four large 96px round character tiles: Keza, Hirwa, Ngabo, Inyoni.
-Selection = 3px green-600 ring + green-100 tint + gentle scale up. Never colour
-alone. Spoken prompt (show a small speaker icon): "Ni nde uri gukina?"
-One big green CTA: "Ni njye!" (That's me!)
-No typing anywhere. This must feel like choosing a friend, not filling a field.
+Shared structure across all three:
+- Ngabo present and encouraging, pointing at the choices
+- The avatar being built shown LARGE and live at the top (~140px, circular,
+  on a thousand-hills backdrop) so every tap visibly changes it
+- Six to eight big choice tiles below, each >=80px with >=20px gaps
+- Three small progress dots showing step 1/2/3
+- Selection = 3px green-600 ring + green-100 tint + scale 1.06. Never colour alone
+- A skip affordance that is available but visually quiet
+- A speaker icon showing the prompt is spoken aloud
+
+SCREEN 1 — FACE: 6 faces, an accurate range of Rwandan skin tones.
+  Prompt: "Hitamo mu maso" (Pick your face)
+SCREEN 2 — HAIR: 8 textured styles (coils, afro, twists, cornrows, braids with
+  beads, bantu knots, low fade, locs).
+  Prompt: "Hitamo umusatsi" (Pick your hair)
+SCREEN 3 — COLOUR: 6 colour swatches that recolour the top and backdrop together.
+  Prompt: "Hitamo ibara" (Pick your colour)
+  Final CTA, large and green: "Ni njye!" (That's me!)
+
+Show all three screens side by side. Make it obvious this takes seconds, not
+minutes — it must never look like a character creator.
 ```
 
 ### 2.7 Light personalisation
@@ -258,9 +382,12 @@ The child cannot fail. Show both the resting state and the gentle-redirect state
 
 ```
 Design the celebration after the first win. Warm, brief, informational.
-Ngabo celebrating; ONE gold star arriving with a soft spring.
-Message: "Wabikoze!" (You did it!) in Fredoka, plus a quiet line naming the
-effort — "You practised letter sounds."
+Ngabo celebrating (jump, arms up, crest overshooting); ONE gold star arriving
+with a soft spring and dropping into the child's AGASEKE basket.
+Message: "Wabikoze, {name}!" (You did it, {name}!) in Fredoka — show the child's
+real name, which Ngabo speaks aloud in the PARENT'S RECORDED VOICE. Add a small
+speaker icon to indicate this. Plus a quiet line naming the effort — "You
+practised letter sounds."
 NO coins, NO streak, NO counter counting up, NO confetti storm, NO "level up".
 Rewards here celebrate effort, not currency — a memento, never a balance.
 One clear green CTA: "Kina byinshi!" (Play more!)
@@ -279,7 +406,9 @@ Structure:
   next thing to tap.
 - A row of 3 category tiles (Amasomo/videos · Imikino/games · Ibitabo/stories),
   ≥80px, illustrated.
-- A star memento shown quietly — a collection, not a scoreboard.
+- The child's AGASEKE (Rwandan peace basket) shown quietly, partly full — a
+  collection that fills, never a score that counts down.
+- The child's own built avatar beside the greeting.
 - Bottom dock, 4 destinations max, 64px, active item a filled green pill.
 - A small blue lock button for "Grown-ups" in a corner — reachable by an adult,
   unremarkable to a child.
@@ -302,6 +431,48 @@ to play together?" with "Yes" and "Maybe later" — equally weighted, no dark
 patterns, no guilt.
 NO scores, NO percentages, NO comparison to other children.
 Calm, reassuring, respectful of a busy parent's 20 seconds.
+```
+
+---
+
+### 2.12 Parent voice recording — our signature feature
+
+```
+Design the parent voice-recording screen (GROWN-UP lane, blue chrome).
+This is Kina Wige's signature feature: the parent records their child's name
+once, and Ngabo then says the child's real name IN THEIR PARENT'S VOICE at every
+celebration. It never leaves the phone.
+
+Content:
+- Heading: "Fata ijwi ry'izina ry'umwana" (Record your child's name)
+- One plain-language line explaining the payoff and the privacy in the same
+  breath: Ngabo will say their name when they do well; it stays on this phone.
+- A large circular RECORD button (blue lane, ~96px) with a 2-second countdown
+  state and a simple live waveform while recording.
+- After recording: a PLAY BACK control, plus "Bika" (Keep) and "Ongera" (Try
+  again), equally weighted.
+- A quiet, always-available "Simbuka" (Skip) — this must be genuinely optional.
+- A small note that the recording can be deleted at any time.
+
+Show three states side by side: ready to record · recording · review.
+Calm and trustworthy. No mascot on this screen — it is the grown-up lane.
+```
+
+### 2.13 Abankunda — "those who love me"
+
+```
+Design the "Abankunda" screen (Those who love me) — a small, warm place the
+child can visit. Child lane.
+
+Up to FOUR people, each shown as a simple avatar in a circular frame with a
+first name beneath (mama, papa, a sibling, a friend). Warm, generous spacing,
+a thousand-hills backdrop, one low-opacity imigongo motif behind.
+
+This is not a management screen — there are no edit controls visible to the
+child. Adding or removing people happens in the grown-up lane only.
+It should feel like looking at a shelf of photos: quiet, safe, loved.
+
+Also show the empty state, which must be gentle rather than a prompt to act.
 ```
 
 ---
@@ -381,3 +552,13 @@ gold, character pointing, never red, never a sad face, never punishing.
 - More than 5 choices on a child screen
 - Anything requiring a network connection, an account, or a login for a child
 - Illustration too detailed to ship under 40KB as SVG
+- A human character (Keza, Hirwa) used as UI chrome, a button, or a floating
+  companion — they belong in videos, thumbnails and framed portraits only
+- Ngabo showing sadness, disappointment, guilt or any "you left me" state
+- Ngabo appearing on a grown-up (blue) screen
+- Generic avatar parts — untextured "long/short" hair, a light default face, or
+  anything that could belong to any app in any country
+- Imigongo at full opacity, in its traditional black/white/red/ochre palette, or
+  more than one motif on a screen
+- A star counter that displays a number or can decrease
+- More than one signature element competing on a single screen

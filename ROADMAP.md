@@ -216,6 +216,14 @@ All verified working in production build.
     parent-redirects (babies/death/God/skin-colour — review the TONE of these
     especially, they must feel warm and safe in Kinyarwanda). Spot-checked for
     sense; need a native speaker for phrasing.
+  - redesign specs (2026-07-31, `docs/CHARACTERS-AND-IDENTITY.md` §5) — not yet
+    in code, review before implementing: `avatar.pick_face` ("Hitamo mu maso"),
+    `avatar.pick_hair` ("Hitamo umusatsi"), `avatar.pick_colour` ("Hitamo
+    ibara"), `avatar.thats_me` ("Ni njye!"), `people.title` ("Abankunda" —
+    confirm this is the natural word for "those who love me"),
+    `voice.record_prompt` ("Fata ijwi ry'izina ry'umwana"), `voice.keep`
+    ("Bika"), `voice.retry` ("Ongera"), `voice.skip` ("Simbuka"),
+    celebration with name ("Wabikoze, {name}!").
 - [ ] **D. Revoke the old Gemini API key** at https://aistudio.google.com/apikey
   (exposed in pre-2026-07-07 builds).
 - [x] **E. Hosting** — done, deployed on Vercel by owner (2026-07-08).

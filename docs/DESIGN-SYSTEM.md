@@ -398,7 +398,81 @@ walk-through after each step. `games.ts` stores Tailwind class strings
 
 ---
 
-## 10. Definition of done
+## 10. Signature — what makes this unmistakably Kina Wige
+
+Anyone can buy a rounded font and a green palette. These four elements are drawn
+from Rwandan visual culture, and they are why the app cannot be cloned by a
+competitor who has not lived here. Used with restraint, they read as *premium and
+rooted*; used heavily, they read as costume. **Restraint is the whole craft.**
+
+### 10.1 Imigongo geometry — the pattern language
+
+**Imigongo** is Rwanda's traditional geometric relief art: bold spirals,
+zigzags, diamonds and chevrons. It is the single most distinctive visual asset
+Rwanda has, and almost no digital product uses it well.
+
+**How we use it**
+- Take the **geometry only**, recoloured into our palette. Do not import the
+  traditional black/white/red/ochre — it fights our green and reads as pastiche.
+- Deploy as a **tiled SVG `<pattern>`** at **4–8% opacity** in `green-800`:
+  behind the home hero, inside celebration bursts, as a section divider, as the
+  frame around a portrait.
+- Motifs: the nested diamond, the spiral, the zigzag band. Pick **one per
+  screen** — never two.
+- Weight: a single reusable `<pattern>` def, under 2 KB, reused everywhere.
+
+**Never**: as a full-strength background, behind body text, on more than one
+surface per screen, or stretched out of its square proportion.
+
+### 10.2 Agaseke — the vessel for what you've learned
+
+The **agaseke** (Rwandan peace basket, with its distinctive conical lid and woven
+zigzag) replaces the generic star counter.
+
+This solves a real product problem. `PRD.md` §6 requires rewards to be a
+**memento, never a currency** — and a number that goes up is a currency no matter
+what we call it. A basket that visibly fills is a *collection*: it can grow, it
+can be admired, and **nothing can ever be taken out of it.**
+
+- Stars accumulate *inside* the child's agaseke.
+- Fill state is shown by how full the weave is, not by a digit.
+- Tapping it shows what was collected — never a score, never a comparison.
+- The child's basket appears on the home screen and in the profile.
+
+### 10.3 The thousand hills — our recurring shape
+
+Rwanda is *igihugu cy'imisozi igihumbi*, the land of a thousand hills, and rolling
+hills already anchor the backgrounds of our own cartoon episodes.
+
+Use a **soft two- or three-layer hill silhouette** as the app's structural shape:
+the base of the home screen, the top of a sheet, the backdrop behind an avatar,
+the divider between sections. Layer in `green-100` / `green-300` / `green-400`.
+
+It gives every screen the same quiet horizon — a signature you can recognise from
+across a room, at zero cost.
+
+### 10.4 The parent's voice — the feature nobody else has
+
+Documented in `CHARACTERS-AND-IDENTITY.md` §4.3, listed here because it is a
+**brand** asset, not merely a feature: the mascot celebrates using the child's
+real name, recorded in their own parent's voice, stored only on the device.
+
+No competitor in this category does this. It is offline, it costs ~2 KB, and it
+is the thing a parent will describe to another parent.
+
+### 10.5 The uniqueness test
+
+Before shipping any screen, ask: **would this screen be recognisably Kina Wige
+with the logo removed?**
+
+If the answer is no, it is missing its signature — usually a hill line, a
+low-opacity imigongo motif, the agaseke, or Ngabo. If the answer is "yes, because
+there are five of them on it", it is overdressed. **One signature element per
+screen** is the target.
+
+---
+
+## 11. Definition of done
 
 - [ ] No raw hex outside `src/index.css` (`grep -rE "#[0-9a-fA-F]{6}" src --include=*.tsx` is empty)
 - [ ] Semantic colour honoured — no blue chrome or red in the child lane
@@ -410,3 +484,8 @@ walk-through after each step. `games.ts` stores Tailwind class strings
 - [ ] Fonts still bundled locally — **no runtime font request**
 - [ ] App-shell precache ≤ **2.0 MB**
 - [ ] Airplane-mode walk-through passes: first win reachable, videos still cached
+- [ ] **Signature:** every screen carries exactly **one** signature element
+      (hill line, imigongo motif, agaseke, or Ngabo) — never zero, never five
+- [ ] Imigongo used at 4–8% opacity only, one motif per screen, never behind body text
+- [ ] Stars live in the agaseke as a filling collection — no digit that can decrease
+- [ ] Passes the uniqueness test: recognisable as Kina Wige with the logo removed

@@ -165,19 +165,30 @@ Marketing may describe the full five; the product ships 1–3 plus a minimal 4.
 
 ---
 
-## 8. Characters (resolved)
+## 8. Characters and identity (resolved)
 
-| Character | Role | Build status |
-| --- | --- | --- |
-| **Keza** | Peer avatar a child can choose as "me"; voice of Baza Keza Q&A | Exists |
-| **Hirwa** | Peer avatar a child can choose as "me" | Exists |
-| **Ngabo** | Onboarding guide + celebrator — the relationship anchor | **New — needs art** |
-| **Inyoni** | Wise helper; gives hints, never scolds | **New — needs art, lower priority** |
+Full specification: **`docs/CHARACTERS-AND-IDENTITY.md`**.
 
-**Decision needed from Godwin (§13-A):** Ngabo and Inyoni are new to the brand
-sheet and do not exist as assets. Ngabo is required for the redesigned onboarding.
-If art is not funded this cycle, Keza becomes the guide and Ngabo/Inyoni are cut —
-that is an acceptable fallback and costs nothing.
+The original characters failed because they had **no job** — a character without
+a role reads as decoration, which is why they felt AI-generated. Better art would
+not have fixed it. Three tiers, three jobs, no overlap:
+
+| Tier | Who | Lives in | Status |
+| --- | --- | --- | --- |
+| **Mascot** | **Ngabo** — a golden monkey (endemic to Volcanoes NP) | The app UI | **New — rigged SVG, ≤ 40 KB** |
+| **Cast** | Keza, Hirwa, family, community | Inside the videos | Exists |
+| **Me** | The child's own **built** avatar | Profile, home, celebration | **New — parts kit, ≤ 60 KB** |
+
+**Hard rule:** rendered human characters never become UI chrome. They appear in
+the app only as a video thumbnail or a clearly framed portrait. Keza keeps her
+real job — she answers questions in `Baza Keza` — but as a portrait, not an
+animated companion. **Inyoni is cut** (a second helper with a vague role repeats
+the original mistake). Hirwa moves to the video cast.
+
+**Ngabo's stance:** take Duolingo's craft and contingency — reacts within 100 ms,
+ten states, eyes that follow the child's taps — and leave its guilt behind. No
+sadness at absence, no streak loss, no nagging. That contradicts "don't reward
+with fear" and is simply anxiety for a four-year-old.
 
 ---
 
@@ -256,6 +267,57 @@ session; delete control leaves `localStorage` empty.
 *Blocked on ROADMAP Human-required §B (Godwin records the Kinyarwanda VO).*
 *Accept:* with audio off, every instruction is still solvable from icon + motion.
 
+### P0-6 · Ngabo, the reactive mascot
+Spec: `CHARACTERS-AND-IDENTITY.md` §2.
+
+- **P0-6.1** One **rigged SVG** (named parts), animated with `motion` —
+  **no new dependency**, ≤ 40 KB for all states.
+- **P0-6.2** Ten states: idle · look-at · wave · point · think · encourage ·
+  celebrate · amazed · doze · peek.
+- **P0-6.3** Reacts within **100 ms** of any child input; every state
+  **interruptible** — a tap mid-celebration gets an instant new reaction.
+- **P0-6.4** Pupils track the child's last tap on every child screen.
+- **P0-6.5** **No guilt state may exist in the codebase** — no sadness at
+  absence, no streak loss, no nagging, no disappointment.
+- **P0-6.6** Never appears in the grown-up lane.
+
+*Accept:* silhouette readable at 20 px; tapping during any animation produces a
+new reaction within 100 ms; `grep` finds no sad/disappointed/streak state.
+
+### P0-7 · The child's built avatar
+Spec: `CHARACTERS-AND-IDENTITY.md` §3.
+
+- **P0-7.1** Built in **exactly three taps** — face → hair → colour — each
+  skippable with a sensible default. 288+ combinations from ~20 SVG parts.
+- **P0-7.2** Parts drawn from **real Rwandan children**: accurate skin-tone range,
+  textured hair (coils, twists, cornrows, braids, bantu knots, locs), kitenge-
+  inspired tops. No generic "long/short" hair, no default-light face first.
+- **P0-7.3** Whole kit ≤ 60 KB; selection stored as an index tuple per profile.
+- **P0-7.4** Editing is revisitable from the profile — never a destination that
+  competes with learning.
+
+*Accept:* a child completes an avatar in three taps with no typing; kit total
+≤ 60 KB; avatar renders on home, profile and celebration.
+
+### P0-8 · Names, parent voice and belonging
+Spec: `CHARACTERS-AND-IDENTITY.md` §4.
+
+- **P0-8.1** All names entered by the **parent in the grown-up lane**; no
+  keyboard is ever reachable by a child.
+- **P0-8.2** **Parent voice recording** (signature feature): the parent records
+  the child's name once (~1 s); Ngabo says the real name in the parent's voice at
+  celebrations. `MediaRecorder` + local blob — **offline, no TTS, no API**, ~2 KB.
+- **P0-8.3** Recording is optional, playable back, retryable and deletable. Mic
+  permission asked **at that moment only**, benefit stated first.
+- **P0-8.4** Fallback with no recording: name shown in writing, celebrated
+  without speech. **Never a synthetic voice** — silence beats uncanny.
+- **P0-8.5** **Abankunda** ("those who love me"): max **4** people, **first names
+  only**, parent-entered, one-tap delete each. No photos, no contacts access.
+- **P0-8.6** "Delete everything" wipes avatar, names, recordings and progress.
+
+*Accept:* recording works in airplane mode; DevTools shows zero network activity;
+no path from a child screen reaches a text input.
+
 ### P1-7 · Original character art replaces emoji
 - **P1-7.1** Guide, avatars and celebration art are **illustrated assets**, not
   emoji. Emoji render differently on every Android build — the guide would
@@ -303,7 +365,8 @@ Any metric we cannot obtain this way is not a metric we keep.
 | Phase | Window | Contents |
 | --- | --- | --- |
 | **R1 — Foundation** | Aug–Sep 2026 | Design system landed; tokens enforced; parent gate; on-device profiles (P0-2, P0-3, P0-4) |
-| **R2 — First run** | Oct–Nov 2026 | Two-lane onboarding, guest mode, guide character, privacy posture (P0-1, P0-5) |
+| **R2 — Identity** | Oct–Nov 2026 | Ngabo rig + ten states, avatar builder, names + parent voice recording (P0-6, P0-7, P0-8) |
+| **R2b — First run** | Nov 2026 | Two-lane onboarding, guest mode, privacy posture (P0-1, P0-5) |
 | **R3 — Voice & art** | Dec 2026–Feb 2027 | Kinyarwanda VO packs, illustrated characters, Parent Companion upgrade (P1-6, P1-7, P1-8) |
 | **R4 — Pilot** | Mar–May 2027 | 100+ households, 5 ECD centres, pre/post assessment; fix what the field shows |
 | **R5 — Consolidate** | Jun–Jul 2027 | Library minimal, local difficulty ramp, hardening (P2) |
@@ -318,7 +381,9 @@ browser walk-through, per `CLAUDE.md`.
 | Risk | Impact | Mitigation |
 | --- | --- | --- |
 | **Voice-over blows the size budget** | High | Opus ~16 kbps mono, lazily-cached packs, never in precache (P1-6.2). KN ships first; EN/FR packs are optional downloads |
-| **Character art unfunded** | Medium | Keza becomes the guide; Ngabo/Inyoni cut without redesign impact (§8) |
+| **Mascot art quality** — the old characters felt AI-generated | High | Ngabo is a **rigged SVG built from designed parts**, not a generated illustration; his appeal comes from *behaviour* (contingency, secondary motion), which art alone cannot fix |
+| **Avatar kit looks generic** | Medium | Parts drawn from real Rwandan children — textured hair, kitenge prints, accurate skin range. Generic parts would reproduce the exact failure we are correcting |
+| **Signature reads as costume** | Medium | Imigongo at 4–8% opacity, one motif per screen, recoloured into our palette — never traditional colours at full strength |
 | **Scope creep back toward v1.0** | High | §3 is binding; Teacher Hub and Community Learning are deferred in writing |
 | **Redesign regresses offline behaviour** | High | Airplane-mode walk-through is a release gate, not a test case |
 | **"Under 5 MB" claim drifts** | Medium | CI asserts precache ≤ 2.0 MB; pitch materials cite *app shell*, video cached on demand |
@@ -328,8 +393,10 @@ browser walk-through, per `CLAUDE.md`.
 
 ## 13. Open decisions — owner only
 
-- **A. Character art budget.** Fund Ngabo (+ optionally Inyoni), or promote Keza
-  to guide and cut both? Blocks P1-7 and the onboarding art direction.
+- **A. Mascot approval.** Ngabo as a **golden monkey** (endemic to Volcanoes NP;
+  chosen because a guide needs *hands* to point and clap). Alternative considered
+  and rejected: the crowned crane — better silhouette, cannot point. Confirm the
+  animal before the rig is drawn; everything else in §8 is settled.
 - **B. Kinyarwanda VO recording.** ROADMAP Human-required §B. Blocks P1-6; the
   redesign ships icon+motion-only until then.
 - **C. Compliance review.** We claim "COPPA & GDPR compliant" on brand material.
