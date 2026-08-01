@@ -20,7 +20,8 @@ export default function VideoPlayer({ clips, poster, onAllClipsEnded }: VideoPla
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const controlsTimer = useRef<ReturnType<typeof setTimeout>>();
+  // React 19 types require an explicit initial value for useRef.
+  const controlsTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const durations = useRef<number[]>(clips.map(() => 0));
   const currentClipRef = useRef(0);
 

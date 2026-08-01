@@ -16,6 +16,8 @@ const ComicsScreen = lazy(() => import('./screens/ComicsScreen'));
 const ComicReader = lazy(() => import('./screens/ComicReader'));
 const SettingsScreen = lazy(() => import('./screens/SettingsScreen'));
 const MotionLab = lazy(() => import('./screens/MotionLab'));
+const HomePathScreen = lazy(() => import('./screens/HomePathScreen'));
+const PlanScreen = lazy(() => import('./screens/PlanScreen'));
 
 function LoadingFallback() {
   return (
@@ -44,6 +46,9 @@ function AnimatedRoutes() {
           <Route path="/baza-keza" element={<BazaKezaScreen />} />
           <Route path="/settings" element={<SettingsScreen />} />
           <Route path="/lab" element={<MotionLab />} />
+          <Route path="/home-path" element={<HomePathScreen />} />
+          {/* Costs money -> must sit behind the parent gate. */}
+          <Route path="/plan" element={<ParentGate><PlanScreen /></ParentGate>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </React.Fragment>

@@ -2,6 +2,11 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 // Self-hosted fonts — bundled locally so text renders correctly offline on the
 // very first launch (no dependency on fonts.googleapis.com).
+import '@fontsource/baloo-2/500.css';
+import '@fontsource/baloo-2/600.css';
+import '@fontsource/baloo-2/700.css';
+import '@fontsource/baloo-2/800.css';
+import '@fontsource/nunito/900.css';
 import '@fontsource/fredoka/400.css';
 import '@fontsource/fredoka/500.css';
 import '@fontsource/fredoka/600.css';
