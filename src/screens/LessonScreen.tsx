@@ -18,6 +18,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import Kina from '../components/characters/Kina';
 import { LESSONS, LESSON_U1_L1 } from '../data/lessons';
 import type { LessonItem } from '../data/lessons';
+import { ListenPick, CountActivity, MatchActivity, TraceActivity } from '../components/lesson/Activities';
 import { useStars } from '../hooks/useStars';
 import { useSound } from '../hooks/useSound';
 
@@ -75,7 +76,9 @@ export default function LessonScreen() {
 
   const [index, setIndex] = useState(0);
   const [phase, setPhase] = useState<Phase>('ask');
-  const [picked, setPicked] = useState<string | null>(null);
+  /** null = nothing chosen yet; true/false = a complete answer. */
+  const [answer, setAnswer] = useState<boolean | null>(null);
+  const [lastPickId, setLastPickId] = useState<string | null>(null);
   const [ruledOut, setRuledOut] = useState<string[]>([]);
   const [earned, setEarned] = useState(0);
   const spoke = useRef<string | null>(null);
@@ -97,24 +100,27 @@ export default function LessonScreen() {
     return () => window.clearTimeout(t);
   }, [item.id, phase, speak]);
 
-  function choose(choiceId: string) {
-    if (phase !== 'ask' || ruledOut.includes(choiceId)) return;
-    setPicked(choiceId);
-  }
+  /** Activities report a complete answer here; the shell owns the verdict. */
+  const onSelect = useCallback(
+    (correct: boolean | null, pickId?: string) => {
+      setAnswer(correct);
+      if (pickId !== undefined) setLastPickId(pickId);
+    },
+    []
+  );
 
   function check() {
-    if (!picked) return;
-    const choice = item.choices.find((c) => c.id === picked);
-    if (choice?.correct) {
+    if (answer === null) return;
+    if (answer) {
       play('success');
       addStar(1);
       setEarned((e) => e + 1);
       setPhase('correct');
     } else {
-      // Gentle: dim the wrong one, keep everything else open. Never a loss.
+      // Gentle: dim only that choice, keep everything else open. Never a loss.
       play('error');
-      setRuledOut((r) => (picked ? [...r, picked] : r));
-      setPicked(null);
+      if (lastPickId) setRuledOut((r) => [...r, lastPickId]);
+      setAnswer(null);
       setPhase('retry');
     }
   }
@@ -126,9 +132,25 @@ export default function LessonScreen() {
       return;
     }
     setIndex((i) => i + 1);
-    setPicked(null);
+    setAnswer(null);
+    setLastPickId(null);
     setRuledOut([]);
     setPhase('ask');
+  }
+
+  /** Dispatch on activity kind. Each reports through the same callback. */
+  function renderActivity() {
+    const common = { ruledOut, onSelect };
+    switch (item.kind) {
+      case 'listen-pick':
+        return <ListenPick key={item.id} item={item} {...common} />;
+      case 'count':
+        return <CountActivity key={item.id} item={item} {...common} />;
+      case 'match':
+        return <MatchActivity key={item.id} item={item} {...common} />;
+      case 'trace':
+        return <TraceActivity key={item.id} item={item} {...common} />;
+    }
   }
 
   /* ── Lesson complete ── */
@@ -242,41 +264,15 @@ export default function LessonScreen() {
               <span className="block font-body font-black text-[19px]">Umva</span>
               <span className="block font-body font-extrabold text-[12px] text-sun-deep">Listen again</span>
             </span>
-            <span className="font-display font-extrabold text-[40px] leading-none pr-2">{item.token}</span>
+            {item.kind === 'listen-pick' && (
+              <span className="font-display font-extrabold text-[40px] leading-none pr-2">{item.token}</span>
+            )}
           </span>
         </Chunky>
       </div>
 
-      {/* ── Choices. Max 3. The glyph is huge; the label is a hint for adults. ── */}
-      <div className="px-6 pt-6 grid grid-cols-3 gap-4">
-        {item.choices.map((c) => {
-          const isPicked = picked === c.id;
-          const isOut = ruledOut.includes(c.id);
-          return (
-            <motion.button
-              key={c.id}
-              onClick={() => choose(c.id)}
-              aria-label={c.label}
-              aria-pressed={isPicked}
-              disabled={isOut}
-              whileTap={isOut ? undefined : { y: 6 }}
-              animate={{ opacity: isOut ? 0.35 : 1, scale: isPicked ? 1.04 : 1 }}
-              transition={{ type: 'spring', stiffness: 700, damping: 30, mass: 0.6 }}
-              className="rounded-[26px] bg-white grid place-items-center"
-              style={{
-                minHeight: 116,
-                boxShadow: isPicked
-                  ? '0 8px 0 #1E8C4C, inset 0 0 0 5px #2FBF6B'
-                  : '0 8px 0 #D9D2C4, inset 0 0 0 3px #E4DDCE',
-              }}
-            >
-              <span className="font-display font-extrabold text-ink" style={{ fontSize: 54, lineHeight: 1 }}>
-                {c.glyph}
-              </span>
-            </motion.button>
-          );
-        })}
-      </div>
+      {/* ── The activity itself ── */}
+      <div className="px-6 pt-6">{renderActivity()}</div>
 
       <div className="flex-1" />
 
@@ -325,10 +321,10 @@ export default function LessonScreen() {
         ) : (
           <motion.div key="check" className="px-6 pb-8 pt-2">
             <Chunky
-              bg={picked ? '#2FBF6B' : '#E4DDCE'}
-              shadow={picked ? '#1E8C4C' : '#D9D2C4'}
-              color={picked ? '#fff' : '#A8A090'}
-              disabled={!picked}
+              bg={answer !== null ? '#2FBF6B' : '#E4DDCE'}
+              shadow={answer !== null ? '#1E8C4C' : '#D9D2C4'}
+              color={answer !== null ? '#fff' : '#A8A090'}
+              disabled={answer === null}
               onClick={check}
             >
               <span className="text-2xl">Reba</span>
