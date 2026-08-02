@@ -30,7 +30,7 @@ interface PathNode {
 const NODES: PathNode[] = [
   { id: 'n1', x: 62, y: 0, state: 'done', to: '/episodes' },
   { id: 'n2', x: 178, y: 96, state: 'done', to: '/episodes' },
-  { id: 'n3', x: 108, y: 188, state: 'current', to: '/games' },
+  { id: 'n3', x: 108, y: 188, state: 'current', to: '/lesson/u1l1' },
   { id: 'n4', x: 194, y: 300, state: 'locked' },
 ];
 

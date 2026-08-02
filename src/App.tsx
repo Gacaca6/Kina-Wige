@@ -18,6 +18,7 @@ const SettingsScreen = lazy(() => import('./screens/SettingsScreen'));
 const MotionLab = lazy(() => import('./screens/MotionLab'));
 const HomePathScreen = lazy(() => import('./screens/HomePathScreen'));
 const PlanScreen = lazy(() => import('./screens/PlanScreen'));
+const LessonScreen = lazy(() => import('./screens/LessonScreen'));
 
 function LoadingFallback() {
   return (
@@ -47,6 +48,8 @@ function AnimatedRoutes() {
           <Route path="/settings" element={<SettingsScreen />} />
           <Route path="/lab" element={<MotionLab />} />
           <Route path="/home-path" element={<HomePathScreen />} />
+          <Route path="/lesson/:id" element={<LessonScreen />} />
+          <Route path="/lesson" element={<LessonScreen />} />
           {/* Costs money -> must sit behind the parent gate. */}
           <Route path="/plan" element={<ParentGate><PlanScreen /></ParentGate>} />
           <Route path="*" element={<Navigate to="/" replace />} />
