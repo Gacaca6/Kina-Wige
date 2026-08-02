@@ -18,6 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import Kina from '../components/characters/Kina';
 import { useStars } from '../hooks/useStars';
+import BottomNav from '../components/ui/BottomNav';
 
 interface PathNode {
   id: string;
@@ -28,9 +29,11 @@ interface PathNode {
 }
 
 const NODES: PathNode[] = [
-  { id: 'n1', x: 62, y: 0, state: 'done', to: '/episodes' },
-  { id: 'n2', x: 178, y: 96, state: 'done', to: '/episodes' },
-  { id: 'n3', x: 108, y: 188, state: 'current', to: '/lesson/u1l1' },
+  // Wired to content that already ships: lessons from data/lessons.ts and
+  // episodes from data/episodes.ts.
+  { id: 'n1', x: 62, y: 0, state: 'done', to: '/lesson/u1l1' },
+  { id: 'n2', x: 178, y: 96, state: 'done', to: '/episode/alphabet' },
+  { id: 'n3', x: 108, y: 188, state: 'current', to: '/lesson/u2l1' },
   { id: 'n4', x: 194, y: 300, state: 'locked' },
 ];
 
@@ -39,33 +42,7 @@ const TRAIL =
 const TRAIL_DONE = 'M120 20 C 250 60, 60 120, 190 170';
 
 /* ── Pictorial nav icons. A 4-year-old reads the picture, not the label. ── */
-function IconLearn() {
-  return (
-    <svg viewBox="0 0 48 48" className="w-full h-full" aria-hidden>
-      <rect x={7} y={10} width={34} height={28} rx={6} fill="#FFFDF7" stroke="#10241B" strokeWidth={3.5} />
-      <path d="M24 12v26" stroke="#10241B" strokeWidth={3.5} />
-      <path d="M12 19h8M12 25h8M28 19h8M28 25h8" stroke="#2FBF6B" strokeWidth={3.5} strokeLinecap="round" />
-    </svg>
-  );
-}
-function IconPlay() {
-  return (
-    <svg viewBox="0 0 48 48" className="w-full h-full" aria-hidden>
-      <rect x={6} y={14} width={36} height={22} rx={11} fill="#FFC02E" stroke="#10241B" strokeWidth={3.5} />
-      <path d="M15 21v8M11 25h8" stroke="#10241B" strokeWidth={3.5} strokeLinecap="round" />
-      <circle cx={32} cy={23} r={3} fill="#10241B" />
-      <circle cx={37} cy={29} r={3} fill="#10241B" />
-    </svg>
-  );
-}
-function IconStories() {
-  return (
-    <svg viewBox="0 0 48 48" className="w-full h-full" aria-hidden>
-      <path d="M8 12c6-3 12-3 16 1v24c-4-4-10-4-16-1z" fill="#9B6BFF" stroke="#10241B" strokeWidth={3.5} strokeLinejoin="round" />
-      <path d="M40 12c-6-3-12-3-16 1v24c4-4 10-4 16-1z" fill="#FFFDF7" stroke="#10241B" strokeWidth={3.5} strokeLinejoin="round" />
-    </svg>
-  );
-}
+
 function IconStars() {
   return (
     <svg viewBox="0 0 48 48" className="w-full h-full" aria-hidden>
@@ -80,43 +57,6 @@ function IconStars() {
   );
 }
 
-function NavItem({
-  icon,
-  label,
-  active,
-  onClick,
-}: {
-  icon: ReactNode;
-  label: string;
-  active?: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="flex flex-col items-center justify-center gap-1 flex-1"
-      style={{ minHeight: 84, minWidth: 76 }}
-      aria-label={label}
-      aria-current={active ? 'page' : undefined}
-    >
-      <span
-        className="grid place-items-center rounded-[18px]"
-        style={{
-          width: 58,
-          height: 52,
-          background: active ? '#E7F7EE' : 'transparent',
-        }}
-      >
-        <span style={{ width: 40, height: 40, display: 'block' }}>{icon}</span>
-      </span>
-      <span
-        className={`font-body font-black text-[12px] ${active ? 'text-forest' : 'text-ink-faint'}`}
-      >
-        {label}
-      </span>
-    </button>
-  );
-}
 
 export default function HomePathScreen() {
   const navigate = useNavigate();
@@ -161,6 +101,23 @@ export default function HomePathScreen() {
               <span className="flex-1 bg-grass" />
             </span>
             <span className="font-body font-black text-base">RW</span>
+          </button>
+
+          {/* The only way into the grown-up lane from the child's world.
+              Blue on purpose — blue always means "an adult should hold this". */}
+          <button
+            onClick={() => navigate('/parents')}
+            className="flex items-center justify-center bg-forest-deep rounded-[16px]"
+            style={{ minHeight: 72, minWidth: 72 }}
+            aria-label="Grown-ups area"
+          >
+            <span className="relative block" style={{ width: 22, height: 24 }} aria-hidden>
+              <span className="absolute bottom-0 left-0 right-0 rounded-[5px] bg-sky" style={{ height: 15 }} />
+              <span
+                className="absolute top-0 left-[4px] right-[4px] rounded-t-[8px] border-[3px] border-b-0 border-sky box-border"
+                style={{ height: 11 }}
+              />
+            </span>
           </button>
         </div>
       </header>
@@ -253,13 +210,8 @@ export default function HomePathScreen() {
         })}
       </div>
 
-      {/* ── Bottom nav: picture first, word second ── */}
-      <nav className="bg-white border-t-[3px] border-edge flex items-stretch justify-around px-1 pb-2 pt-1">
-        <NavItem icon={<IconLearn />} label="WIGA" active onClick={() => navigate('/home-path')} />
-        <NavItem icon={<IconPlay />} label="KINA" onClick={() => navigate('/games')} />
-        <NavItem icon={<IconStories />} label="INKURU" onClick={() => navigate('/comics')} />
-        <NavItem icon={<IconStars />} label="INYENYERI" onClick={() => navigate('/parents')} />
-      </nav>
+      {/* The ONE bottom nav, shared by every child screen. */}
+      <BottomNav />
     </div>
   );
 }

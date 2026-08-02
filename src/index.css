@@ -30,6 +30,22 @@
   --color-sun-deep: #D89A00;
   --color-sky: #35A7E8;          /* Numbers */
   --color-sky-deep: #1D7BB3;
+
+  /* ── The GROWN-UP lane ─────────────────────────────────────────────
+     Blue means "an adult should be holding this phone". The parent area
+     must never look like the child's world: calmer, plainer, blue.
+     These also back the surface-container-* / primary-fixed classes that
+     ParentScreen already uses — without them those cards render with no
+     background at all. */
+  --color-sky-wash: #F5FAFE;
+  --color-sky-soft: #E3F2FD;
+  --color-sky-line: #90CAF9;
+  --color-sky-ink: #1565C0;
+  --color-surface-container-lowest: #FFFFFF;
+  --color-surface-container-low: #F5FAFE;
+  --color-surface-container-highest: #E3F2FD;
+  --color-primary-fixed: #1565C0;
+  --color-primary-container: #E3F2FD;
   --color-coral: #FF6B4A;        /* World */
   --color-coral-deep: #CC4A2E;
   --color-grape: #9B6BFF;        /* Stories */

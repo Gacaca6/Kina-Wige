@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
-import { motion } from 'motion/react';
-import { ArrowLeft, Globe, Info, Heart, Database, Mail, Check } from 'lucide-react';
+// Settings — grown-up lane.
+//
+// Blue, plain, and deliberately unexciting. Nothing here is for a child, so
+// nothing here uses the child's chunky green language.
+
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ParentShell, Card } from '../components/ui/Shell';
 import { useI18n } from '../i18n/context';
 import type { Language } from '../i18n/translations';
-import BottomNav from '../components/ui/BottomNav';
 
 const APP_VERSION = '0.1.0';
 const CONTACT_EMAIL = 'mikelgodwin1234@gmail.com';
@@ -15,7 +18,7 @@ const LANGUAGES: { code: Language; label: string }[] = [
   { code: 'FR', label: 'Français' },
 ];
 
-// localStorage keys used across the app — cleared by "Reset progress".
+// Everything this app stores. Listed openly, and wiped by the button below.
 const PROGRESS_KEYS = [
   'kina-wige-stars',
   'kina-wige-progress',
@@ -23,110 +26,103 @@ const PROGRESS_KEYS = [
   'kina-wige-weekly',
 ];
 
-function Section({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) {
+function Label({ children }: { children: React.ReactNode }) {
   return (
-    <section className="bg-white rounded-2xl shadow-sm p-5">
-      <h2 className="flex items-center gap-2 font-headline font-bold text-primary mb-3">
-        {icon}
-        {title}
-      </h2>
+    <h2 className="font-body font-black text-[13px] tracking-[.1em] uppercase mb-3" style={{ color: '#1565C0' }}>
       {children}
-    </section>
+    </h2>
   );
 }
 
 export default function SettingsScreen() {
   const navigate = useNavigate();
-  const { t, language, setLanguage } = useI18n();
-  const [resetArmed, setResetArmed] = useState(false);
-  const [resetDone, setResetDone] = useState(false);
+  const { language, setLanguage } = useI18n();
+  const [cleared, setCleared] = useState(false);
 
-  const handleReset = () => {
-    if (!resetArmed) {
-      setResetArmed(true);
-      return;
-    }
-    try {
-      PROGRESS_KEYS.forEach(k => localStorage.removeItem(k));
-    } catch {
-      // localStorage unavailable
-    }
-    setResetArmed(false);
-    setResetDone(true);
-    setTimeout(() => setResetDone(false), 2500);
-  };
+  function resetProgress() {
+    PROGRESS_KEYS.forEach((k) => {
+      try {
+        localStorage.removeItem(k);
+      } catch {
+        /* storage unavailable */
+      }
+    });
+    setCleared(true);
+  }
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-h-screen bg-surface pb-24">
-      <header className="bg-surface flex items-center gap-4 w-full px-6 py-4 sticky top-0 z-40">
-        <button
-          onClick={() => navigate('/home')}
-          aria-label="Back to home"
-          className="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-low text-primary hover:scale-105 transition-transform active:scale-95"
-        >
-          <ArrowLeft className="w-6 h-6" />
-        </button>
-        <h1 className="text-2xl font-black text-primary font-headline tracking-tight">{t('settings.title')}</h1>
-      </header>
-
-      <main className="px-6 py-4 max-w-lg mx-auto space-y-5">
-        {/* Language */}
-        <Section icon={<Globe className="w-5 h-5" />} title={t('settings.language')}>
-          <div className="grid grid-cols-3 gap-3">
-            {LANGUAGES.map(l => (
-              <button
-                key={l.code}
-                onClick={() => setLanguage(l.code)}
-                className={`py-3 rounded-xl font-headline font-bold text-sm transition-all active:scale-95 ${
-                  language === l.code
-                    ? 'bg-primary text-white shadow-md'
-                    : 'bg-surface-container-low text-primary hover:bg-secondary-container'
-                }`}
-              >
-                {l.label}
-              </button>
-            ))}
+    <ParentShell title="Settings" hint="Language, data and about" onBack={() => navigate('/parents')}>
+      <div className="flex flex-col gap-4">
+        <Card tone="parent">
+          <Label>Language</Label>
+          <div className="flex gap-2">
+            {LANGUAGES.map((l) => {
+              const on = language === l.code;
+              return (
+                <button
+                  key={l.code}
+                  onClick={() => setLanguage(l.code)}
+                  aria-pressed={on}
+                  className="flex-1 rounded-[14px] font-body font-black text-[14px]"
+                  style={{
+                    minHeight: 48,
+                    background: on ? '#1565C0' : '#FFFFFF',
+                    color: on ? '#FFFFFF' : '#1565C0',
+                    border: '2px solid #90CAF9',
+                  }}
+                >
+                  {l.code}
+                </button>
+              );
+            })}
           </div>
-        </Section>
+          <p className="font-body font-bold text-[13px] mt-3" style={{ color: '#5B7A94' }}>
+            {LANGUAGES.find((l) => l.code === language)?.label}
+          </p>
+        </Card>
 
-        {/* About */}
-        <Section icon={<Info className="w-5 h-5" />} title={t('settings.about')}>
-          <p className="text-dark/70 font-medium leading-relaxed">{t('settings.aboutBody')}</p>
-          <p className="text-dark/40 text-sm font-bold mt-3">{t('settings.version')} {APP_VERSION}</p>
-        </Section>
-
-        {/* Credits */}
-        <Section icon={<Heart className="w-5 h-5" />} title={t('settings.credits')}>
-          <p className="text-dark/70 font-medium leading-relaxed">{t('settings.creditsBody')}</p>
-        </Section>
-
-        {/* Contact */}
-        <Section icon={<Mail className="w-5 h-5" />} title={t('settings.contact')}>
-          <a href={`mailto:${CONTACT_EMAIL}`} className="text-primary font-bold break-all">{CONTACT_EMAIL}</a>
-        </Section>
-
-        {/* Data */}
-        <Section icon={<Database className="w-5 h-5" />} title={t('settings.data')}>
+        <Card tone="parent">
+          <Label>What is stored</Label>
+          <ul className="flex flex-col gap-2">
+            {[
+              'Stars and lesson progress',
+              'Which episodes and stories were opened',
+              'Chosen language',
+            ].map((t) => (
+              <li key={t} className="flex items-start gap-2 font-body font-bold text-[14px]" style={{ color: '#213B4A' }}>
+                <span className="mt-1.5 rounded-full flex-none" style={{ width: 7, height: 7, background: '#42A5F5' }} />
+                {t}
+              </li>
+            ))}
+          </ul>
+          <p className="font-body font-bold text-[13px] mt-3 leading-relaxed" style={{ color: '#5B7A94' }}>
+            Everything stays on this phone. There is no account, no analytics and
+            no network call — nothing is ever transmitted.
+          </p>
           <button
-            onClick={handleReset}
-            className={`w-full py-3 rounded-xl font-headline font-bold transition-colors active:scale-95 ${
-              resetArmed ? 'bg-danger text-white' : 'bg-danger/10 text-danger hover:bg-danger/20'
-            }`}
+            onClick={resetProgress}
+            className="w-full rounded-[14px] font-body font-black text-[15px] mt-4"
+            style={{ minHeight: 48, background: cleared ? '#E3F2FD' : '#C62828', color: cleared ? '#1565C0' : '#fff' }}
           >
-            {resetDone ? (
-              <span className="flex items-center justify-center gap-2"><Check className="w-5 h-5" /> {t('settings.resetDone')}</span>
-            ) : resetArmed ? (
-              t('settings.resetConfirm')
-            ) : (
-              t('settings.reset')
-            )}
+            {cleared ? 'Progress cleared' : 'Delete all progress'}
           </button>
-        </Section>
+        </Card>
 
-        <p className="text-center text-dark/40 font-bold text-sm pt-2">{t('settings.madeIn')}</p>
-      </main>
-
-      <BottomNav />
-    </motion.div>
+        <Card tone="parent">
+          <Label>About</Label>
+          <p className="font-body font-bold text-[14px] leading-relaxed" style={{ color: '#213B4A' }}>
+            Kina Wige — a Kinyarwanda-first learning app for children aged 3–6.
+            Works fully offline.
+          </p>
+          <p className="font-body font-bold text-[13px] mt-3" style={{ color: '#5B7A94' }}>
+            Version {APP_VERSION}
+            <br />
+            <a href={`mailto:${CONTACT_EMAIL}`} style={{ color: '#1565C0' }}>
+              {CONTACT_EMAIL}
+            </a>
+          </p>
+        </Card>
+      </div>
+    </ParentShell>
   );
 }

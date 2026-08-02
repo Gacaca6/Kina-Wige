@@ -33,12 +33,12 @@ export default function EpisodeScreen() {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-h-screen pb-24">
-      <header className="bg-surface text-primary sticky top-0 z-50 flex justify-between items-center w-full px-6 py-4">
+      <header className="bg-sand text-forest sticky top-0 z-50 flex justify-between items-center w-full px-6 py-4">
         <div className="flex items-center gap-4">
           <button onClick={() => navigate('/episodes')} aria-label="Back to episodes" className="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-low hover:scale-105 transition-transform">
             <ArrowLeft className="w-6 h-6" />
           </button>
-          <h1 className="font-headline font-bold tracking-tight text-xl">{episode.title[language]}</h1>
+          <h1 className="font-display font-bold tracking-tight text-xl">{episode.title[language]}</h1>
         </div>
         <div className="flex items-center gap-2 bg-tertiary-fixed px-4 py-2 rounded-full">
           <Star className="w-5 h-5 text-on-tertiary-fixed-variant fill-current" />
@@ -71,12 +71,12 @@ export default function EpisodeScreen() {
           <section className="bg-surface-container-low p-8 rounded-lg relative overflow-hidden">
             <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
               <div className="space-y-2 text-center md:text-left">
-                <h2 className="text-3xl font-headline font-extrabold text-primary tracking-tight">{t('episode.playIntro')}</h2>
+                <h2 className="text-3xl font-display font-extrabold text-forest tracking-tight">{t('episode.playIntro')}</h2>
                 <p className="text-primary-container font-medium">{t('episode.playSub')}</p>
               </div>
               <button
                 onClick={() => navigate(`/game/${episode.gameId}`)}
-                className="bg-primary text-on-primary px-10 py-5 rounded-full font-headline font-bold text-xl hover:scale-105 transition-transform active:scale-95 shadow-[0_12px_24px_-8px_rgba(15,82,56,0.4)] border-b-4 border-primary-fixed-variant"
+                className="bg-forest text-on-primary px-10 py-5 rounded-full font-display font-bold text-xl hover:scale-105 transition-transform active:scale-95 shadow-[0_12px_24px_-8px_rgba(15,82,56,0.4)] border-b-4 border-primary-fixed-variant"
               >
                 {t('episode1.play')}
               </button>
@@ -88,13 +88,13 @@ export default function EpisodeScreen() {
 
         <section className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
           <div className="space-y-6">
-            <div className="inline-block bg-primary/10 text-primary px-4 py-1 rounded-lg text-sm font-bold uppercase tracking-widest">{t('episode.story')}</div>
-            <p className="text-lg leading-relaxed text-on-surface font-medium">
+            <div className="inline-block bg-mint text-forest px-4 py-1 rounded-lg text-sm font-bold uppercase tracking-widest">{t('episode.story')}</div>
+            <p className="text-lg leading-relaxed text-ink font-medium">
               {episode.story[language]}
             </p>
           </div>
           <div className="bg-surface-container-lowest p-6 rounded-lg shadow-[0_24px_48px_-12px_rgba(0,33,19,0.06)]">
-            <h3 className="text-primary font-bold mb-6 flex items-center gap-2">
+            <h3 className="text-forest font-bold mb-6 flex items-center gap-2">
               <Users className="w-5 h-5" />
               {t('episode.characters')}
             </h3>

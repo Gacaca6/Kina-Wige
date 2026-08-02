@@ -204,20 +204,20 @@ export default function BazaKezaScreen() {
       className="min-h-screen flex flex-col bg-gradient-to-b from-[#E8F5E9] to-[#F0FFF4]"
     >
       {/* Header */}
-      <header className="flex items-center gap-4 px-4 py-3 bg-white/80 backdrop-blur-sm border-b border-primary/10 sticky top-0 z-50">
+      <header className="flex items-center gap-4 px-4 py-3 bg-white/80 backdrop-blur-sm border-b border-forest/10 sticky top-0 z-50">
         <button
           onClick={() => navigate(-1)}
           className="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-low hover:scale-105 transition-transform active:scale-95"
         >
-          <ArrowLeft className="w-5 h-5 text-primary" />
+          <ArrowLeft className="w-5 h-5 text-forest" />
         </button>
         <div className="flex items-center gap-3 flex-1">
-          <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary shadow-sm">
+          <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-forest shadow-sm">
             <img src={images.kezaAvatar} alt="Keza" className="w-full h-full object-cover" />
           </div>
           <div>
-            <h1 className="font-headline font-bold text-primary text-lg leading-tight">Baza Keza</h1>
-            <p className="text-xs text-primary/60 font-medium">
+            <h1 className="font-display font-bold text-forest text-lg leading-tight">Baza Keza</h1>
+            <p className="text-xs text-forest/60 font-medium">
               {language === 'KN' ? 'Ndahari kukwibaza!' : language === 'FR' ? 'Je suis là pour toi!' : 'I\'m here to help!'}
             </p>
           </div>
@@ -234,10 +234,10 @@ export default function BazaKezaScreen() {
               transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
               className="w-40 h-40 relative"
             >
-              <div className="absolute inset-0 bg-primary/10 rounded-full blur-2xl scale-125" />
+              <div className="absolute inset-0 bg-mint rounded-full blur-2xl scale-125" />
               <img src={images.kezaFull} alt="Keza" className="w-full h-full object-contain relative z-10" />
             </motion.div>
-            <p className="text-center text-primary/50 font-medium text-sm mt-4 max-w-[200px]">
+            <p className="text-center text-forest/50 font-medium text-sm mt-4 max-w-[200px]">
               {language === 'KN' ? 'Kanda kuri micro uvuge ikibazo cyawe!' :
                language === 'FR' ? 'Appuie sur le micro et pose ta question!' :
                'Tap the mic and ask your question!'}
@@ -256,20 +256,20 @@ export default function BazaKezaScreen() {
               className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {msg.type === 'keza' && (
-                <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-primary/30 mr-2 flex-shrink-0 mt-1">
+                <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-forest/30 mr-2 flex-shrink-0 mt-1">
                   <img src={images.kezaAvatar} alt="Keza" className="w-full h-full object-cover" />
                 </div>
               )}
               <div className={`max-w-[80%] ${
                 msg.type === 'user'
-                  ? 'bg-primary text-white rounded-2xl rounded-tr-md'
-                  : 'bg-white text-dark rounded-2xl rounded-tl-md shadow-sm border border-primary/10'
+                  ? 'bg-forest text-white rounded-2xl rounded-tr-md'
+                  : 'bg-white text-ink rounded-2xl rounded-tl-md shadow-sm border border-forest/10'
               } px-4 py-3`}>
                 {msg.isThinking ? (
                   <div className="flex items-center gap-1.5 py-1">
-                    <div className="w-2.5 h-2.5 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: '0ms' }} />
-                    <div className="w-2.5 h-2.5 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: '150ms' }} />
-                    <div className="w-2.5 h-2.5 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: '300ms' }} />
+                    <div className="w-2.5 h-2.5 rounded-full bg-forest/40 animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <div className="w-2.5 h-2.5 rounded-full bg-forest/40 animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <div className="w-2.5 h-2.5 rounded-full bg-forest/40 animate-bounce" style={{ animationDelay: '300ms' }} />
                   </div>
                 ) : (
                   <>
@@ -280,7 +280,7 @@ export default function BazaKezaScreen() {
                     {msg.type === 'keza' && !msg.isThinking && (
                       <button
                         onClick={() => speakMessage(msg.text)}
-                        className="mt-2 text-xs text-primary/50 hover:text-primary flex items-center gap-1 transition-colors"
+                        className="mt-2 text-xs text-forest/50 hover:text-forest flex items-center gap-1 transition-colors"
                       >
                         🔊 {language === 'KN' ? 'Umva' : language === 'FR' ? 'Écouter' : 'Listen'}
                       </button>
@@ -296,12 +296,12 @@ export default function BazaKezaScreen() {
       </div>
 
       {/* Input area */}
-      <div className="sticky bottom-0 bg-white/90 backdrop-blur-sm border-t border-primary/10 px-4 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+      <div className="sticky bottom-0 bg-white/90 backdrop-blur-sm border-t border-forest/10 px-4 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
         {showKeyboard ? (
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowKeyboard(false)}
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-low text-primary"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-low text-forest"
             >
               <Mic className="w-5 h-5" />
             </button>
@@ -312,13 +312,13 @@ export default function BazaKezaScreen() {
                 onChange={(e) => setTextInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleTextSubmit()}
                 placeholder={language === 'KN' ? 'Andika ikibazo cyawe...' : language === 'FR' ? 'Écris ta question...' : 'Type your question...'}
-                className="flex-1 bg-transparent py-3 text-dark placeholder-dark/40 outline-none text-sm font-medium"
+                className="flex-1 bg-transparent py-3 text-ink placeholder-dark/40 outline-none text-sm font-medium"
                 autoFocus
               />
               <button
                 onClick={handleTextSubmit}
                 disabled={!textInput.trim() || isThinking}
-                className="w-9 h-9 flex items-center justify-center rounded-full bg-primary text-white disabled:opacity-40 active:scale-90 transition-transform"
+                className="w-9 h-9 flex items-center justify-center rounded-full bg-forest text-white disabled:opacity-40 active:scale-90 transition-transform"
               >
                 <Send className="w-4 h-4" />
               </button>
@@ -328,7 +328,7 @@ export default function BazaKezaScreen() {
           <div className="flex items-center justify-center gap-4">
             <button
               onClick={() => setShowKeyboard(true)}
-              className="w-12 h-12 flex items-center justify-center rounded-full bg-surface-container-low text-primary hover:scale-105 transition-transform active:scale-95"
+              className="w-12 h-12 flex items-center justify-center rounded-full bg-surface-container-low text-forest hover:scale-105 transition-transform active:scale-95"
             >
               <Keyboard className="w-5 h-5" />
             </button>
@@ -342,8 +342,8 @@ export default function BazaKezaScreen() {
                 isListening
                   ? 'bg-red-500 shadow-red-500/30 scale-110'
                   : isThinking
-                    ? 'bg-primary/50 cursor-not-allowed'
-                    : 'bg-primary shadow-primary/30 hover:shadow-primary/50'
+                    ? 'bg-forest/50 cursor-not-allowed'
+                    : 'bg-forest shadow-primary/30 hover:shadow-primary/50'
               }`}
             >
               {isListening ? (

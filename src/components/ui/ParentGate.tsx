@@ -64,7 +64,7 @@ export default function ParentGate({ children }: { children: React.ReactNode }) 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen bg-primary flex flex-col items-center justify-center p-6 text-white text-center"
+      className="min-h-screen bg-sky-ink flex flex-col items-center justify-center p-6 text-white text-center"
     >
       <button
         onClick={() => navigate('/home')}
@@ -78,7 +78,7 @@ export default function ParentGate({ children }: { children: React.ReactNode }) 
         <Lock className="w-8 h-8" />
       </div>
 
-      <h1 className="font-headline text-2xl font-bold mb-2">{t('gate.title')}</h1>
+      <h1 className="font-display text-2xl font-bold mb-2">{t('gate.title')}</h1>
       <p className="text-white/80 font-medium mb-8 max-w-xs">{t('gate.instruction')}</p>
 
       <div className="bg-white/10 rounded-2xl px-8 py-5 mb-8">
@@ -94,7 +94,7 @@ export default function ParentGate({ children }: { children: React.ReactNode }) 
             onClick={() => choose(n)}
             animate={wrong === n ? { x: [0, -8, 8, -8, 0] } : {}}
             className={`w-20 h-20 rounded-2xl font-display font-bold text-3xl shadow-lg tabular-nums transition-colors active:scale-90 ${
-              wrong === n ? 'bg-danger text-white' : 'bg-white text-primary hover:bg-surface'
+              wrong === n ? 'bg-coral text-white' : 'bg-white text-sky-ink hover:bg-sky-wash'
             }`}
           >
             {n}

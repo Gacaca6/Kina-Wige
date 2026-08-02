@@ -1,152 +1,174 @@
-import React from 'react';
-import { motion } from 'motion/react';
-import { ArrowLeft, Sparkles, Home, Eye, Target, Check, Hourglass, Settings } from 'lucide-react';
+// Ku Babyeyi — the grown-up dashboard.
+//
+// Deliberately a different product from the child's world: blue, plain, dense,
+// no mascot, no chunky play buttons, no bottom nav. A child who lands here can
+// tell in half a second that it is not for them.
+
 import { useNavigate } from 'react-router-dom';
+import { ParentShell, Card } from '../components/ui/Shell';
 import { useI18n } from '../i18n/context';
 import { useParentData } from '../hooks/useParentData';
-import { images } from '../assets/images';
-import BottomNav from '../components/ui/BottomNav';
+import { useStars } from '../hooks/useStars';
+
+const DAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
+function Label({ children }: { children: React.ReactNode }) {
+  return (
+    <h2 className="font-body font-black text-[13px] tracking-[.1em] uppercase mb-3" style={{ color: '#1565C0' }}>
+      {children}
+    </h2>
+  );
+}
 
 export default function ParentScreen() {
   const navigate = useNavigate();
   const { t } = useI18n();
   const { activities, weeklyDays, toggleActivity, toggleDay, progressKey, progressPercent } = useParentData();
-
-  const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const { stars } = useStars();
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-h-screen bg-[#FFF8E7] text-on-background pb-24">
-      <header className="w-full top-0 sticky z-40 bg-[#FFF8E7]">
-        <div className="flex justify-between items-center px-6 py-4 w-full">
-          <div className="flex items-center gap-4">
-            <button onClick={() => navigate('/home')} className="hover:bg-surface-container-highest/20 transition-colors active:scale-95 p-2 rounded-full">
-              <ArrowLeft className="w-6 h-6 text-primary" />
-            </button>
-            <h1 className="font-headline font-bold text-xl tracking-tight text-primary">
-              {t('parents.title')}
-            </h1>
-          </div>
-          <button onClick={() => navigate('/settings')} aria-label={t('settings.title')} className="w-9 h-9 flex items-center justify-center bg-surface-container-low rounded-full text-primary active:scale-95 transition-transform">
-            <Settings className="w-5 h-5" />
-          </button>
-        </div>
-        <div className="bg-[#cdffe2] h-[1px] opacity-15" />
-      </header>
+    <ParentShell title={t('parents.title')} hint="Progress, activities and settings">
+      <div className="flex flex-col gap-4">
+        {/* Welcome */}
+        <Card tone="parent">
+          <p className="font-body font-black text-[13px] tracking-[.08em] uppercase" style={{ color: '#42A5F5' }}>
+            {t('parents.welcome')}
+          </p>
+          <h2 className="font-display font-extrabold text-[24px] leading-tight mt-1" style={{ color: '#0F2E45' }}>
+            {t('parents.subtitle')}
+          </h2>
+          <p className="font-body font-bold text-[14px] leading-relaxed mt-2" style={{ color: '#5B7A94' }}>
+            {t('parents.description')}
+          </p>
+        </Card>
 
-      <main className="max-w-3xl mx-auto px-6 pt-8 space-y-10">
-        <section className="flex flex-col md:flex-row items-center gap-8 bg-surface-container-lowest p-8 rounded-lg shadow-sm border border-outline-variant/10">
-          <div className="flex-1 space-y-4">
-            <div className="inline-flex items-center gap-2 bg-tertiary-fixed/30 px-4 py-1 rounded-full text-tertiary font-bold text-sm">
-              <Sparkles className="w-4 h-4 fill-current" />
-              {t('parents.welcome')}
+        {/* This week */}
+        <div className="rounded-[20px] p-5" style={{ background: '#1565C0', color: '#fff' }}>
+          <div className="flex items-end justify-between gap-3">
+            <div>
+              <h3 className="font-display font-extrabold text-[20px]">{t('parents.weekTitle')}</h3>
+              <p className="font-body font-bold text-[13px] opacity-85 mt-0.5">{t(progressKey)}</p>
             </div>
-            <h2 className="font-nunito text-3xl font-extrabold text-on-surface leading-tight">
-              {t('parents.subtitle')}
-            </h2>
-            <p className="font-nunito text-lg text-on-surface-variant leading-relaxed">
-              {t('parents.description')}
-            </p>
+            <div className="font-display font-extrabold text-[30px] tabular-nums">{progressPercent}%</div>
           </div>
-          <div className="w-32 h-32 md:w-48 md:h-48 relative shrink-0">
-            <div className="absolute inset-0 bg-primary-fixed rounded-full opacity-20 scale-110" />
-            <img src={images.parentChild} alt="Parent and child" className="w-full h-full object-cover rounded-full border-4 border-surface-container-lowest" />
-          </div>
-        </section>
 
-        <section className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h3 className="font-nunito text-2xl font-bold text-primary">{t('parents.episode1')}</h3>
-            <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">{t('parents.activeLesson')}</span>
-          </div>
-          <div className="bg-surface-container-low rounded-lg overflow-hidden space-y-1">
-            <details className="group bg-surface-container-lowest" open>
-              <summary className="flex items-center gap-4 p-6 cursor-pointer list-none">
-                <div className="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
-                  <Target className="w-5 h-5" />
-                </div>
-                <span className="font-nunito text-lg font-bold flex-1">{t('parents.whatWelearned')}</span>
-              </summary>
-              <div className="px-20 pb-8 font-nunito text-on-surface-variant leading-relaxed">
-                {t('parents.learnedBody')}
-              </div>
-            </details>
-
-            <details className="group bg-surface-container-lowest">
-              <summary className="flex items-center gap-4 p-6 cursor-pointer list-none">
-                <div className="w-10 h-10 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed">
-                  <Home className="w-5 h-5 fill-current" />
-                </div>
-                <span className="font-nunito text-lg font-bold flex-1">{t('parents.activities')}</span>
-              </summary>
-              <div className="px-20 pb-8 space-y-4 font-nunito">
-                <div className="flex items-center gap-4 p-4 rounded-lg bg-surface-container-low border border-transparent hover:border-primary/20 transition-all">
-                  <input
-                    type="checkbox"
-                    checked={!!activities['song']}
-                    onChange={() => toggleActivity('song')}
-                    className="w-6 h-6 rounded border-outline text-primary focus:ring-primary"
-                  />
-                  <div className="flex-1">
-                    <h4 className="font-bold text-on-surface">{t('parents.activity1.title')}</h4>
-                    <p className="text-sm text-on-surface-variant italic">{t('parents.activity1.desc')}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4 p-4 rounded-lg bg-surface-container-low border border-transparent hover:border-primary/20 transition-all">
-                  <input
-                    type="checkbox"
-                    checked={!!activities['questions']}
-                    onChange={() => toggleActivity('questions')}
-                    className="w-6 h-6 rounded border-outline text-primary focus:ring-primary"
-                  />
-                  <div className="flex-1">
-                    <h4 className="font-bold text-on-surface">{t('parents.activity2.title')}</h4>
-                    <p className="text-sm text-on-surface-variant italic">{t('parents.activity2.desc')}</p>
-                  </div>
-                </div>
-              </div>
-            </details>
-
-            <details className="group bg-surface-container-lowest">
-              <summary className="flex items-center gap-4 p-6 cursor-pointer list-none">
-                <div className="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed">
-                  <Eye className="w-5 h-5 fill-current" />
-                </div>
-                <span className="font-nunito text-lg font-bold flex-1">{t('parents.changes')}</span>
-              </summary>
-              <div className="px-20 pb-8 font-nunito text-on-surface-variant leading-relaxed">
-                {t('parents.changesBody')}
-              </div>
-            </details>
-          </div>
-        </section>
-
-        <section className="bg-[#1B4332] text-white p-8 rounded-lg space-y-6">
-          <div className="flex justify-between items-end">
-            <div className="space-y-1">
-              <h3 className="font-nunito text-xl font-bold">{t('parents.weekTitle')}</h3>
-              <p className="text-primary-fixed opacity-90">{t(progressKey)}</p>
-            </div>
-            <div className="font-nunito text-3xl font-black text-tertiary-fixed">{progressPercent}%</div>
-          </div>
-          <div className="flex justify-between items-center gap-2">
-            {dayLabels.map((day, i) => (
-              <button key={day} onClick={() => toggleDay(i)} className="flex flex-col items-center gap-2">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${weeklyDays[i] ? 'bg-primary-container border-primary-fixed' : 'bg-white/10 border-white/20'}`}>
-                  {weeklyDays[i] && <Check className="w-5 h-5" />}
-                </div>
-                <span className="text-[10px] uppercase font-bold opacity-60">{day}</span>
+          {/* 7 equal columns — fixed circles in a flex row overflow a 375px phone. */}
+          <div className="grid grid-cols-7 gap-1 mt-4">
+            {DAYS.map((d, i) => (
+              <button
+                key={i}
+                onClick={() => toggleDay(i)}
+                aria-label={`Day ${i + 1}`}
+                aria-pressed={!!weeklyDays[i]}
+                className="flex flex-col items-center gap-1.5 min-w-0"
+                style={{ minHeight: 68 }}
+              >
+                <span
+                  className="rounded-full grid place-items-center"
+                  style={{
+                    width: 40,
+                    height: 40,
+                    background: weeklyDays[i] ? '#FFFFFF' : 'rgba(255,255,255,.14)',
+                    border: `2px solid ${weeklyDays[i] ? '#FFFFFF' : 'rgba(255,255,255,.28)'}`,
+                  }}
+                >
+                  {weeklyDays[i] && (
+                    <span
+                      className="block border-l-[3px] border-b-[3px] rounded-[1px]"
+                      style={{
+                        width: 13,
+                        height: 7,
+                        borderColor: '#1565C0',
+                        transform: 'rotate(-45deg) translateY(-1px)',
+                      }}
+                    />
+                  )}
+                </span>
+                <span className="font-body font-black text-[11px] opacity-75">{d}</span>
               </button>
             ))}
           </div>
-        </section>
 
-        <section className="text-center py-10 opacity-60 space-y-4">
-          <Hourglass className="w-10 h-10 text-primary mx-auto" />
-          <p className="font-nunito font-bold text-primary">{t('parents.moreSoon')}</p>
-        </section>
-      </main>
+          <p className="font-body font-bold text-[13px] opacity-85 mt-4">
+            Stars collected: <span className="font-black tabular-nums">{stars}</span> — stars only ever go up.
+          </p>
+        </div>
 
-      <BottomNav />
-    </motion.div>
+        {/* Do together at home */}
+        <Card tone="parent">
+          <Label>{t('parents.activities')}</Label>
+          {([
+            { key: 'song', title: 'parents.activity1.title', desc: 'parents.activity1.desc' },
+            { key: 'questions', title: 'parents.activity2.title', desc: 'parents.activity2.desc' },
+          ] as const).map(({ key, title, desc }) => (
+            <button
+              key={key}
+              onClick={() => toggleActivity(key)}
+              aria-pressed={!!activities[key]}
+              className="w-full flex items-start gap-3 text-left rounded-[14px] p-3 mb-2"
+              style={{ background: activities[key] ? '#E3F2FD' : '#F7FAFC', minHeight: 64 }}
+            >
+              <span
+                className="rounded-[8px] grid place-items-center flex-none mt-0.5"
+                style={{
+                  width: 26,
+                  height: 26,
+                  background: activities[key] ? '#1565C0' : '#FFFFFF',
+                  border: '2px solid #90CAF9',
+                }}
+              >
+                {activities[key] && (
+                  <span
+                    className="block border-l-[3px] border-b-[3px] border-white rounded-[1px]"
+                    style={{ width: 11, height: 6, transform: 'rotate(-45deg) translateY(-1px)' }}
+                  />
+                )}
+              </span>
+              <span className="min-w-0">
+                <span className="block font-body font-black text-[15px]" style={{ color: '#0F2E45' }}>
+                  {t(title)}
+                </span>
+                <span className="block font-body font-bold text-[13px] mt-0.5" style={{ color: '#5B7A94' }}>
+                  {t(desc)}
+                </span>
+              </span>
+            </button>
+          ))}
+        </Card>
+
+        {/* What they learned */}
+        <Card tone="parent">
+          <Label>{t('parents.whatWelearned')}</Label>
+          <p className="font-body font-bold text-[14px] leading-relaxed" style={{ color: '#213B4A' }}>
+            {t('parents.learnedBody')}
+          </p>
+        </Card>
+
+        <Card tone="parent">
+          <Label>{t('parents.changes')}</Label>
+          <p className="font-body font-bold text-[14px] leading-relaxed" style={{ color: '#213B4A' }}>
+            {t('parents.changesBody')}
+          </p>
+        </Card>
+
+        {/* Grown-up destinations */}
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={() => navigate('/plan')}
+            className="rounded-[16px] font-body font-black text-[15px]"
+            style={{ minHeight: 56, background: '#1565C0', color: '#fff' }}
+          >
+            Plan
+          </button>
+          <button
+            onClick={() => navigate('/settings')}
+            className="rounded-[16px] font-body font-black text-[15px]"
+            style={{ minHeight: 56, background: '#FFFFFF', color: '#1565C0', border: '2px solid #90CAF9' }}
+          >
+            Settings
+          </button>
+        </div>
+      </div>
+    </ParentShell>
   );
 }

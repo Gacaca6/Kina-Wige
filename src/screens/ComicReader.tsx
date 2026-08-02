@@ -88,11 +88,11 @@ export default function ComicReader() {
         <button
           onClick={() => navigate('/comics')}
           aria-label="Back to books"
-          className="w-11 h-11 flex items-center justify-center rounded-full bg-white/80 text-primary shadow-sm hover:scale-105 transition-transform active:scale-95"
+          className="w-11 h-11 flex items-center justify-center rounded-full bg-white/80 text-forest shadow-sm hover:scale-105 transition-transform active:scale-95"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <h1 className="font-headline font-bold text-primary text-lg leading-tight flex-1 truncate">
+        <h1 className="font-display font-bold text-forest text-lg leading-tight flex-1 truncate">
           {comic.title[language]}
         </h1>
       </header>
@@ -103,7 +103,7 @@ export default function ComicReader() {
           <div
             key={i}
             className={`h-2 rounded-full transition-all ${
-              i === index ? 'w-6 bg-primary' : i < index ? 'w-2 bg-secondary' : 'w-2 bg-primary/20'
+              i === index ? 'w-6 bg-forest' : i < index ? 'w-2 bg-grass' : 'w-2 bg-mint'
             }`}
           />
         ))}
@@ -125,10 +125,10 @@ export default function ComicReader() {
             </div>
 
             <div className="mt-5 w-full bg-white rounded-2xl shadow-md px-5 py-4 relative">
-              <p className="text-lg font-bold text-dark leading-relaxed text-center">{panel.text[language]}</p>
+              <p className="text-lg font-bold text-ink leading-relaxed text-center">{panel.text[language]}</p>
               <button
                 onClick={() => speak(panel.text[language])}
-                className="mt-3 mx-auto text-sm text-primary/60 hover:text-primary flex items-center gap-1.5 transition-colors"
+                className="mt-3 mx-auto text-sm text-forest/60 hover:text-forest flex items-center gap-1.5 transition-colors"
               >
                 <Volume2 className="w-4 h-4" /> {t('comic.listen')}
               </button>
@@ -143,14 +143,14 @@ export default function ComicReader() {
           onClick={goPrev}
           disabled={index === 0}
           aria-label={t('comic.prev')}
-          className="w-14 h-14 rounded-full bg-white text-primary shadow-md flex items-center justify-center disabled:opacity-30 active:scale-90 transition-transform"
+          className="w-14 h-14 rounded-full bg-white text-forest shadow-md flex items-center justify-center disabled:opacity-30 active:scale-90 transition-transform"
         >
           <ChevronLeft className="w-7 h-7" />
         </button>
 
         <button
           onClick={goNext}
-          className="flex-1 h-14 rounded-full bg-primary text-white font-headline font-bold text-lg shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform"
+          className="flex-1 h-14 rounded-full bg-forest text-white font-display font-bold text-lg shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform"
         >
           {isLast ? t('comic.finish') : t('comic.next')}
           {!isLast && <ChevronRight className="w-6 h-6" />}
@@ -174,18 +174,18 @@ export default function ComicReader() {
             >
               ⭐
             </motion.div>
-            <h2 className="font-headline text-4xl text-white font-bold mb-2 drop-shadow-lg">{t('comic.done')}</h2>
+            <h2 className="font-display text-4xl text-white font-bold mb-2 drop-shadow-lg">{t('comic.done')}</h2>
             <p className="font-body text-xl text-white/90 font-bold mb-10">+1 ⭐</p>
             <div className="flex flex-col gap-4 w-full max-w-xs">
               <button
                 onClick={restart}
-                className="bg-primary text-white font-headline font-bold text-xl px-8 py-4 rounded-full shadow-lg hover:scale-105 active:scale-95 transition-transform"
+                className="bg-forest text-white font-display font-bold text-xl px-8 py-4 rounded-full shadow-lg hover:scale-105 active:scale-95 transition-transform"
               >
                 {t('comic.readAgain')}
               </button>
               <button
                 onClick={() => navigate('/comics')}
-                className="bg-transparent border-2 border-white text-white font-headline font-bold text-xl px-8 py-4 rounded-full hover:bg-white/10 active:scale-95 transition-all"
+                className="bg-transparent border-2 border-white text-white font-display font-bold text-xl px-8 py-4 rounded-full hover:bg-white/10 active:scale-95 transition-all"
               >
                 {t('comics.title')}
               </button>

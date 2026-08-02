@@ -1,11 +1,9 @@
 import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'motion/react';
-import FloatingKeza from './components/ui/FloatingKeza';
 import ParentGate from './components/ui/ParentGate';
 
 const SplashScreen = lazy(() => import('./screens/SplashScreen'));
-const HomeScreen = lazy(() => import('./screens/HomeScreen'));
 const EpisodeScreen = lazy(() => import('./screens/EpisodeScreen'));
 const GameScreen = lazy(() => import('./screens/GameScreen'));
 const ParentScreen = lazy(() => import('./screens/ParentScreen'));
@@ -15,15 +13,14 @@ const BazaKezaScreen = lazy(() => import('./screens/BazaKezaScreen'));
 const ComicsScreen = lazy(() => import('./screens/ComicsScreen'));
 const ComicReader = lazy(() => import('./screens/ComicReader'));
 const SettingsScreen = lazy(() => import('./screens/SettingsScreen'));
-const MotionLab = lazy(() => import('./screens/MotionLab'));
 const HomePathScreen = lazy(() => import('./screens/HomePathScreen'));
 const PlanScreen = lazy(() => import('./screens/PlanScreen'));
 const LessonScreen = lazy(() => import('./screens/LessonScreen'));
 
 function LoadingFallback() {
   return (
-    <div className="min-h-screen bg-surface flex items-center justify-center">
-      <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+    <div className="min-h-screen bg-sand flex items-center justify-center">
+      <div className="w-16 h-16 border-4 border-grass border-t-transparent rounded-full animate-spin" />
     </div>
   );
 }
@@ -36,7 +33,8 @@ function AnimatedRoutes() {
       <React.Fragment key={location.pathname}>
         <Routes location={location}>
           <Route path="/" element={<SplashScreen />} />
-          <Route path="/home" element={<HomeScreen />} />
+          {/* Legacy home is gone — the path IS the home. */}
+          <Route path="/home" element={<Navigate to="/home-path" replace />} />
           <Route path="/episode/:id" element={<EpisodeScreen />} />
           <Route path="/game/:id" element={<GameScreen />} />
           <Route path="/parents" element={<ParentGate><ParentScreen /></ParentGate>} />
@@ -46,7 +44,6 @@ function AnimatedRoutes() {
           <Route path="/comic/:id" element={<ComicReader />} />
           <Route path="/baza-keza" element={<BazaKezaScreen />} />
           <Route path="/settings" element={<SettingsScreen />} />
-          <Route path="/lab" element={<MotionLab />} />
           <Route path="/home-path" element={<HomePathScreen />} />
           <Route path="/lesson/:id" element={<LessonScreen />} />
           <Route path="/lesson" element={<LessonScreen />} />
@@ -62,10 +59,9 @@ function AnimatedRoutes() {
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-background text-on-surface font-body font-medium selection:bg-primary/20">
+      <div className="min-h-screen bg-sand text-ink font-body">
         <Suspense fallback={<LoadingFallback />}>
           <AnimatedRoutes />
-          <FloatingKeza />
         </Suspense>
       </div>
     </BrowserRouter>

@@ -1,69 +1,83 @@
-import React from 'react';
-import { motion } from 'motion/react';
-import { Star, PlayCircle } from 'lucide-react';
+// Amasomo — the lessons/videos shelf.
+//
+// Same card language as Stories so the app reads as one product, with the
+// play badge and category chip carrying the difference.
+
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'motion/react';
+import { KidShell } from '../components/ui/Shell';
+import { episodes } from '../data/episodes';
 import { useI18n } from '../i18n/context';
 import { useProgress } from '../hooks/useProgress';
-import { episodes, upcomingEpisodes } from '../data/episodes';
-import BottomNav from '../components/ui/BottomNav';
 
 export default function EpisodeListScreen() {
   const navigate = useNavigate();
-  const { t, language } = useI18n();
+  const { language } = useI18n();
   const { isEpisodeWatched } = useProgress();
 
   return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="min-h-screen pb-24">
-      <header className="bg-surface flex justify-between items-center w-full px-6 py-4 sticky top-0 z-40">
-        <h1 className="text-2xl font-black text-primary font-headline tracking-tight">{t('home.episodes')}</h1>
-        <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-bold">
-          {episodes.length}/{episodes.length + upcomingEpisodes.length}
-        </div>
-      </header>
-
-      <main className="px-6 py-6 max-w-lg mx-auto space-y-6">
-        {episodes.map(ep => (
-          <button
-            key={ep.id}
-            onClick={() => navigate(`/episode/${ep.id}`)}
-            className="group bg-white rounded-2xl p-2 shadow-lg hover:scale-[1.02] transition-transform duration-300 text-left w-full border-2 border-transparent hover:border-primary/20"
-          >
-            <div className="aspect-video rounded-xl overflow-hidden relative mb-3">
-              <img src={ep.thumb} alt={ep.title[language]} className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-primary/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <PlayCircle className="w-16 h-16 text-white" />
-              </div>
-            </div>
-            <div className="px-2 pb-2">
-              <div className="flex justify-between items-start mb-1">
-                <h4 className="font-headline font-bold text-xl text-primary">{ep.title[language]}</h4>
-                <div className="bg-accent/20 px-2 py-1 rounded-full text-xs font-bold text-accent-warm flex items-center gap-1">
-                  <Star className="w-3 h-3 fill-current" /> {isEpisodeWatched(ep.id) ? '1/1' : '0/1'}
-                </div>
-              </div>
-              <span className="text-sm font-bold text-secondary block">{ep.category[language]}</span>
-            </div>
-          </button>
-        ))}
-
-        {upcomingEpisodes.map((ep, i) => (
-          <div key={i} className="bg-white/50 rounded-2xl p-2 border-2 border-dashed border-primary/20 grayscale opacity-70 relative overflow-hidden">
-            <div className="absolute inset-0 bg-white/40 z-10 flex flex-col items-center justify-center backdrop-blur-[1px]">
-              <div className="bg-dark/80 text-white p-3 rounded-full mb-2">
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-              </div>
-              <span className="font-headline font-bold text-dark bg-white/80 px-4 py-1 rounded-full">{t('coming_soon')}</span>
-            </div>
-            <div className="aspect-video rounded-xl overflow-hidden relative bg-surface-warm mb-3" />
-            <div className="px-2 pb-2">
-              <h4 className="font-headline font-bold text-xl text-dark mb-1">{ep.title}</h4>
-              <span className="text-sm font-bold text-dark/60 block mb-1">{ep.category[language]}</span>
-              <p className="text-sm text-dark/50">{ep.teaser[language]}</p>
-            </div>
-          </div>
-        ))}
-      </main>
-      <BottomNav />
-    </motion.div>
+    <KidShell title="Amasomo" hint="Lessons · tap one to watch" onBack={() => navigate('/home-path')}>
+      <div className="px-4 py-5 flex flex-col gap-4">
+        {episodes.map((e) => {
+          const watched = isEpisodeWatched(e.id);
+          return (
+            <motion.button
+              key={e.id}
+              onClick={() => navigate(`/episode/${e.id}`)}
+              aria-label={e.title[language]}
+              whileTap={{ y: 6, boxShadow: '0 2px 0 #D9D2C4' }}
+              transition={{ type: 'spring', stiffness: 900, damping: 34, mass: 0.5 }}
+              className="bg-white rounded-[26px] flex items-center gap-4 p-3 text-left"
+              style={{ boxShadow: '0 8px 0 #D9D2C4', minHeight: 116 }}
+            >
+              <span
+                className="relative rounded-[20px] overflow-hidden flex-none grid place-items-center"
+                style={{ width: 112, height: 92, background: '#E7F7EE' }}
+              >
+                {e.thumb && <img src={e.thumb} alt="" className="absolute inset-0 w-full h-full object-cover" />}
+                <span
+                  className="relative rounded-full grid place-items-center"
+                  style={{ width: 46, height: 46, background: '#2FBF6B', boxShadow: '0 4px 0 #1E8C4C' }}
+                >
+                  <span
+                    style={{
+                      width: 0,
+                      height: 0,
+                      borderLeft: '16px solid #fff',
+                      borderTop: '10px solid transparent',
+                      borderBottom: '10px solid transparent',
+                      marginLeft: 4,
+                    }}
+                  />
+                </span>
+              </span>
+              <span className="flex-1 min-w-0">
+                <span className="block font-display font-extrabold text-ink leading-tight" style={{ fontSize: 19 }}>
+                  {e.title[language]}
+                </span>
+                <span
+                  className="inline-block font-body font-black text-[12px] mt-2 px-3 py-1 rounded-[12px]"
+                  style={{ background: '#E7F7EE', color: '#246428' }}
+                >
+                  {e.category[language]}
+                </span>
+              </span>
+              {watched && (
+                <span
+                  className="rounded-full grid place-items-center flex-none"
+                  style={{ width: 44, height: 44, background: '#2FBF6B' }}
+                  aria-label="Watched"
+                >
+                  <span
+                    className="block border-l-[5px] border-b-[5px] border-white rounded-[2px]"
+                    style={{ width: 20, height: 11, transform: 'rotate(-45deg) translateY(-2px)' }}
+                  />
+                </span>
+              )}
+            </motion.button>
+          );
+        })}
+      </div>
+    </KidShell>
   );
 }

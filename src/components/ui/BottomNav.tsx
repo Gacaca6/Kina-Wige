@@ -1,67 +1,121 @@
-import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, PlayCircle, Gamepad2, BookOpen, Users } from 'lucide-react';
-import { useI18n } from '../../i18n/context';
+// THE bottom navigation. There is exactly one of these in the app.
+//
+// Child lane only — an adult reaches their area through the blue lock in a
+// header, never through a tab in the child's world.
+//
+// Built for 3–6: the PICTURE carries the meaning and the word underneath is a
+// hint for the adult nearby. Targets are 84px, well over the 72px floor.
 
-function NavButton({ icon, label, isActive, onClick }: { icon: React.ReactNode; label: string; isActive: boolean; onClick: () => void }) {
+import { useNavigate, useLocation } from 'react-router-dom';
+import type { ReactNode } from 'react';
+
+function IconLearn({ on }: { on: boolean }) {
   return (
-    <button
-      onClick={onClick}
-      aria-label={label}
-      className={`flex flex-col items-center justify-center flex-1 min-w-0 px-0.5 py-1.5 transition-all duration-150 active:scale-90 ${
-        isActive ? 'text-primary' : 'text-dark/40 hover:text-dark/60'
-      }`}
-    >
-      {icon}
-      <span className="font-headline text-[9px] leading-none font-bold mt-1 w-full text-center truncate">{label}</span>
-      <div className={`w-1 h-1 rounded-full mt-0.5 ${isActive ? 'bg-primary' : 'bg-transparent'}`} />
-    </button>
+    <svg viewBox="0 0 48 48" className="w-full h-full" aria-hidden>
+      <rect x={7} y={10} width={34} height={28} rx={6} fill={on ? '#FFFDF7' : '#F3F1EA'} stroke="#10241B" strokeWidth={3.5} />
+      <path d="M24 12v26" stroke="#10241B" strokeWidth={3.5} />
+      <path d="M12 19h8M12 25h8M28 19h8M28 25h8" stroke={on ? '#2FBF6B' : '#A8B5AC'} strokeWidth={3.5} strokeLinecap="round" />
+    </svg>
+  );
+}
+function IconPlay({ on }: { on: boolean }) {
+  return (
+    <svg viewBox="0 0 48 48" className="w-full h-full" aria-hidden>
+      <rect x={6} y={14} width={36} height={22} rx={11} fill={on ? '#FFC02E' : '#EDE8DC'} stroke="#10241B" strokeWidth={3.5} />
+      <path d="M15 21v8M11 25h8" stroke="#10241B" strokeWidth={3.5} strokeLinecap="round" />
+      <circle cx={32} cy={23} r={3} fill="#10241B" />
+      <circle cx={37} cy={29} r={3} fill="#10241B" />
+    </svg>
+  );
+}
+function IconStories({ on }: { on: boolean }) {
+  return (
+    <svg viewBox="0 0 48 48" className="w-full h-full" aria-hidden>
+      <path d="M8 12c6-3 12-3 16 1v24c-4-4-10-4-16-1z" fill={on ? '#9B6BFF' : '#E6E1F2'} stroke="#10241B" strokeWidth={3.5} strokeLinejoin="round" />
+      <path d="M40 12c-6-3-12-3-16 1v24c4-4 10-4 16-1z" fill="#FFFDF7" stroke="#10241B" strokeWidth={3.5} strokeLinejoin="round" />
+    </svg>
+  );
+}
+function IconAsk({ on }: { on: boolean }) {
+  return (
+    <svg viewBox="0 0 48 48" className="w-full h-full" aria-hidden>
+      <rect x={6} y={9} width={36} height={26} rx={9} fill={on ? '#35A7E8' : '#E4EEF3'} stroke="#10241B" strokeWidth={3.5} />
+      <path d="M17 35l-2 7 9-7z" fill={on ? '#35A7E8' : '#E4EEF3'} stroke="#10241B" strokeWidth={3.5} strokeLinejoin="round" />
+      <path d="M20 19a4 4 0 1 1 5 4v2" stroke={on ? '#fff' : '#8A9A90'} strokeWidth={3.5} strokeLinecap="round" fill="none" />
+      <circle cx={25} cy={29} r={1.9} fill={on ? '#fff' : '#8A9A90'} />
+    </svg>
   );
 }
 
+interface Tab {
+  to: string;
+  label: string;
+  match: (p: string) => boolean;
+  icon: (on: boolean) => ReactNode;
+}
+
+const TABS: Tab[] = [
+  {
+    to: '/home-path',
+    label: 'WIGA',
+    match: (p) => p === '/home-path' || p.startsWith('/lesson'),
+    icon: (on) => <IconLearn on={on} />,
+  },
+  {
+    to: '/games',
+    label: 'KINA',
+    match: (p) => p.startsWith('/game'),
+    icon: (on) => <IconPlay on={on} />,
+  },
+  {
+    to: '/comics',
+    label: 'INKURU',
+    match: (p) => p.startsWith('/comic') || p.startsWith('/episode'),
+    icon: (on) => <IconStories on={on} />,
+  },
+  {
+    to: '/baza-keza',
+    label: 'BAZA',
+    match: (p) => p.startsWith('/baza'),
+    icon: (on) => <IconAsk on={on} />,
+  },
+];
+
 export default function BottomNav() {
-  const { t } = useI18n();
   const navigate = useNavigate();
-  const location = useLocation();
-  const path = location.pathname;
+  const { pathname } = useLocation();
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-dark/10 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+      className="flex items-stretch justify-around bg-white px-1 pt-1 flex-none"
+      style={{
+        borderTop: '3px solid #E4DDCE',
+        paddingBottom: 'max(8px, env(safe-area-inset-bottom))',
+      }}
     >
-      <div className="flex items-center h-14 max-w-lg mx-auto px-1">
-        <NavButton
-          icon={<Home className="w-5 h-5" />}
-          label={t('nav.home')}
-          isActive={path === '/home'}
-          onClick={() => navigate('/home')}
-        />
-        <NavButton
-          icon={<PlayCircle className="w-5 h-5" />}
-          label={t('nav.episodes')}
-          isActive={path === '/episodes' || path.startsWith('/episode')}
-          onClick={() => navigate('/episodes')}
-        />
-        <NavButton
-          icon={<Gamepad2 className="w-5 h-5" />}
-          label={t('nav.games')}
-          isActive={path === '/games' || path.startsWith('/game')}
-          onClick={() => navigate('/games')}
-        />
-        <NavButton
-          icon={<BookOpen className="w-5 h-5" />}
-          label={t('nav.comics')}
-          isActive={path === '/comics' || path.startsWith('/comic')}
-          onClick={() => navigate('/comics')}
-        />
-        <NavButton
-          icon={<Users className="w-5 h-5" />}
-          label={t('nav.parents')}
-          isActive={path === '/parents'}
-          onClick={() => navigate('/parents')}
-        />
-      </div>
+      {TABS.map((tab) => {
+        const on = tab.match(pathname);
+        return (
+          <button
+            key={tab.to}
+            onClick={() => navigate(tab.to)}
+            aria-label={tab.label}
+            aria-current={on ? 'page' : undefined}
+            className="flex flex-col items-center justify-center gap-1 flex-1"
+            style={{ minHeight: 84, minWidth: 72 }}
+          >
+            <span
+              className="grid place-items-center rounded-[18px]"
+              style={{ width: 58, height: 50, background: on ? '#E7F7EE' : 'transparent' }}
+            >
+              <span style={{ width: 38, height: 38, display: 'block' }}>{tab.icon(on)}</span>
+            </span>
+            <span className="font-body font-black text-[12px]" style={{ color: on ? '#17543C' : '#8A9A90' }}>
+              {tab.label}
+            </span>
+          </button>
+        );
+      })}
     </nav>
   );
 }
