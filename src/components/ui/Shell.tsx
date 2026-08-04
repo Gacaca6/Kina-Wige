@@ -10,6 +10,7 @@
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BottomNav from './BottomNav';
+import LanguageToggle from './LanguageToggle';
 
 /* ── Back button, sized for a small hand ── */
 function BackButton({ onClick, tone }: { onClick: () => void; tone: 'child' | 'parent' }) {
@@ -63,6 +64,8 @@ export interface KidShellProps {
   /** Hide the nav for full-screen experiences (a lesson, a story reader). */
   nav?: boolean;
   lock?: boolean;
+  /** Language switch in the header — on by default; settings are for adults. */
+  lang?: boolean;
   right?: ReactNode;
   children: ReactNode;
 }
@@ -73,6 +76,7 @@ export function KidShell({
   onBack,
   nav = true,
   lock = false,
+  lang = true,
   right,
   children,
 }: KidShellProps) {
@@ -93,6 +97,7 @@ export function KidShell({
             {hint && <p className="font-body font-extrabold text-[13px] mt-0.5" style={{ color: '#7FD3A5' }}>{hint}</p>}
           </div>
           {right}
+          {lang && <LanguageToggle />}
           {lock && <GrownUpLock />}
         </header>
       )}

@@ -44,7 +44,8 @@ function AnimatedRoutes() {
           <Route path="/comics" element={<ComicsScreen />} />
           <Route path="/comic/:id" element={<ComicReader />} />
           <Route path="/baza-keza" element={<BazaKezaScreen />} />
-          <Route path="/settings" element={<SettingsScreen />} />
+          {/* Settings belong to grown-ups; the child changes language in the header. */}
+          <Route path="/settings" element={<ParentGate><SettingsScreen /></ParentGate>} />
           <Route path="/home-path" element={<HomePathScreen />} />
           <Route path="/lesson/:id" element={<LessonScreen />} />
           <Route path="/lesson" element={<LessonScreen />} />

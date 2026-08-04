@@ -19,6 +19,7 @@ import { motion } from 'motion/react';
 import Kina from '../components/characters/Kina';
 import { useStars } from '../hooks/useStars';
 import BottomNav from '../components/ui/BottomNav';
+import LanguageToggle from '../components/ui/LanguageToggle';
 
 interface PathNode {
   id: string;
@@ -89,19 +90,7 @@ export default function HomePathScreen() {
             </span>
             <span className="font-body font-black text-2xl tabular-nums">{stars}</span>
           </div>
-          <button
-            onClick={() => navigate('/settings')}
-            className="ml-auto flex items-center gap-2 bg-forest-deep rounded-[16px] px-4"
-            style={{ minHeight: 72, minWidth: 84 }}
-            aria-label="Language and settings"
-          >
-            <span className="w-6 h-6 rounded-md overflow-hidden flex flex-col">
-              <span className="flex-1 bg-sky" />
-              <span className="flex-1 bg-sun" />
-              <span className="flex-1 bg-grass" />
-            </span>
-            <span className="font-body font-black text-base">RW</span>
-          </button>
+          <LanguageToggle />
 
           {/* The only way into the grown-up lane from the child's world.
               Blue on purpose — blue always means "an adult should hold this". */}

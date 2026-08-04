@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowLeft, ChevronLeft, ChevronRight, Volume2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Volume2 } from 'lucide-react';
 import { useNavigate, useParams, Navigate } from 'react-router-dom';
 import { useI18n } from '../i18n/context';
 import { useSound, useHaptic } from '../hooks/useSound';
 import { useStars } from '../hooks/useStars';
 import { useProgress } from '../hooks/useProgress';
 import { getComic } from '../data/comics';
+import { KidShell } from '../components/ui/Shell';
+import Kina from '../components/characters/Kina';
+
+const SPRING = { type: 'spring' as const, stiffness: 900, damping: 34, mass: 0.5 };
 
 export default function ComicReader() {
   const navigate = useNavigate();
@@ -77,122 +81,150 @@ export default function ComicReader() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="min-h-screen flex flex-col bg-gradient-to-b from-[#E8F5E9] to-[#F0FFF4]"
-    >
-      {/* Header */}
-      <header className="flex items-center gap-4 px-4 py-3 sticky top-0 z-40">
-        <button
-          onClick={() => navigate('/comics')}
-          aria-label="Back to books"
-          className="w-11 h-11 flex items-center justify-center rounded-full bg-white/80 text-forest shadow-sm hover:scale-105 transition-transform active:scale-95"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <h1 className="font-display font-bold text-forest text-lg leading-tight flex-1 truncate">
-          {comic.title[language]}
-        </h1>
-      </header>
+    <KidShell title={comic.title[language]} onBack={() => navigate('/comics')} nav={false} lang={false}>
+      <div className="flex flex-col px-4 pt-4" style={{ minHeight: 'calc(100dvh - 120px)' }}>
+        {/* Progress — a page count a pre-reader can see at a glance. */}
+        <div className="flex justify-center gap-1.5 pb-4 flex-none" role="progressbar">
+          {comic.panels.map((_, i) => (
+            <motion.span
+              key={i}
+              className="rounded-full"
+              animate={{ width: i === index ? 26 : 10 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 26 }}
+              style={{ height: 10, background: i <= index ? '#2FBF6B' : '#E4DDCE' }}
+            />
+          ))}
+        </div>
 
-      {/* Progress dots */}
-      <div className="flex justify-center gap-1.5 pb-3">
-        {comic.panels.map((_, i) => (
-          <div
-            key={i}
-            className={`h-2 rounded-full transition-all ${
-              i === index ? 'w-6 bg-forest' : i < index ? 'w-2 bg-grass' : 'w-2 bg-mint'
-            }`}
-          />
-        ))}
-      </div>
-
-      {/* Panel */}
-      <main className="flex-1 flex flex-col items-center justify-center px-5 pb-4">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -40 }}
-            transition={{ type: 'spring', damping: 22 }}
-            className="w-full max-w-md flex flex-col items-center"
-          >
-            <div className="w-full aspect-square bg-white rounded-3xl shadow-xl overflow-hidden border-4 border-white flex items-center justify-center">
-              <img src={panel.image} alt="" className="w-full h-full object-contain p-4" />
-            </div>
-
-            <div className="mt-5 w-full bg-white rounded-2xl shadow-md px-5 py-4 relative">
-              <p className="text-lg font-bold text-ink leading-relaxed text-center">{panel.text[language]}</p>
-              <button
-                onClick={() => speak(panel.text[language])}
-                className="mt-3 mx-auto text-sm text-forest/60 hover:text-forest flex items-center gap-1.5 transition-colors"
+        <div className="flex-1 flex flex-col justify-center">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -40 }}
+              transition={{ type: 'spring', stiffness: 320, damping: 26 }}
+              className="flex flex-col"
+            >
+              <div
+                className="w-full bg-white overflow-hidden grid place-items-center"
+                style={{ aspectRatio: '1', borderRadius: 26, boxShadow: '0 8px 0 #DDD6C8' }}
               >
-                <Volume2 className="w-4 h-4" /> {t('comic.listen')}
-              </button>
-            </div>
-          </motion.div>
-        </AnimatePresence>
-      </main>
+                <img src={panel.image} alt="" className="w-full h-full object-contain p-3" />
+              </div>
 
-      {/* Nav controls */}
-      <div className="sticky bottom-0 px-5 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))] flex items-center justify-between gap-4">
-        <button
-          onClick={goPrev}
-          disabled={index === 0}
-          aria-label={t('comic.prev')}
-          className="w-14 h-14 rounded-full bg-white text-forest shadow-md flex items-center justify-center disabled:opacity-30 active:scale-90 transition-transform"
-        >
-          <ChevronLeft className="w-7 h-7" />
-        </button>
+              <div
+                className="mt-4 bg-white px-5 py-4"
+                style={{ borderRadius: 26, boxShadow: '0 6px 0 #DDD6C8' }}
+              >
+                <p
+                  className="font-display font-extrabold text-ink text-center"
+                  style={{ fontSize: 20, lineHeight: 1.35 }}
+                >
+                  {panel.text[language]}
+                </p>
+                <button
+                  onClick={() => speak(panel.text[language])}
+                  aria-label={t('comic.listen')}
+                  className="mt-3 mx-auto flex items-center justify-center gap-2 rounded-[16px] px-4"
+                  style={{ minHeight: 48, background: '#FFC02E', boxShadow: '0 4px 0 #D89A00' }}
+                >
+                  <Volume2 className="w-5 h-5" style={{ color: '#10241B' }} />
+                  <span className="font-body font-black text-ink" style={{ fontSize: 14 }}>
+                    {t('comic.listen')}
+                  </span>
+                </button>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
-        <button
-          onClick={goNext}
-          className="flex-1 h-14 rounded-full bg-forest text-white font-display font-bold text-lg shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform"
-        >
-          {isLast ? t('comic.finish') : t('comic.next')}
-          {!isLast && <ChevronRight className="w-6 h-6" />}
-        </button>
+        {/* Turn the page */}
+        <div className="flex items-center gap-3 py-4 pb-safe flex-none">
+          <motion.button
+            onClick={goPrev}
+            disabled={index === 0}
+            aria-label={t('comic.prev')}
+            whileTap={index === 0 ? undefined : { y: 5, boxShadow: '0 2px 0 #D9D2C4' }}
+            transition={SPRING}
+            className="rounded-[22px] bg-white grid place-items-center flex-none"
+            style={{ width: 76, height: 76, boxShadow: '0 6px 0 #D9D2C4', opacity: index === 0 ? 0.35 : 1 }}
+          >
+            <ChevronLeft className="w-8 h-8" style={{ color: '#17543C' }} />
+          </motion.button>
+
+          <motion.button
+            onClick={goNext}
+            whileTap={{ y: 6, boxShadow: '0 2px 0 #1E8C4C' }}
+            transition={SPRING}
+            className="flex-1 rounded-[22px] flex items-center justify-center gap-2"
+            style={{ minHeight: 76, background: '#2FBF6B', boxShadow: '0 8px 0 #1E8C4C' }}
+          >
+            <span className="font-display font-extrabold text-white" style={{ fontSize: 22 }}>
+              {isLast ? t('comic.finish') : t('comic.next')}
+            </span>
+            {!isLast && <ChevronRight className="w-7 h-7 text-white" />}
+          </motion.button>
+        </div>
       </div>
 
-      {/* Completion overlay */}
+      {/* Finished */}
       <AnimatePresence>
         {finished && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-gradient-to-b from-secondary to-accent-warm flex flex-col items-center justify-center p-6 text-center"
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center p-6 text-center"
+            style={{ background: '#17543C' }}
           >
             <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', bounce: 0.5 }}
-              className="text-8xl mb-6"
+              initial={{ scale: 0.3, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 14, mass: 0.9 }}
             >
-              ⭐
+              <Kina mood="cheer" style={{ width: 150, height: 136 }} />
             </motion.div>
-            <h2 className="font-display text-4xl text-white font-bold mb-2 drop-shadow-lg">{t('comic.done')}</h2>
-            <p className="font-body text-xl text-white/90 font-bold mb-10">+1 ⭐</p>
-            <div className="flex flex-col gap-4 w-full max-w-xs">
-              <button
+            <h2
+              className="font-display font-extrabold text-white mt-5"
+              style={{ fontSize: 40, lineHeight: 1.05 }}
+            >
+              {t('comic.done')}
+            </h2>
+            <div
+              className="mt-5 flex items-center gap-3 rounded-[20px] px-6"
+              style={{ minHeight: 72, background: '#0E3626' }}
+            >
+              <span style={{ fontSize: 28 }}>⭐</span>
+              <span className="font-body font-black text-white" style={{ fontSize: 26 }}>+1</span>
+            </div>
+            <div className="flex flex-col gap-3 w-full max-w-xs mt-8">
+              <motion.button
                 onClick={restart}
-                className="bg-forest text-white font-display font-bold text-xl px-8 py-4 rounded-full shadow-lg hover:scale-105 active:scale-95 transition-transform"
+                whileTap={{ y: 6, boxShadow: '0 2px 0 #1E8C4C' }}
+                transition={SPRING}
+                className="rounded-[22px]"
+                style={{ minHeight: 76, background: '#2FBF6B', boxShadow: '0 8px 0 #1E8C4C' }}
               >
-                {t('comic.readAgain')}
-              </button>
-              <button
+                <span className="font-display font-extrabold text-white" style={{ fontSize: 21 }}>
+                  {t('comic.readAgain')}
+                </span>
+              </motion.button>
+              <motion.button
                 onClick={() => navigate('/comics')}
-                className="bg-transparent border-2 border-white text-white font-display font-bold text-xl px-8 py-4 rounded-full hover:bg-white/10 active:scale-95 transition-all"
+                whileTap={{ y: 5, boxShadow: '0 2px 0 #0B2A1D' }}
+                transition={SPRING}
+                className="rounded-[22px]"
+                style={{ minHeight: 68, background: '#0E3626', boxShadow: '0 6px 0 #0B2A1D' }}
               >
-                {t('comics.title')}
-              </button>
+                <span className="font-body font-black text-mint" style={{ fontSize: 18 }}>
+                  {t('comics.title')}
+                </span>
+              </motion.button>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </KidShell>
   );
 }
