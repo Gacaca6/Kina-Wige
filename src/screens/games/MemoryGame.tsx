@@ -1,11 +1,11 @@
 import React, { useState, useCallback } from 'react';
-import { motion } from 'motion/react';
+import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../../i18n/context';
 import { useSound, useHaptic } from '../../hooks/useSound';
 import { useStars } from '../../hooks/useStars';
 import { useProgress } from '../../hooks/useProgress';
 import { games } from '../../data/games';
-import GameHeader from '../../components/game/GameHeader';
+import { KidShell, Card } from '../../components/ui/Shell';
 import GameCelebration from '../../components/game/GameCelebration';
 
 const PAIR_EMOJIS = ['🍌', '🥑', '🐐', '🌻'];
@@ -27,10 +27,11 @@ function buildDeck(): Card[] {
 }
 
 export default function MemoryGame() {
+  const navigate = useNavigate();
   const { t, language } = useI18n();
   const { play } = useSound();
   const haptic = useHaptic();
-  const { addStar } = useStars();
+  const { stars, addStar } = useStars();
   const { markGameCompleted } = useProgress();
 
   const [cards, setCards] = useState<Card[]>(buildDeck);
@@ -102,16 +103,14 @@ export default function MemoryGame() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 50 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -50 }}
-      className="min-h-screen flex flex-col bg-surface"
+    <KidShell
+      title={info ? info.title[language] : 'Memory'}
+      onBack={() => navigate('/games')}
+      nav={false}
+      lang={false}
     >
-      <GameHeader title={info ? info.title[language] : 'Memory'} />
-
-      <main className="flex-1 flex flex-col items-center px-6 pt-4 pb-10">
-        <p className="text-center text-primary/70 font-bold mb-6 max-w-xs">
+      <div className="flex flex-col items-center px-6 pt-4 pb-10">
+        <p className="text-center font-body font-bold mb-6 max-w-xs" style={{ color: '#3D5449' }}>
           {t('memory.instructions')}
         </p>
 
@@ -121,25 +120,26 @@ export default function MemoryGame() {
               key={card.key}
               onClick={() => handleTap(card.key)}
               aria-label={card.state === 'down' ? 'Hidden card' : card.emoji}
-              className={`aspect-square rounded-2xl flex items-center justify-center text-4xl shadow-md transition-all duration-300 active:scale-90 ${
+              className="aspect-square rounded-[18px] grid place-items-center text-4xl chunk active:translate-y-1"
+              style={
                 card.state === 'down'
-                  ? 'bg-primary text-white hover:bg-primary-light'
+                  ? { background: '#9B6BFF', boxShadow: '0 6px 0 #6F43C9' }
                   : card.state === 'matched'
-                    ? 'bg-secondary/30 border-4 border-secondary scale-95'
-                    : 'bg-white border-4 border-primary/20'
-              }`}
+                    ? { background: '#E7F7EE', boxShadow: 'inset 0 0 0 4px #2FBF6B' }
+                    : { background: '#FFFFFF', boxShadow: '0 6px 0 #DDD6C8' }
+              }
             >
               {card.state === 'down' ? <span className="text-3xl">❓</span> : card.emoji}
             </button>
           ))}
         </div>
 
-        <div className="mt-8 bg-white px-6 py-3 rounded-full shadow-sm">
-          <span className="font-headline font-bold text-primary">{t('game.score')}: {moves}</span>
-        </div>
-      </main>
+        <Card className="mt-8 !py-3 !px-6">
+          <span className="font-display font-bold" style={{ color: '#17543C' }}>{t('game.score')}: {moves}</span>
+        </Card>
+      </div>
 
       {won && <GameCelebration onPlayAgain={restart} scoreLabel={String(moves)} />}
-    </motion.div>
+    </KidShell>
   );
 }

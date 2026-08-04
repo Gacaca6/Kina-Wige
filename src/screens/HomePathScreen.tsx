@@ -17,7 +17,6 @@ import type { PointerEvent as ReactPointerEvent, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import Kina from '../components/characters/Kina';
-import { useStars } from '../hooks/useStars';
 import BottomNav from '../components/ui/BottomNav';
 import LanguageToggle from '../components/ui/LanguageToggle';
 
@@ -44,24 +43,10 @@ const TRAIL_DONE = 'M120 20 C 250 60, 60 120, 190 170';
 
 /* ── Pictorial nav icons. A 4-year-old reads the picture, not the label. ── */
 
-function IconStars() {
-  return (
-    <svg viewBox="0 0 48 48" className="w-full h-full" aria-hidden>
-      <path
-        d="M24 6l5.5 11.6 12.5 1.6-9.2 8.7 2.4 12.5L24 34.2 12.8 40.4l2.4-12.5L6 19.2l12.5-1.6z"
-        fill="#FFC02E"
-        stroke="#10241B"
-        strokeWidth={3.5}
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
 
 
 export default function HomePathScreen() {
   const navigate = useNavigate();
-  const { stars } = useStars();
   const [look, setLook] = useState<{ x: number; y: number } | null>(null);
 
   function track(e: ReactPointerEvent<HTMLDivElement>) {
@@ -80,16 +65,7 @@ export default function HomePathScreen() {
     >
       {/* ── Header. Stars only — no streak, no gems, nothing that can go down. ── */}
       <header className="bg-forest text-white px-5 pt-safe pb-5">
-        <div className="flex items-center gap-3">
-          <div
-            className="flex items-center gap-2.5 bg-forest-deep rounded-[16px] px-4"
-            style={{ minHeight: 72 }}
-          >
-            <span style={{ width: 28, height: 28, display: 'block' }}>
-              <IconStars />
-            </span>
-            <span className="font-body font-black text-2xl tabular-nums">{stars}</span>
-          </div>
+        <div className="flex items-center justify-end gap-3">
           <LanguageToggle />
 
           {/* The only way into the grown-up lane from the child's world.

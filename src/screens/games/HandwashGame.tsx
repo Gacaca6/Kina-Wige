@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Star, ArrowLeft, Bug, Droplets, Sparkles, Wind, Shirt } from 'lucide-react';
+import { Bug, Droplets, Sparkles, Wind, Shirt } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../../i18n/context';
 import { useSound, useHaptic } from '../../hooks/useSound';
 import { useStars } from '../../hooks/useStars';
 import { useProgress } from '../../hooks/useProgress';
+import { games } from '../../data/games';
 import { images } from '../../assets/images';
+import { KidShell, Card } from '../../components/ui/Shell';
+
+const SPRING = { type: 'spring' as const, stiffness: 900, damping: 34, mass: 0.5 };
 
 const INITIAL_GERMS = [
   { id: 1, color: 'bg-[#4CAF50]', top: '10%', left: '25%', right: undefined, bottom: undefined, delay: '0.1s', size: 'w-16 h-16', sound: 'germ_pop_1' as const, transform: undefined },
@@ -18,7 +22,8 @@ const INITIAL_GERMS = [
 
 export default function HandwashGame() {
   const navigate = useNavigate();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
+  const info = games.find(g => g.id === 'karaba');
   const [gameState, setGameState] = useState<'intro' | 'water' | 'soap' | 'scrub' | 'rinse' | 'dry' | 'celebration'>('intro');
   const [germs, setGerms] = useState([...INITIAL_GERMS]);
   const { play } = useSound();
@@ -82,52 +87,84 @@ export default function HandwashGame() {
 
   if (gameState === 'intro') {
     return (
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-h-screen bg-gradient-to-b from-primary to-secondary flex flex-col items-center justify-center p-6 text-center">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="flex flex-col items-center justify-center p-6 text-center"
+        style={{ minHeight: '100dvh', background: '#17543C' }}
+      >
         <div className="relative w-64 h-64 mb-8">
-          <div className="absolute inset-0 bg-white/20 rounded-full blur-2xl" />
           <img src={images.hirwaFull} alt="Hirwa" className="w-full h-full object-contain relative z-10" />
-          <div className="absolute -top-8 -right-8 bg-white text-primary font-bold px-4 py-2 rounded-2xl rounded-bl-none shadow-lg z-20">
+          <div
+            className="absolute -top-6 -right-4 bg-white font-body font-black px-4 py-2 rounded-[16px] rounded-bl-none z-20"
+            style={{ color: '#17543C', fontSize: 14, boxShadow: '0 4px 0 #DDD6C8' }}
+          >
             Amaboko yanjye asa n'ayera!
           </div>
         </div>
-        <h1 className="font-headline text-3xl text-white font-bold mb-8 drop-shadow-md">
+        <h1 className="font-display font-extrabold text-white mb-8" style={{ fontSize: 30 }}>
           {t('game.start')}
         </h1>
-        <button onClick={handleStart} className="bg-white text-primary font-headline font-bold text-2xl px-12 py-4 rounded-full shadow-xl hover:scale-105 active:scale-95 transition-transform animate-pulse">
-          Tangira!
-        </button>
+        <motion.button
+          onClick={handleStart}
+          whileTap={{ y: 6, boxShadow: '0 2px 0 #D9D2C4' }}
+          transition={SPRING}
+          className="chunk rounded-[22px] px-14"
+          style={{ minHeight: 76, background: '#FFFFFF', boxShadow: '0 8px 0 #D9D2C4' }}
+        >
+          <span className="font-display font-extrabold" style={{ color: '#17543C', fontSize: 24 }}>Tangira!</span>
+        </motion.button>
       </motion.div>
     );
   }
 
   if (gameState === 'celebration') {
     return (
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-h-screen bg-gradient-to-b from-secondary to-accent-warm flex flex-col items-center justify-center p-6 text-center overflow-hidden">
-        {/* Confetti */}
-        <div className="absolute inset-0 pointer-events-none">
-          {[...Array(20)].map((_, i) => (
-            <div key={i} className="absolute w-3 h-6 bg-white rounded-sm animate-bounce" style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%`, animationDelay: `${Math.random()}s`, backgroundColor: ['#FFD700', '#E91E63', '#00BCD4', '#4CAF50'][i % 4] }} />
-          ))}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="flex flex-col items-center justify-center p-6 text-center"
+        style={{ minHeight: '100dvh', background: '#17543C' }}
+      >
+        <motion.div
+          initial={{ scale: 0.3, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 14, mass: 0.9 }}
+          className="w-56 h-56 mb-6"
+        >
+          <img src={images.hirwaFull} alt="Hirwa Clean" className="w-full h-full object-contain" />
+        </motion.div>
+
+        <h1 className="font-display font-extrabold text-white mb-2" style={{ fontSize: 34 }}>⭐ Wabikoze neza!</h1>
+        <p className="font-body font-bold text-white/85 mb-6" style={{ fontSize: 17 }}>{t('game.done')}</p>
+
+        <div className="flex items-center gap-3 rounded-[20px] px-6 mb-8" style={{ minHeight: 60, background: '#0E3626' }}>
+          <span style={{ fontSize: 24 }} aria-hidden>⭐</span>
+          <span className="font-body font-black text-white" style={{ fontSize: 22 }}>+1</span>
         </div>
 
-        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', bounce: 0.5 }} className="relative w-64 h-64 mb-8 z-10">
-          <div className="absolute inset-0 bg-white/40 rounded-full blur-3xl" />
-          <img src={images.hirwaFull} alt="Hirwa Clean" className="w-full h-full object-contain relative z-10" />
-        </motion.div>
-
-        <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5 }} className="z-10">
-          <h1 className="font-headline text-4xl text-white font-bold mb-2 drop-shadow-lg">{'⭐'} Wabikoze neza!</h1>
-          <p className="font-body text-xl text-white/90 font-bold mb-12">{t('game.done')}</p>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }} className="flex flex-col gap-4 w-full max-w-xs z-10">
-          <button onClick={handlePlayAgain} className="bg-primary text-white font-headline font-bold text-xl px-8 py-4 rounded-full shadow-lg hover:scale-105 active:scale-95 transition-transform">
-            {t('game.playAgain')}
-          </button>
-          <button onClick={() => navigate('/games')} className="bg-transparent border-2 border-white text-white font-headline font-bold text-xl px-8 py-4 rounded-full hover:bg-white/10 active:scale-95 transition-all">
-            {t('nav.games')}
-          </button>
-        </motion.div>
+        <div className="flex flex-col gap-3 w-full max-w-xs">
+          <motion.button
+            onClick={handlePlayAgain}
+            whileTap={{ y: 6, boxShadow: '0 2px 0 #1E8C4C' }}
+            transition={SPRING}
+            className="chunk rounded-[22px]"
+            style={{ minHeight: 76, background: '#2FBF6B', boxShadow: '0 8px 0 #1E8C4C' }}
+          >
+            <span className="font-display font-extrabold text-white" style={{ fontSize: 21 }}>{t('game.playAgain')}</span>
+          </motion.button>
+          <motion.button
+            onClick={() => navigate('/games')}
+            whileTap={{ y: 5, boxShadow: '0 2px 0 #0B2A1D' }}
+            transition={SPRING}
+            className="chunk rounded-[22px]"
+            style={{ minHeight: 68, background: '#0E3626', boxShadow: '0 6px 0 #0B2A1D' }}
+          >
+            <span className="font-body font-black text-mint" style={{ fontSize: 18 }}>{t('nav.games')}</span>
+          </motion.button>
+        </div>
       </motion.div>
     );
   }
@@ -136,19 +173,14 @@ export default function HandwashGame() {
   const currentStepIndex = steps.indexOf(gameState);
 
   return (
-    <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} className="min-h-screen flex flex-col items-center justify-between overflow-hidden pb-8 bg-surface">
-      <header className="flex justify-between items-center px-6 py-4 w-full sticky top-0 z-50">
-        <button onClick={() => navigate('/games')} aria-label="Back to games" className="w-12 h-12 flex items-center justify-center rounded-full bg-surface-container-low text-primary hover:scale-105 transition-transform active:scale-95 duration-150">
-          <ArrowLeft className="w-6 h-6" />
-        </button>
-        <div className="flex items-center gap-2 bg-accent/20 px-4 py-2 rounded-full border border-accent/20">
-          <Star className="w-5 h-5 text-accent-warm fill-current" />
-          <span className="font-display font-bold text-dark text-lg">{stars}</span>
-        </div>
-      </header>
-
-      <main className="relative w-full flex-grow flex flex-col items-center justify-center">
-        <div className="w-full max-w-md px-6 mt-2">
+    <KidShell
+      title={info ? info.title[language] : 'Karaba!'}
+      onBack={() => navigate('/games')}
+      nav={false}
+      lang={false}
+    >
+      <main className="relative w-full flex-grow flex flex-col items-center justify-center pb-8">
+        <div className="w-full max-w-md px-6 mt-4">
           <div className="flex justify-between items-center relative z-10 px-2">
             {[
               { id: 'water', icon: <Droplets className="w-6 h-6 fill-current" /> },
@@ -160,7 +192,17 @@ export default function HandwashGame() {
               const isPast = idx < currentStepIndex;
               const isCurrent = idx === currentStepIndex;
               return (
-                <div key={step.id} className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${isCurrent ? 'bg-primary text-white scale-125 shadow-xl ring-4 ring-primary-light' : isPast ? 'bg-secondary text-white' : 'bg-surface-container-highest text-primary/40'}`}>
+                <div
+                  key={step.id}
+                  className="w-12 h-12 rounded-full grid place-items-center transition-transform duration-300"
+                  style={
+                    isCurrent
+                      ? { background: '#2FBF6B', color: '#FFFFFF', transform: 'scale(1.2)', boxShadow: '0 0 0 4px #C3DFC7' }
+                      : isPast
+                        ? { background: '#17543C', color: '#FFFFFF' }
+                        : { background: '#E7F7EE', color: '#97C79D' }
+                  }
+                >
                   {step.icon}
                 </div>
               );
@@ -169,11 +211,7 @@ export default function HandwashGame() {
         </div>
 
         <div className="relative w-full max-w-lg aspect-square flex items-center justify-center mt-12">
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className={`w-80 h-80 rounded-full blur-3xl transition-colors duration-1000 ${gameState === 'water' ? 'bg-blue-400/30' : gameState === 'soap' ? 'bg-pink-400/20' : 'bg-primary-light/30'}`} />
-          </div>
-
-          <div className="relative w-72 h-72 lg:w-96 lg:h-96 bg-white rounded-full shadow-2xl flex items-center justify-center overflow-visible border-8 border-surface-warm">
+          <div className="relative w-72 h-72 lg:w-96 lg:h-96 bg-white rounded-full flex items-center justify-center overflow-visible" style={{ boxShadow: '0 10px 0 #DDD6C8', border: '8px solid #E7F7EE' }}>
             <img src={images.hands} alt="Hands" className={`w-4/5 h-4/5 object-contain z-10 transition-all duration-500 ${gameState === 'water' ? 'brightness-90 sepia-[0.2] hue-rotate-180' : gameState === 'dry' ? 'brightness-110 contrast-125' : ''}`} />
 
             {gameState === 'water' && (
@@ -226,25 +264,25 @@ export default function HandwashGame() {
         </div>
 
         <div className="w-full max-w-2xl px-6 flex flex-col items-center text-center mt-12">
-          <div className="bg-white p-6 rounded-2xl w-full shadow-lg relative">
+          <Card className="w-full">
             {gameState === 'water' && (
-              <h2 className="font-display text-3xl text-primary font-bold leading-tight">{t('game.water')}</h2>
+              <h2 className="font-display font-extrabold leading-tight" style={{ fontSize: 26, color: '#17543C' }}>{t('game.water')}</h2>
             )}
             {gameState === 'soap' && (
-              <h2 className="font-display text-3xl text-primary font-bold leading-tight">{t('game.soap')}</h2>
+              <h2 className="font-display font-extrabold leading-tight" style={{ fontSize: 26, color: '#17543C' }}>{t('game.soap')}</h2>
             )}
             {gameState === 'scrub' && (
-              <h2 className="font-display text-3xl text-primary font-bold leading-tight">{t('game.scrub')}</h2>
+              <h2 className="font-display font-extrabold leading-tight" style={{ fontSize: 26, color: '#17543C' }}>{t('game.scrub')}</h2>
             )}
             {gameState === 'rinse' && (
-              <h2 className="font-display text-3xl text-primary font-bold leading-tight">{t('game.rinse')}</h2>
+              <h2 className="font-display font-extrabold leading-tight" style={{ fontSize: 26, color: '#17543C' }}>{t('game.rinse')}</h2>
             )}
             {gameState === 'dry' && (
-              <h2 className="font-display text-3xl text-primary font-bold leading-tight">{t('game.dry')}</h2>
+              <h2 className="font-display font-extrabold leading-tight" style={{ fontSize: 26, color: '#17543C' }}>{t('game.dry')}</h2>
             )}
-          </div>
+          </Card>
         </div>
       </main>
-    </motion.div>
+    </KidShell>
   );
 }

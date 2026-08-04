@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
+import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../../i18n/context';
 import { useSound, useHaptic } from '../../hooks/useSound';
 import { useStars } from '../../hooks/useStars';
 import { useProgress } from '../../hooks/useProgress';
 import { games } from '../../data/games';
-import GameHeader from '../../components/game/GameHeader';
+import { KidShell, Card } from '../../components/ui/Shell';
 import GameCelebration from '../../components/game/GameCelebration';
 
 interface PatternRound {
@@ -24,10 +25,11 @@ const ROUNDS: PatternRound[] = [
 ];
 
 export default function PatternGame() {
+  const navigate = useNavigate();
   const { t, language } = useI18n();
   const { play } = useSound();
   const haptic = useHaptic();
-  const { addStar } = useStars();
+  const { stars, addStar } = useStars();
   const { markGameCompleted } = useProgress();
 
   const [roundIndex, setRoundIndex] = useState(0);
@@ -76,31 +78,30 @@ export default function PatternGame() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 50 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -50 }}
-      className="min-h-screen flex flex-col bg-surface"
+    <KidShell
+      title={info ? info.title[language] : 'Patterns'}
+      onBack={() => navigate('/games')}
+      nav={false}
+      lang={false}
     >
-      <GameHeader title={info ? info.title[language] : 'Patterns'} />
-
-      <main className="flex-1 flex flex-col items-center px-6 pt-2 pb-10">
+      <div className="flex flex-col items-center px-6 pt-2 pb-10">
         <div className="flex gap-2 mb-6">
           {ROUNDS.map((_, i) => (
-            <div
+            <motion.span
               key={i}
-              className={`w-3 h-3 rounded-full transition-colors ${
-                i < roundIndex ? 'bg-secondary' : i === roundIndex ? 'bg-primary scale-125' : 'bg-surface-container-highest'
-              }`}
+              className="rounded-full"
+              animate={{ width: i === roundIndex ? 26 : 12, height: 12 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 26 }}
+              style={{ background: i <= roundIndex ? '#FF6B4A' : '#E4DDCE' }}
             />
           ))}
         </div>
 
-        <h2 className="font-headline text-2xl text-primary font-bold mb-6 text-center max-w-xs">
+        <h2 className="font-display text-2xl font-extrabold mb-6 text-center max-w-xs" style={{ color: '#17543C' }}>
           {t('pattern.instructions')}
         </h2>
 
-        <div className="bg-white rounded-3xl shadow-lg px-6 py-8 w-full max-w-md flex flex-wrap items-center justify-center gap-2 mb-8">
+        <Card className="w-full max-w-md flex flex-wrap items-center justify-center gap-2 mb-8 !py-8">
           {round.sequence.map((item, i) => (
             <motion.span
               key={`${roundIndex}-${i}`}
@@ -117,13 +118,12 @@ export default function PatternGame() {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: round.sequence.length * 0.12, type: 'spring' }}
-            className={`text-5xl w-16 h-16 flex items-center justify-center rounded-2xl border-4 border-dashed ${
-              correctPicked ? 'border-secondary' : 'border-primary/40'
-            }`}
+            className="text-5xl w-16 h-16 grid place-items-center rounded-[18px]"
+            style={{ border: `4px dashed ${correctPicked ? '#2FBF6B' : '#C3DFC7'}` }}
           >
             {correctPicked ? round.answer : '❓'}
           </motion.span>
-        </div>
+        </Card>
 
         <div className="flex gap-4">
           {round.options.map(opt => (
@@ -131,21 +131,21 @@ export default function PatternGame() {
               key={opt}
               onClick={() => handlePick(opt)}
               animate={wrongPick === opt ? { x: [0, -8, 8, -8, 0] } : {}}
-              className={`w-20 h-20 rounded-2xl text-4xl shadow-md flex items-center justify-center transition-colors active:scale-90 ${
+              whileTap={{ y: 5 }}
+              className="chunk w-20 h-20 rounded-[20px] text-4xl grid place-items-center"
+              style={
                 correctPicked && opt === round.answer
-                  ? 'bg-secondary/30 border-4 border-secondary'
-                  : wrongPick === opt
-                    ? 'bg-danger/20 border-4 border-danger'
-                    : 'bg-white border-4 border-primary/20 hover:border-primary/50'
-              }`}
+                  ? { background: '#2FBF6B', boxShadow: '0 6px 0 #1E8C4C' }
+                  : { background: '#FFFFFF', boxShadow: '0 6px 0 #DDD6C8' }
+              }
             >
               {opt}
             </motion.button>
           ))}
         </div>
-      </main>
+      </div>
 
       {won && <GameCelebration onPlayAgain={restart} scoreLabel={`${ROUNDS.length - Math.min(mistakes, ROUNDS.length)}/${ROUNDS.length}`} />}
-    </motion.div>
+    </KidShell>
   );
 }

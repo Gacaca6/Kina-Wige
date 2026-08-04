@@ -135,7 +135,7 @@ body {
    indicator, so the screen's own colour reaches every edge. These keep the
    CONTENT clear of the notch without breaking that full-bleed fill. */
 @layer utilities {
-  .pt-safe { padding-top: max(16px, env(safe-area-inset-top)); }
-  .pb-safe { padding-bottom: max(8px, env(safe-area-inset-bottom)); }
+  .pt-safe { padding-top: calc(env(safe-area-inset-top, 0px) + 18px); }
+  .pb-safe { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); }
   .min-h-screen-safe { min-height: 100dvh; }
 }

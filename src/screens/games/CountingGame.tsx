@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
+import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../../i18n/context';
 import { useSound, useHaptic } from '../../hooks/useSound';
 import { useStars } from '../../hooks/useStars';
 import { useProgress } from '../../hooks/useProgress';
 import { games } from '../../data/games';
-import GameHeader from '../../components/game/GameHeader';
+import { KidShell, Card } from '../../components/ui/Shell';
 import GameCelebration from '../../components/game/GameCelebration';
 
 const TOTAL_ROUNDS = 5;
@@ -39,10 +40,11 @@ function makeRound(roundIndex: number): Round {
 }
 
 export default function CountingGame() {
+  const navigate = useNavigate();
   const { t, language } = useI18n();
   const { play } = useSound();
   const haptic = useHaptic();
-  const { addStar } = useStars();
+  const { stars, addStar } = useStars();
   const { markGameCompleted } = useProgress();
 
   const [roundIndex, setRoundIndex] = useState(0);
@@ -94,32 +96,31 @@ export default function CountingGame() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 50 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -50 }}
-      className="min-h-screen flex flex-col bg-surface"
+    <KidShell
+      title={info ? info.title[language] : 'Count!'}
+      onBack={() => navigate('/games')}
+      nav={false}
+      lang={false}
     >
-      <GameHeader title={info ? info.title[language] : 'Count!'} />
-
-      <main className="flex-1 flex flex-col items-center px-6 pt-2 pb-10">
+      <div className="flex flex-col items-center px-6 pt-2 pb-10">
         {/* Round progress dots */}
         <div className="flex gap-2 mb-6">
           {[...Array(TOTAL_ROUNDS)].map((_, i) => (
-            <div
+            <motion.span
               key={i}
-              className={`w-3 h-3 rounded-full transition-colors ${
-                i < roundIndex ? 'bg-secondary' : i === roundIndex ? 'bg-primary scale-125' : 'bg-surface-container-highest'
-              }`}
+              className="rounded-full"
+              animate={{ width: i === roundIndex ? 26 : 12, height: 12 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 26 }}
+              style={{ background: i <= roundIndex ? '#35A7E8' : '#E4DDCE' }}
             />
           ))}
         </div>
 
-        <h2 className="font-headline text-2xl text-primary font-bold mb-6 text-center">
+        <h2 className="font-display text-2xl font-extrabold mb-6 text-center" style={{ color: '#17543C' }}>
           {t('counting.question')}
         </h2>
 
-        <div className="bg-white rounded-3xl shadow-lg p-8 w-full max-w-sm min-h-[180px] flex flex-wrap items-center justify-center gap-3 mb-8">
+        <Card className="w-full max-w-sm min-h-[180px] flex flex-wrap items-center justify-center gap-3 mb-8">
           {[...Array(round.count)].map((_, i) => (
             <motion.span
               key={`${roundIndex}-${i}`}
@@ -131,7 +132,7 @@ export default function CountingGame() {
               {round.emoji}
             </motion.span>
           ))}
-        </div>
+        </Card>
 
         <div className="flex gap-4">
           {round.options.map(n => (
@@ -139,21 +140,21 @@ export default function CountingGame() {
               key={n}
               onClick={() => handlePick(n)}
               animate={wrongPick === n ? { x: [0, -8, 8, -8, 0] } : {}}
-              className={`w-20 h-20 rounded-2xl font-display font-bold text-3xl shadow-md transition-colors active:scale-90 ${
+              whileTap={{ y: 5 }}
+              className="chunk w-20 h-20 rounded-[20px] font-display font-extrabold text-3xl grid place-items-center"
+              style={
                 correctPicked && n === round.count
-                  ? 'bg-secondary text-white'
-                  : wrongPick === n
-                    ? 'bg-danger/20 text-danger border-4 border-danger'
-                    : 'bg-white text-primary border-4 border-primary/20 hover:border-primary/50'
-              }`}
+                  ? { background: '#2FBF6B', color: '#FFFFFF', boxShadow: '0 6px 0 #1E8C4C' }
+                  : { background: '#FFFFFF', color: '#17543C', boxShadow: '0 6px 0 #DDD6C8' }
+              }
             >
               {n}
             </motion.button>
           ))}
         </div>
-      </main>
+      </div>
 
       {won && <GameCelebration onPlayAgain={restart} scoreLabel={`${TOTAL_ROUNDS - Math.min(mistakes, TOTAL_ROUNDS)}/${TOTAL_ROUNDS}`} />}
-    </motion.div>
+    </KidShell>
   );
 }

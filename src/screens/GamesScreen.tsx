@@ -22,11 +22,11 @@ const TONES = [
 
 export default function GamesScreen() {
   const navigate = useNavigate();
-  const { language } = useI18n();
+  const { t, language } = useI18n();
   const { gamePlayCount } = useProgress();
 
   return (
-    <KidShell title="Imikino" hint="Games · pick one to play" onBack={() => navigate('/home-path')}>
+    <KidShell title={t('nav.games')} hint={t('screen.games.hint')} onBack={() => navigate('/home-path')}>
       <div className="px-4 py-5 grid grid-cols-2 gap-4">
         {games.map((g, i) => {
           const tone = TONES[i % TONES.length];

@@ -12,11 +12,11 @@ import { useProgress } from '../hooks/useProgress';
 
 export default function ComicsScreen() {
   const navigate = useNavigate();
-  const { language } = useI18n();
+  const { t, language } = useI18n();
   const { isComicRead } = useProgress();
 
   return (
-    <KidShell title="Inkuru" hint="Stories · tap one to read" onBack={() => navigate('/home-path')}>
+    <KidShell title={t('nav.comics')} hint={t('screen.stories.hint')} onBack={() => navigate('/home-path')}>
       <div className="px-4 py-5 flex flex-col gap-4">
         {comics.map((c) => {
           const read = isComicRead(c.id);

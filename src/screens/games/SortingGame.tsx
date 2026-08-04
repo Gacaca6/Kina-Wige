@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Check, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../../i18n/context';
 import { useSound, useHaptic } from '../../hooks/useSound';
 import { useStars } from '../../hooks/useStars';
 import { useProgress } from '../../hooks/useProgress';
 import { games } from '../../data/games';
 import type { Language } from '../../i18n/translations';
-import GameHeader from '../../components/game/GameHeader';
+import { KidShell } from '../../components/ui/Shell';
 import GameCelebration from '../../components/game/GameCelebration';
 
 interface FoodItem {
@@ -37,10 +38,11 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 export default function SortingGame() {
+  const navigate = useNavigate();
   const { t, language } = useI18n();
   const { play } = useSound();
   const haptic = useHaptic();
-  const { addStar } = useStars();
+  const { stars, addStar } = useStars();
   const { markGameCompleted } = useProgress();
 
   const [items, setItems] = useState<FoodItem[]>(() => shuffle(FOOD_ITEMS));
@@ -90,27 +92,29 @@ export default function SortingGame() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 50 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -50 }}
-      className="min-h-screen flex flex-col bg-surface"
+    <KidShell
+      title={info ? info.title[language] : 'Sorting'}
+      onBack={() => navigate('/games')}
+      nav={false}
+      lang={false}
     >
-      <GameHeader title={info ? info.title[language] : 'Sorting'} />
-
-      <main className="flex-1 flex flex-col items-center px-6 pt-2 pb-10">
+      <div className="flex flex-col items-center px-6 pt-2 pb-10">
         <div className="flex gap-1.5 mb-6">
           {items.map((_, i) => (
-            <div
+            <span
               key={i}
-              className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                i < index ? 'bg-secondary' : i === index ? 'bg-primary scale-125' : 'bg-surface-container-highest'
-              }`}
+              className="rounded-full flex-none"
+              style={{
+                width: i === index ? 20 : 10,
+                height: 10,
+                background: i <= index ? '#FFC02E' : '#E4DDCE',
+                transition: 'width .2s',
+              }}
             />
           ))}
         </div>
 
-        <h2 className="font-headline text-2xl text-primary font-bold mb-8 text-center max-w-xs">
+        <h2 className="font-display text-2xl font-extrabold mb-8 text-center max-w-xs" style={{ color: '#17543C' }}>
           {t('sorting.question')}
         </h2>
 
@@ -122,52 +126,59 @@ export default function SortingGame() {
               animate={{ scale: 1, rotate: 0 }}
               exit={{ scale: 0, opacity: 0 }}
               transition={{ type: 'spring', damping: 15 }}
-              className={`relative bg-white rounded-3xl shadow-lg w-48 h-48 flex flex-col items-center justify-center mb-10 border-8 transition-colors ${
-                feedback === 'correct' ? 'border-secondary' : feedback === 'wrong' ? 'border-danger' : 'border-surface-warm'
-              }`}
+              className="relative bg-white w-48 h-48 flex flex-col items-center justify-center mb-10"
+              style={{
+                borderRadius: 26,
+                boxShadow: feedback === 'correct' ? '0 0 0 6px #2FBF6B, 0 6px 0 #DDD6C8' : '0 6px 0 #DDD6C8',
+              }}
             >
               <span className="text-7xl mb-2">{current.emoji}</span>
-              <span className="font-headline font-bold text-dark">{current.name[language]}</span>
+              <span className="font-display font-extrabold" style={{ color: '#10241B' }}>{current.name[language]}</span>
 
-              {/* On a wrong answer, show which bin was right so the child learns */}
+              {/* On a wrong answer, show which bin was right so the child learns — no red, just the correct answer surfacing. */}
               {feedback === 'wrong' && (
                 <motion.div
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className={`absolute -bottom-5 px-4 py-1 rounded-full text-sm font-bold text-white shadow ${
-                    current.healthy ? 'bg-secondary' : 'bg-danger'
-                  }`}
+                  className="absolute -bottom-5 px-4 py-1.5 rounded-full font-body font-black text-white"
+                  style={{ fontSize: 13, background: '#17543C' }}
                 >
-                  {current.healthy ? `✅ ${t('sorting.healthy')}` : `❌ ${t('sorting.unhealthy')}`}
+                  {current.healthy ? `✅ ${t('sorting.healthy')}` : `🍬 ${t('sorting.unhealthy')}`}
                 </motion.div>
               )}
             </motion.div>
           )}
         </AnimatePresence>
 
-        <div className="flex gap-6 w-full max-w-sm">
-          <button
+        <div className="flex gap-4 w-full max-w-sm">
+          <motion.button
             onClick={() => handleSort(true)}
-            className="flex-1 flex flex-col items-center gap-2 bg-secondary/15 border-4 border-secondary rounded-3xl py-6 hover:bg-secondary/25 active:scale-95 transition-all"
+            whileTap={{ y: 6, boxShadow: '0 2px 0 #1E8C4C' }}
+            transition={{ type: 'spring', stiffness: 900, damping: 34, mass: 0.5 }}
+            className="chunk flex-1 flex flex-col items-center gap-2 rounded-[22px] py-5"
+            style={{ background: '#2FBF6B', boxShadow: '0 8px 0 #1E8C4C' }}
           >
-            <span className="w-12 h-12 rounded-full bg-secondary text-white flex items-center justify-center">
+            <span className="w-12 h-12 rounded-full bg-white grid place-items-center" style={{ color: '#17543C' }}>
               <Check className="w-7 h-7" strokeWidth={3} />
             </span>
-            <span className="font-headline font-bold text-primary">{t('sorting.healthy')}</span>
-          </button>
-          <button
+            <span className="font-display font-extrabold text-white">{t('sorting.healthy')}</span>
+          </motion.button>
+          <motion.button
             onClick={() => handleSort(false)}
-            className="flex-1 flex flex-col items-center gap-2 bg-danger/10 border-4 border-danger rounded-3xl py-6 hover:bg-danger/20 active:scale-95 transition-all"
+            whileTap={{ y: 6, boxShadow: '0 2px 0 #6F43C9' }}
+            transition={{ type: 'spring', stiffness: 900, damping: 34, mass: 0.5 }}
+            className="chunk flex-1 flex flex-col items-center gap-2 rounded-[22px] py-5"
+            style={{ background: '#9B6BFF', boxShadow: '0 8px 0 #6F43C9' }}
           >
-            <span className="w-12 h-12 rounded-full bg-danger text-white flex items-center justify-center">
+            <span className="w-12 h-12 rounded-full bg-white grid place-items-center" style={{ color: '#6F43C9' }}>
               <X className="w-7 h-7" strokeWidth={3} />
             </span>
-            <span className="font-headline font-bold text-danger">{t('sorting.unhealthy')}</span>
-          </button>
+            <span className="font-display font-extrabold text-white">{t('sorting.unhealthy')}</span>
+          </motion.button>
         </div>
-      </main>
+      </div>
 
       {won && <GameCelebration onPlayAgain={restart} scoreLabel={`${score}/${items.length}`} />}
-    </motion.div>
+    </KidShell>
   );
 }

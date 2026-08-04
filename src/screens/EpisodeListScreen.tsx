@@ -12,11 +12,11 @@ import { useProgress } from '../hooks/useProgress';
 
 export default function EpisodeListScreen() {
   const navigate = useNavigate();
-  const { language } = useI18n();
+  const { t, language } = useI18n();
   const { isEpisodeWatched } = useProgress();
 
   return (
-    <KidShell title="Amasomo" hint="Lessons · tap one to watch" onBack={() => navigate('/home-path')}>
+    <KidShell title={t('nav.episodes')} hint={t('screen.videos.hint')} onBack={() => navigate('/home-path')}>
       <div className="px-4 py-5 flex flex-col gap-4">
         {episodes.map((e) => {
           const watched = isEpisodeWatched(e.id);
