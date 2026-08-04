@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'motion/react';
 import ParentGate from './components/ui/ParentGate';
+import AskKeza from './components/ui/AskKeza';
 
 const SplashScreen = lazy(() => import('./screens/SplashScreen'));
 const EpisodeScreen = lazy(() => import('./screens/EpisodeScreen'));
@@ -62,6 +63,8 @@ export default function App() {
       <div className="min-h-screen bg-sand text-ink font-body">
         <Suspense fallback={<LoadingFallback />}>
           <AnimatedRoutes />
+          {/* Child-lane only; hides itself in the grown-up area. */}
+          <AskKeza />
         </Suspense>
       </div>
     </BrowserRouter>

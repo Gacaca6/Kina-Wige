@@ -1,11 +1,13 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowLeft, Mic, MicOff, Keyboard, Send, X } from 'lucide-react';
+import { Mic, MicOff, Keyboard, Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../i18n/context';
 import { useSound, useHaptic } from '../hooks/useSound';
-import { images } from '../assets/images';
 import { findOfflineAnswer, offTopicResponses } from '../data/kezaQA';
+import Kina from '../components/characters/Kina';
+import type { KinaMood } from '../components/characters/Kina';
+import { KidShell } from '../components/ui/Shell';
 
 interface Message {
   id: number;
@@ -26,6 +28,9 @@ export default function BazaKezaScreen() {
   const [isThinking, setIsThinking] = useState(false);
   const [showKeyboard, setShowKeyboard] = useState(false);
   const [textInput, setTextInput] = useState('');
+  /** Transient — Kina cheers for a beat after answering, then settles. */
+  const [cheer, setCheer] = useState(false);
+  const [look, setLook] = useState<{ x: number; y: number } | null>(null);
 
   const recognitionRef = useRef<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -107,6 +112,9 @@ export default function BazaKezaScreen() {
     }
 
     setIsThinking(false);
+    // Kina celebrates the answer, then settles back to idle on her own.
+    setCheer(true);
+    window.setTimeout(() => setCheer(false), 1800);
   }, [language, play, haptic]);
 
   // Speech recognition — tap to start, tap again to stop, or auto-stops after speech
@@ -196,181 +204,230 @@ export default function BazaKezaScreen() {
     }
   };
 
+  /* Kina carries the whole conversation — she listens, thinks, then cheers.
+     No static portraits anywhere; the state IS the illustration. */
+  const mood: KinaMood = isThinking ? 'point' : isListening ? 'point' : cheer ? 'cheer' : 'idle';
+
+  const hint =
+    language === 'KN'
+      ? 'Kanda kuri mikoro uvuge ikibazo cyawe!'
+      : language === 'FR'
+        ? 'Appuie sur le micro et pose ta question!'
+        : 'Tap the mic and ask your question!';
+
+  const listeningLabel =
+    language === 'KN' ? 'Ndumva… Vuga!' : language === 'FR' ? "J'écoute… Parle!" : 'Listening… Speak!';
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 20 }}
-      className="min-h-screen flex flex-col bg-gradient-to-b from-[#E8F5E9] to-[#F0FFF4]"
+    <KidShell
+      title="Baza Keza"
+      hint={language === 'KN' ? 'Ndahari kukwibaza!' : language === 'FR' ? 'Je suis là pour toi!' : "I'm here to help!"}
+      onBack={() => navigate(-1)}
+      nav={false}
     >
-      {/* Header */}
-      <header className="flex items-center gap-4 px-4 py-3 bg-white/80 backdrop-blur-sm border-b border-forest/10 sticky top-0 z-50">
-        <button
-          onClick={() => navigate(-1)}
-          className="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-low hover:scale-105 transition-transform active:scale-95"
-        >
-          <ArrowLeft className="w-5 h-5 text-forest" />
-        </button>
-        <div className="flex items-center gap-3 flex-1">
-          <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-forest shadow-sm">
-            <img src={images.kezaAvatar} alt="Keza" className="w-full h-full object-cover" />
-          </div>
-          <div>
-            <h1 className="font-display font-bold text-forest text-lg leading-tight">Baza Keza</h1>
-            <p className="text-xs text-forest/60 font-medium">
-              {language === 'KN' ? 'Ndahari kukwibaza!' : language === 'FR' ? 'Je suis là pour toi!' : 'I\'m here to help!'}
-            </p>
-          </div>
-        </div>
-      </header>
-
-      {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
-        {/* Keza intro illustration */}
-        {messages.length <= 1 && (
-          <div className="flex flex-col items-center pt-8 pb-4">
-            <motion.div
-              animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-              className="w-40 h-40 relative"
-            >
-              <div className="absolute inset-0 bg-mint rounded-full blur-2xl scale-125" />
-              <img src={images.kezaFull} alt="Keza" className="w-full h-full object-contain relative z-10" />
-            </motion.div>
-            <p className="text-center text-forest/50 font-medium text-sm mt-4 max-w-[200px]">
-              {language === 'KN' ? 'Kanda kuri micro uvuge ikibazo cyawe!' :
-               language === 'FR' ? 'Appuie sur le micro et pose ta question!' :
-               'Tap the mic and ask your question!'}
-            </p>
-          </div>
-        )}
-
-        {/* Chat messages */}
-        <AnimatePresence>
-          {messages.map((msg) => (
-            <motion.div
-              key={msg.id}
-              initial={{ opacity: 0, y: 10, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ type: 'spring', damping: 20 }}
-              className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
-              {msg.type === 'keza' && (
-                <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-forest/30 mr-2 flex-shrink-0 mt-1">
-                  <img src={images.kezaAvatar} alt="Keza" className="w-full h-full object-cover" />
-                </div>
-              )}
-              <div className={`max-w-[80%] ${
-                msg.type === 'user'
-                  ? 'bg-forest text-white rounded-2xl rounded-tr-md'
-                  : 'bg-white text-ink rounded-2xl rounded-tl-md shadow-sm border border-forest/10'
-              } px-4 py-3`}>
-                {msg.isThinking ? (
-                  <div className="flex items-center gap-1.5 py-1">
-                    <div className="w-2.5 h-2.5 rounded-full bg-forest/40 animate-bounce" style={{ animationDelay: '0ms' }} />
-                    <div className="w-2.5 h-2.5 rounded-full bg-forest/40 animate-bounce" style={{ animationDelay: '150ms' }} />
-                    <div className="w-2.5 h-2.5 rounded-full bg-forest/40 animate-bounce" style={{ animationDelay: '300ms' }} />
-                  </div>
-                ) : (
-                  <>
-                    {msg.emoji && msg.type === 'keza' && (
-                      <span className="text-2xl block mb-1">{msg.emoji}</span>
-                    )}
-                    <p className="text-[15px] leading-relaxed font-medium">{msg.text}</p>
-                    {msg.type === 'keza' && !msg.isThinking && (
-                      <button
-                        onClick={() => speakMessage(msg.text)}
-                        className="mt-2 text-xs text-forest/50 hover:text-forest flex items-center gap-1 transition-colors"
-                      >
-                        🔊 {language === 'KN' ? 'Umva' : language === 'FR' ? 'Écouter' : 'Listen'}
-                      </button>
-                    )}
-                  </>
-                )}
-              </div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-
-        <div ref={messagesEndRef} />
-      </div>
-
-      {/* Input area */}
-      <div className="sticky bottom-0 bg-white/90 backdrop-blur-sm border-t border-forest/10 px-4 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
-        {showKeyboard ? (
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowKeyboard(false)}
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-low text-forest"
-            >
-              <Mic className="w-5 h-5" />
-            </button>
-            <div className="flex-1 flex items-center bg-surface-container-low rounded-full px-4">
-              <input
-                type="text"
-                value={textInput}
-                onChange={(e) => setTextInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleTextSubmit()}
-                placeholder={language === 'KN' ? 'Andika ikibazo cyawe...' : language === 'FR' ? 'Écris ta question...' : 'Type your question...'}
-                className="flex-1 bg-transparent py-3 text-ink placeholder-dark/40 outline-none text-sm font-medium"
-                autoFocus
-              />
-              <button
-                onClick={handleTextSubmit}
-                disabled={!textInput.trim() || isThinking}
-                className="w-9 h-9 flex items-center justify-center rounded-full bg-forest text-white disabled:opacity-40 active:scale-90 transition-transform"
-              >
-                <Send className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="flex items-center justify-center gap-4">
-            <button
-              onClick={() => setShowKeyboard(true)}
-              className="w-12 h-12 flex items-center justify-center rounded-full bg-surface-container-low text-forest hover:scale-105 transition-transform active:scale-95"
-            >
-              <Keyboard className="w-5 h-5" />
-            </button>
-
-            {/* Main mic button — tap to start, tap again to stop */}
-            <motion.button
-              onClick={toggleListening}
-              disabled={isThinking}
-              whileTap={{ scale: 0.9 }}
-              className={`w-20 h-20 rounded-full flex items-center justify-center shadow-lg transition-all relative ${
-                isListening
-                  ? 'bg-red-500 shadow-red-500/30 scale-110'
-                  : isThinking
-                    ? 'bg-forest/50 cursor-not-allowed'
-                    : 'bg-forest shadow-primary/30 hover:shadow-primary/50'
-              }`}
-            >
-              {isListening ? (
-                <>
-                  <MicOff className="w-8 h-8 text-white relative z-10" />
-                  {/* Pulse ring */}
-                  <div className="absolute inset-0 rounded-full border-4 border-red-400 animate-ping opacity-30" />
-                </>
-              ) : (
-                <Mic className="w-8 h-8 text-white" />
-              )}
-            </motion.button>
-
-            <div className="w-12" /> {/* Spacer for visual balance */}
-          </div>
-        )}
-
-        {isListening && (
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center text-red-500 font-bold text-sm mt-3 animate-pulse"
+      <div
+        className="flex flex-col"
+        style={{ minHeight: 'calc(100dvh - 120px)' }}
+        onPointerMove={(e) => {
+          const r = e.currentTarget.getBoundingClientRect();
+          setLook({ x: ((e.clientX - r.left) / r.width) * 2 - 1, y: ((e.clientY - r.top) / r.height) * 2 - 1 });
+        }}
+        onPointerLeave={() => setLook(null)}
+      >
+        {/* ── Kina, always present and always reacting ── */}
+        <div className="flex flex-col items-center pt-5 pb-3 flex-none">
+          <motion.div
+            animate={{ scale: isListening ? 1.06 : 1 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 15, mass: 0.9 }}
+            className="relative grid place-items-center"
           >
-            {language === 'KN' ? '🎙️ Ndategera... Vuga!' : language === 'FR' ? '🎙️ J\'écoute... Parle!' : '🎙️ Listening... Speak!'}
-          </motion.p>
-        )}
+            {isListening && (
+              <motion.span
+                className="absolute rounded-full"
+                style={{ width: 180, height: 180, border: '6px solid #FFC02E' }}
+                initial={{ scale: 0.7, opacity: 0.7 }}
+                animate={{ scale: 1.9, opacity: 0 }}
+                transition={{ duration: 1.6, repeat: Infinity, ease: 'easeOut' }}
+                aria-hidden
+              />
+            )}
+            <Kina mood={mood} lookAt={look} style={{ width: 148, height: 134 }} />
+          </motion.div>
+
+          {messages.length <= 1 && (
+            <p
+              className="text-center font-body font-bold mt-3 px-8"
+              style={{ fontSize: 14, color: '#6B7F73', maxWidth: 260 }}
+            >
+              {hint}
+            </p>
+          )}
+        </div>
+
+        {/* ── Conversation ── */}
+        <div className="flex-1 overflow-y-auto px-4 pb-4 flex flex-col gap-3">
+          <AnimatePresence>
+            {messages.map((msg) => (
+              <motion.div
+                key={msg.id}
+                initial={{ opacity: 0, y: 12, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 22 }}
+                className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div
+                  className="px-4 py-3"
+                  style={{
+                    maxWidth: '84%',
+                    background: msg.type === 'user' ? '#17543C' : '#FFFFFF',
+                    color: msg.type === 'user' ? '#FFFFFF' : '#10241B',
+                    borderRadius: msg.type === 'user' ? '22px 22px 6px 22px' : '22px 22px 22px 6px',
+                    boxShadow: msg.type === 'user' ? '0 5px 0 #0E3626' : '0 5px 0 #DDD6C8',
+                  }}
+                >
+                  {msg.isThinking ? (
+                    <div className="flex items-center gap-1.5 py-1" aria-label="Thinking">
+                      {[0, 1, 2].map((i) => (
+                        <motion.span
+                          key={i}
+                          className="rounded-full"
+                          style={{ width: 10, height: 10, background: '#2FBF6B' }}
+                          animate={{ y: [0, -6, 0] }}
+                          transition={{ duration: 0.7, repeat: Infinity, delay: i * 0.14 }}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <>
+                      {msg.emoji && msg.type === 'keza' && (
+                        <span className="block mb-1" style={{ fontSize: 26 }}>
+                          {msg.emoji}
+                        </span>
+                      )}
+                      <p className="font-body font-bold" style={{ fontSize: 15, lineHeight: 1.5 }}>
+                        {msg.text}
+                      </p>
+                      {msg.type === 'keza' && (
+                        <button
+                          onClick={() => speakMessage(msg.text)}
+                          className="mt-2 font-body font-black flex items-center gap-1.5"
+                          style={{ fontSize: 12, color: '#2FBF6B', minHeight: 44, paddingTop: 6, paddingBottom: 6 }}
+                          aria-label="Listen"
+                        >
+                          🔊 {language === 'KN' ? 'Umva' : language === 'FR' ? 'Écouter' : 'Listen'}
+                        </button>
+                      )}
+                    </>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* ── Ask ── */}
+        <div
+          className="px-4 pt-3 pb-safe flex-none bg-white"
+          style={{ borderTop: '3px solid #E4DDCE' }}
+        >
+          {showKeyboard ? (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowKeyboard(false)}
+                aria-label="Use the microphone"
+                className="rounded-[18px] grid place-items-center flex-none"
+                style={{ width: 56, height: 56, background: '#EFEBE1' }}
+              >
+                <Mic className="w-6 h-6" style={{ color: '#17543C' }} />
+              </button>
+              <div
+                className="flex-1 flex items-center px-4 rounded-[18px]"
+                style={{ background: '#EFEBE1', minHeight: 56 }}
+              >
+                <input
+                  type="text"
+                  value={textInput}
+                  onChange={(e) => setTextInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleTextSubmit()}
+                  placeholder={
+                    language === 'KN'
+                      ? 'Andika ikibazo cyawe…'
+                      : language === 'FR'
+                        ? 'Écris ta question…'
+                        : 'Type your question…'
+                  }
+                  className="flex-1 bg-transparent outline-none font-body font-bold"
+                  style={{ fontSize: 15, color: '#10241B' }}
+                  autoFocus
+                />
+                <button
+                  onClick={handleTextSubmit}
+                  disabled={!textInput.trim() || isThinking}
+                  aria-label="Send"
+                  className="rounded-[14px] grid place-items-center flex-none"
+                  style={{
+                    width: 44,
+                    height: 44,
+                    background: '#2FBF6B',
+                    opacity: !textInput.trim() || isThinking ? 0.4 : 1,
+                  }}
+                >
+                  <Send className="w-5 h-5 text-white" />
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center gap-4">
+              <button
+                onClick={() => setShowKeyboard(true)}
+                aria-label="Type instead"
+                className="rounded-[18px] grid place-items-center flex-none"
+                style={{ width: 60, height: 60, background: '#EFEBE1', boxShadow: '0 5px 0 #D9D2C4' }}
+              >
+                <Keyboard className="w-6 h-6" style={{ color: '#17543C' }} />
+              </button>
+
+              {/* The one big thing on this screen. Sun-yellow while listening —
+                  the system's audio colour, never red. Nothing here is a failure. */}
+              <motion.button
+                onClick={toggleListening}
+                disabled={isThinking}
+                aria-label={isListening ? 'Stop listening' : 'Ask a question'}
+                whileTap={{ y: 6, boxShadow: `0 2px 0 ${isListening ? '#D89A00' : '#1E8C4C'}` }}
+                transition={{ type: 'spring', stiffness: 900, damping: 34, mass: 0.5 }}
+                className="rounded-full grid place-items-center flex-none"
+                style={{
+                  width: 96,
+                  height: 96,
+                  background: isListening ? '#FFC02E' : '#2FBF6B',
+                  boxShadow: `0 8px 0 ${isListening ? '#D89A00' : '#1E8C4C'}`,
+                  opacity: isThinking ? 0.5 : 1,
+                }}
+              >
+                {isListening ? (
+                  <MicOff className="w-10 h-10" style={{ color: '#10241B' }} />
+                ) : (
+                  <Mic className="w-10 h-10 text-white" />
+                )}
+              </motion.button>
+
+              <span className="flex-none" style={{ width: 60 }} />
+            </div>
+          )}
+
+          {isListening && (
+            <motion.p
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center font-body font-black mt-3"
+              style={{ fontSize: 14, color: '#B8860B' }}
+            >
+              🎙️ {listeningLabel}
+            </motion.p>
+          )}
+        </div>
       </div>
-    </motion.div>
+    </KidShell>
   );
 }

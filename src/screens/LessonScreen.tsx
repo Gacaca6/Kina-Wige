@@ -156,7 +156,7 @@ export default function LessonScreen() {
   /* ── Lesson complete ── */
   if (phase === 'done') {
     return (
-      <div className="min-h-screen bg-forest flex flex-col items-center justify-center px-6 text-center">
+      <div className="bg-forest flex flex-col items-center justify-center px-6 text-center" style={{ minHeight: '100dvh' }}>
         <motion.div
           initial={{ scale: 0.4, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -200,9 +200,9 @@ export default function LessonScreen() {
   const showCorrect = phase === 'correct';
 
   return (
-    <div className="min-h-screen bg-cream flex flex-col">
+    <div className="bg-cream flex flex-col" style={{ minHeight: '100dvh' }}>
       {/* ── Progress. Segments, not a timer — nothing counts down. ── */}
-      <div className="px-6 pt-5 flex items-center gap-3">
+      <div className="px-6 pt-safe flex items-center gap-3">
         <button
           onClick={() => navigate('/home-path')}
           aria-label="Leave the lesson"

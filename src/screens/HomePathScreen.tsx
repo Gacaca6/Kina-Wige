@@ -73,12 +73,12 @@ export default function HomePathScreen() {
 
   return (
     <div
-      className="min-h-screen bg-cream flex flex-col"
+      className="bg-cream flex flex-col" style={{ minHeight: '100dvh' }}
       onPointerMove={track}
       onPointerLeave={() => setLook(null)}
     >
       {/* ── Header. Stars only — no streak, no gems, nothing that can go down. ── */}
-      <header className="bg-forest text-white px-5 pt-4 pb-5">
+      <header className="bg-forest text-white px-5 pt-safe pb-5">
         <div className="flex items-center gap-3">
           <div
             className="flex items-center gap-2.5 bg-forest-deep rounded-[16px] px-4"

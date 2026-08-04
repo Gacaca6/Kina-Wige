@@ -18,8 +18,8 @@ export default defineConfig({
         description: "Play and Learn — Rwanda's early childhood platform",
         lang: 'rw',
         dir: 'ltr',
-        theme_color: '#2D6A4F',
-        background_color: '#F0FFF4',
+        theme_color: '#17543C',
+        background_color: '#17543C',
         display: 'standalone',
         orientation: 'portrait',
         start_url: '/',
@@ -37,6 +37,12 @@ export default defineConfig({
         ],
       },
       workbox: {
+        // An installed PWA must pick up a new deploy on next launch:
+        // skipWaiting activates the new SW immediately and clientsClaim
+        // hands over open pages, so users are never stuck on an old build.
+        skipWaiting: true,
+        clientsClaim: true,
+        cleanupOutdatedCaches: true,
         globPatterns: ['**/*.{js,css,html,ico,png,jpg,jpeg,webp,svg,woff2}'],
         runtimeCaching: [
           {

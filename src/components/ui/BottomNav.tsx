@@ -36,16 +36,6 @@ function IconStories({ on }: { on: boolean }) {
     </svg>
   );
 }
-function IconAsk({ on }: { on: boolean }) {
-  return (
-    <svg viewBox="0 0 48 48" className="w-full h-full" aria-hidden>
-      <rect x={6} y={9} width={36} height={26} rx={9} fill={on ? '#35A7E8' : '#E4EEF3'} stroke="#10241B" strokeWidth={3.5} />
-      <path d="M17 35l-2 7 9-7z" fill={on ? '#35A7E8' : '#E4EEF3'} stroke="#10241B" strokeWidth={3.5} strokeLinejoin="round" />
-      <path d="M20 19a4 4 0 1 1 5 4v2" stroke={on ? '#fff' : '#8A9A90'} strokeWidth={3.5} strokeLinecap="round" fill="none" />
-      <circle cx={25} cy={29} r={1.9} fill={on ? '#fff' : '#8A9A90'} />
-    </svg>
-  );
-}
 
 interface Tab {
   to: string;
@@ -57,7 +47,7 @@ interface Tab {
 const TABS: Tab[] = [
   {
     to: '/home-path',
-    label: 'WIGA',
+    label: 'IGA',
     match: (p) => p === '/home-path' || p.startsWith('/lesson'),
     icon: (on) => <IconLearn on={on} />,
   },
@@ -72,12 +62,6 @@ const TABS: Tab[] = [
     label: 'INKURU',
     match: (p) => p.startsWith('/comic') || p.startsWith('/episode'),
     icon: (on) => <IconStories on={on} />,
-  },
-  {
-    to: '/baza-keza',
-    label: 'BAZA',
-    match: (p) => p.startsWith('/baza'),
-    icon: (on) => <IconAsk on={on} />,
   },
 ];
 

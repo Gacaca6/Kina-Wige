@@ -47,7 +47,7 @@ export default function SplashScreen() {
       </svg>
 
       {/* ── Kina + wordmark ── */}
-      <div className="relative flex-1 flex flex-col items-center justify-center px-6 pt-8 min-h-0">
+      <div className="relative flex-1 flex flex-col items-center justify-center px-6 pt-safe min-h-0">
         <motion.div
           initial={{ scale: 0.5, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -77,7 +77,7 @@ export default function SplashScreen() {
       </div>
 
       {/* ── The fork ── */}
-      <div className="relative px-5 pb-7 flex flex-col gap-3.5 flex-none">
+      <div className="relative px-5 pb-safe pt-2 flex flex-col gap-3.5 flex-none">
         {/* Child door — dominant, usable without reading a word */}
         <motion.button
           onClick={() => navigate('/home-path')}
