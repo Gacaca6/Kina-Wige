@@ -71,7 +71,7 @@ try {
 }
 
 const {
-  SKILLS, SKILL_IDS, DOMAINS, LEVEL_ORDER, THEMES,
+  SKILLS, SKILL_IDS, DOMAINS, LEVEL_ORDER, THEMES, PARENT_WORDING,
   domainsOf, maxLevelOf, SESSION_CAP_MINUTES,
 } = curriculum;
 
@@ -241,6 +241,21 @@ record('lesson', Object.values(lessonsMod.LESSONS));
 
 const covered = SKILL_IDS.filter((id) => taught.get(id).length > 0);
 const gaps = SKILL_IDS.filter((id) => taught.get(id).length === 0);
+
+// Any skill a child can reach is a skill a PARENT can be shown (§13.3), and the
+// grown-up lane is trilingual like the rest of the UI. Ship content for a skill
+// with no parent wording and this fails — so the report can never quietly fall
+// back to jargon, or to English.
+for (const id of covered) {
+  const wording = PARENT_WORDING[id];
+  if (!wording) {
+    fail(`skill ${id}`, `is taught by ${taught.get(id).length} item(s) but has no PARENT_WORDING — a parent would be shown developmental jargon`);
+    continue;
+  }
+  for (const lang of ['KN', 'EN', 'FR']) {
+    if (!wording[lang]?.trim()) fail(`skill ${id}`, `PARENT_WORDING is missing ${lang}`);
+  }
+}
 
 console.log(`\n${c.bold('Kina Wige · curriculum check')}\n`);
 console.log(`  ${SKILL_IDS.length} skills · ${seenContentIds.size} content items`);

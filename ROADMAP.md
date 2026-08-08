@@ -236,6 +236,14 @@ All verified working in production build.
     intambwe zo gukaraba amaboko mu magambo ye bwite. Mureke arangize interuro
     yose mbere yo kumufasha."). Two of these carry our headline pedagogical
     claims to the parent — their tone matters more than most strings in the app.
+  - **HIGH PRIORITY, parent-facing**: `PARENT_WORDING` in
+    `src/data/curriculum.ts` — 22 short phrases a parent reads about their own
+    child ("abara ibintu bitanu akakubwira uko bingana", "akaraba amaboko ku
+    murongo uwo ari wo", "agerageza ikintu gishya ku bwe", …) plus the
+    `report.*` keys in `translations.ts` (band phrasings: "aratangira",
+    "aragenda, afashijwe gato", "abikora wenyine", "abikoresha mu bindi bihe").
+    These sentences ARE our assessment as far as a family is concerned — if the
+    Kinyarwanda reads coldly or clinically, the whole §13.3 intent is lost.
   - **HIGH PRIORITY**: the five handwashing step words in lesson `u3l1`
     (`src/data/lessons.ts`) — **amazi · isabune · gukanda · koza · kumutsa**.
     These are machine-chosen verbs for wet/soap/scrub/rinse/dry and a child

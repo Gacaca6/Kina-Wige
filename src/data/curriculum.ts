@@ -694,6 +694,100 @@ export const SKILLS: Readonly<Record<SkillId, Skill>> = Object.fromEntries(
 
 export const SKILL_IDS: readonly SkillId[] = SKILL_TABLE.map((s) => s.id);
 
+// ─── Parent wording ─────────────────────────────────────────────────────────
+//
+// A `statement` is written for us: precise, observable, assessable. It is the
+// wrong voice entirely for the person who actually raised this child.
+//
+//   statement:  "Answers 'how many?' after counting a group of up to 5 objects"
+//   parent:     "counts five things and says how many"
+//
+// Same fact, no jargon, and it completes the sentence "This week Keza …".
+// Architecture §13.3: descriptive, never numeric, never a grade.
+//
+// Only skills that CONTENT CAN REACH need an entry — a parent can never be
+// shown a skill their child has no way to attempt. `npm run curriculum:check`
+// enforces exactly that boundary, so this list grows with the catalogue and
+// cannot silently fall behind it.
+//
+// All Kinyarwanda here is machine-written and is in the ROADMAP review queue.
+// It is parent-facing, so it carries more weight than most strings in the app.
+export const PARENT_WORDING: Partial<Record<SkillId, Record<Language, string>>> = {
+  // D1 · Language & Literacy
+  'snd.listen.attend': {
+    KN: 'yumva inkuru yose', EN: 'listens to a whole story', FR: 'écoute une histoire en entier',
+  },
+  'snd.vowel.recognise': {
+    KN: 'yumva inyajwi eshanu', EN: 'hears the five vowels', FR: 'entend les cinq voyelles',
+  },
+  'snd.vowel.name': {
+    KN: 'avuga inyajwi iyo ayibonye', EN: 'names a vowel when they see it', FR: 'nomme une voyelle quand il la voit',
+  },
+  'snd.write.trace': {
+    KN: 'akurikira inyuguti mu buryo bwiza', EN: 'traces a letter the right way', FR: 'trace une lettre correctement',
+  },
+  'wrd.name.object': {
+    KN: "avuga amazina y'ibintu bya buri munsi", EN: 'names everyday things', FR: 'nomme les objets de tous les jours',
+  },
+  'wrd.category': {
+    KN: 'ashyira hamwe ibintu bihuje', EN: 'groups things that belong together', FR: 'regroupe les choses qui vont ensemble',
+  },
+  'wrd.sentence.speak': {
+    KN: 'agusubiza mu nteruro yuzuye', EN: 'answers you in a full sentence', FR: 'répond par une phrase complète',
+  },
+  'wrd.story.recall': {
+    KN: 'akubwira ibyabaye mu nkuru', EN: 'tells you what happened in a story', FR: "raconte ce qui s'est passé dans une histoire",
+  },
+
+  // D2 · Numeracy
+  'num.subitise3': {
+    KN: 'abona rimwe, kabiri cyangwa gatatu atabaze', EN: 'sees one, two or three without counting', FR: 'voit un, deux ou trois sans compter',
+  },
+  'num.count5': {
+    KN: 'abara kugeza kuri gatanu ku murongo', EN: 'counts to five in order', FR: "compte jusqu'à cinq dans l'ordre",
+  },
+  'num.oneToOne': {
+    KN: 'akora ku kintu kimwe rimwe igihe abara', EN: 'touches each thing once while counting', FR: 'touche chaque chose une fois en comptant',
+  },
+  'num.cardinal5': {
+    KN: 'abara ibintu bitanu akakubwira uko bingana', EN: 'counts five things and says how many', FR: 'compte cinq choses et dit combien',
+  },
+  'num.cardinal10': {
+    KN: 'abara ibintu icumi akakubwira uko bingana', EN: 'counts ten things and says how many', FR: 'compte dix choses et dit combien',
+  },
+  'num.numeral10': {
+    KN: "ahuza umubare n'itsinda kugeza ku icumi", EN: 'matches a number to a group, up to ten', FR: 'associe un chiffre à un groupe, jusqu’à dix',
+  },
+  'num.sort.one': {
+    KN: 'atandukanya ibintu hakurikijwe ibara cyangwa ingano', EN: 'sorts things by colour or size', FR: 'trie les choses par couleur ou par taille',
+  },
+  'num.pattern.ab': {
+    KN: 'akomeza uburyo bworoshye', EN: 'carries on a simple pattern', FR: 'continue un motif simple',
+  },
+  'num.pattern.abc': {
+    KN: "akomeza uburyo bw'ibice bitatu", EN: 'carries on a three-part pattern', FR: 'continue un motif à trois parties',
+  },
+
+  // D4 · Physical & Health
+  'phy.hand.sequence': {
+    KN: 'akaraba amaboko ku murongo uwo ari wo', EN: 'washes hands in the right order', FR: 'se lave les mains dans le bon ordre',
+  },
+  'phy.hand.when': {
+    KN: 'azi igihe cyo gukaraba amaboko', EN: 'knows when to wash hands', FR: 'sait quand se laver les mains',
+  },
+  'phy.hand.why': {
+    KN: 'asobanura impamvu dukaraba amaboko', EN: 'explains why we wash hands', FR: 'explique pourquoi on se lave les mains',
+  },
+  'phy.food.healthy': {
+    KN: 'ahitamo ibiryo byiza', EN: 'picks out healthy food', FR: 'choisit les aliments sains',
+  },
+
+  // D5 · Social & Emotional
+  'self.confidence': {
+    KN: 'agerageza ikintu gishya ku bwe', EN: 'tries something new on their own', FR: 'essaie quelque chose de nouveau tout seul',
+  },
+};
+
 // ─── The content contract ───────────────────────────────────────────────────
 //
 // Architecture §17: "If we cannot say what a piece of content teaches, it does

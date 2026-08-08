@@ -544,7 +544,7 @@ Every new piece of content passes this gate before it ships:
 | **1** | This document | No | ✅ 2026-08-02 |
 | **2** | `curriculum.ts` — machine-readable taxonomy + content contract + build check | Yes | ✅ 2026-08-08 |
 | **3** | **One complete vertical slice** | Yes | ✅ 2026-08-08 |
-| **4** | On-device assessment + parent connection | Yes | evidence layer done; parent-facing view next |
+| **4** | On-device assessment + parent connection | Yes | ✅ 2026-08-08 |
 | **5** | Scale themes, one at a time, each fully realised | Yes | — |
 
 ### What Phase 3 delivered
@@ -566,6 +566,32 @@ Two things came out of it that were not in the plan:
 
 **Phase 5 does not start until a child has completed this loop in front of us**
 (§21). The system is ready to be tested; it has not yet been tested.
+
+### What Phase 4 delivered
+
+`SkillReport` on the grown-up dashboard — the first thing a parent reads, and
+the only section on that screen that is about their child rather than about the
+app. It obeys three rules that are easier to break than to keep:
+
+- **Never a number.** No percentage, no score, no "12 of 20 skills". A number
+  invites comparison with someone else's child, which §13.1 forbids outright.
+- **Never a gap.** We show what a child *can* do. A deficit list does not help a
+  parent, and a three-year-old has not failed at anything.
+- **Never jargon.** A new `PARENT_WORDING` map carries a parent-facing phrasing
+  for every skill content can reach — *"counts five things and says how many"*,
+  not *"cardinality to 5"*. The build check fails if a skill becomes reachable
+  without one, so the report can never quietly fall back to developmental
+  language, or to English only.
+
+Domains are ordered by the child's **best** band, not D1–D6. Sorting the rows
+without sorting the groups buried the strongest work under whichever domain came
+first in the taxonomy — a parent met 🌱 Emerging first and ⭐ Applying last.
+
+**Open item this created:** the weekly habit tracker directly below the report
+shows a percentage. It measures *the parent's* week, not the child's learning,
+so it does not breach §13.1 — but sitting under "What your child can do" it can
+easily be read as a score. Placement made an existing metric ambiguous. Owner's
+call whether it becomes a non-numeric streak of days.
 
 ### What Phase 2 measured
 

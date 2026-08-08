@@ -9,6 +9,8 @@ import { ParentShell, Card } from '../components/ui/Shell';
 import { useI18n } from '../i18n/context';
 import { useParentData } from '../hooks/useParentData';
 import { useStars } from '../hooks/useStars';
+import { useSkillEvidence } from '../hooks/useSkillEvidence';
+import SkillReport from '../components/parent/SkillReport';
 
 const DAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
@@ -25,6 +27,7 @@ export default function ParentScreen() {
   const { t } = useI18n();
   const { activities, weeklyDays, toggleActivity, toggleDay, progressKey, progressPercent } = useParentData();
   const { stars } = useStars();
+  const { store } = useSkillEvidence();
 
   return (
     <ParentShell title={t('parents.title')} hint="Progress, activities and settings">
@@ -40,6 +43,14 @@ export default function ParentScreen() {
           <p className="font-body font-bold text-[14px] leading-relaxed mt-2" style={{ color: '#5B7A94' }}>
             {t('parents.description')}
           </p>
+        </Card>
+
+        {/* What your child can do — deliberately the FIRST thing a grown-up
+            reads. It is the only section on this screen that is about the
+            child rather than about the app. */}
+        <Card tone="parent">
+          <Label>{t('report.title')}</Label>
+          <SkillReport store={store} />
         </Card>
 
         {/* This week */}
