@@ -236,12 +236,17 @@ All verified working in production build.
     intambwe zo gukaraba amaboko mu magambo ye bwite. Mureke arangize interuro
     yose mbere yo kumufasha."). Two of these carry our headline pedagogical
     claims to the parent — their tone matters more than most strings in the app.
-  - **`SettingsScreen.tsx` is entirely untranslated** (pre-existing; noted
-    2026-08-08 while adding the Ubongo credits). "Settings", "Language", "What
-    is stored", "Thanks", "About" and all body copy are hardcoded English, so
-    the screen ignores CLAUDE.md rule 4. The new Thanks card was written in
-    English to match rather than making one card trilingual inside an English
-    screen — the whole screen wants doing in one pass, not piecemeal.
+  - ~~`SettingsScreen.tsx` is entirely untranslated~~ — **fixed 2026-08-08.**
+    Every screen now goes through `t()`, enforced by `npm run i18n:check`.
+  - **Kinyarwanda weekday initials** in `translations.ts`
+    (`parents.dayLetters` = "Mb,Ka,Ga,Kn,Gt,Gd,Cy") are machine-derived from
+    Mbere/Kabiri/Gatatu/Kane/Gatanu/Gatandatu/Cyumweru. Confirm these are how a
+    Rwandan parent would actually abbreviate the days on a week strip.
+  - **New trilingual UI copy from the translation pass** (2026-08-08): the whole
+    `lesson.*`, `home.*`, `plan.*`, `report.*`, `a11y.*` and `splash.*` groups —
+    roughly 75 new KN strings, all machine-written. The lesson loop ones are the
+    most child-facing: "Yego! Ni yo!", "Ongera ugerageze", "Kina aracyari kumwe
+    nawe", "Noneho genda ukine!", "Wabikoze!".
   - **HIGH PRIORITY, parent-facing**: `PARENT_WORDING` in
     `src/data/curriculum.ts` — 22 short phrases a parent reads about their own
     child ("abara ibintu bitanu akakubwira uko bingana", "akaraba amaboko ku

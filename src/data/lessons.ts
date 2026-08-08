@@ -15,6 +15,7 @@
 // short list, which meant a lesson could reference a skill the curriculum had
 // never heard of. Now every id here is checked against the taxonomy.
 import type { ContentMeta, SkillId } from './curriculum';
+import type { Language } from '../i18n/translations';
 
 export type { SkillId };
 
@@ -23,8 +24,9 @@ export type ItemKind = 'listen-pick' | 'count' | 'match' | 'trace' | 'sequence';
 interface ItemBase {
   id: string;
   skill: SkillId;
-  promptKn: string;
-  promptEn: string;
+  /** Trilingual, like every other content file. No screen may show a word
+   *  the language toggle cannot change. */
+  prompt: Record<Language, string>;
 }
 
 /** Hear a sound, tap the matching glyph. Max 3 choices. */
@@ -50,7 +52,7 @@ export interface CountItem extends ItemBase {
 /** Match each glyph to its picture. Three pairs. */
 export interface MatchItem extends ItemBase {
   kind: 'match';
-  pairs: { id: string; left: string; right: string }[];
+  pairs: { id: string; left: Record<Language, string>; right: string }[];
 }
 
 /** Trace a letter along a guide. Letter formation, not handwriting quality. */
@@ -73,7 +75,7 @@ export interface TraceItem extends ItemBase {
 export interface SequenceItem extends ItemBase {
   kind: 'sequence';
   /** Listed in the CORRECT order. The activity shuffles them for display. */
-  steps: { id: string; glyph: string; labelKn: string; labelEn: string }[];
+  steps: { id: string; glyph: string; label: Record<Language, string> }[];
 }
 
 export type LessonItem = ListenPickItem | CountItem | MatchItem | TraceItem | SequenceItem;
@@ -81,8 +83,7 @@ export type LessonItem = ListenPickItem | CountItem | MatchItem | TraceItem | Se
 export interface Lesson {
   id: string;
   unit: number;
-  titleKn: string;
-  titleEn: string;
+  title: Record<Language, string>;
   items: LessonItem[];
   /**
    * REQUIRED — and for Iga lessons, `offline` and `parent` are required too.
@@ -97,8 +98,7 @@ export interface Lesson {
 export const LESSON_U1_L1: Lesson = {
   id: 'u1l1',
   unit: 1,
-  titleKn: 'Inyajwi',
-  titleEn: 'The vowels',
+  title: { KN: 'Inyajwi', EN: 'The vowels', FR: 'Les voyelles' },
   curriculum: {
     skills: ['snd.vowel.recognise', 'snd.write.trace', 'wrd.category'],
     level: 'L2',
@@ -128,8 +128,7 @@ export const LESSON_U1_L1: Lesson = {
       kind: 'listen-pick',
       id: 'i1',
       skill: 'snd.vowel.recognise',
-      promptKn: 'Kanda kuri «a»',
-      promptEn: 'Tap the a',
+      prompt: { KN: 'Kanda kuri «a»', EN: 'Tap the a', FR: 'Touche le a' },
       token: 'a',
       choices: [
         { id: 'a', glyph: 'a', correct: true },
@@ -141,8 +140,7 @@ export const LESSON_U1_L1: Lesson = {
       kind: 'listen-pick',
       id: 'i2',
       skill: 'snd.vowel.recognise',
-      promptKn: 'Kanda kuri «e»',
-      promptEn: 'Tap the e',
+      prompt: { KN: 'Kanda kuri «e»', EN: 'Tap the e', FR: 'Touche le e' },
       token: 'e',
       choices: [
         { id: 'u', glyph: 'u' },
@@ -154,8 +152,7 @@ export const LESSON_U1_L1: Lesson = {
       kind: 'trace',
       id: 'i3',
       skill: 'snd.write.trace',
-      promptKn: 'Kurikira «o»',
-      promptEn: 'Trace the o',
+      prompt: { KN: 'Kurikira «o»', EN: 'Trace the o', FR: 'Trace le o' },
       glyph: 'o',
       waypoints: [
         { x: 50, y: 18 },
@@ -172,20 +169,18 @@ export const LESSON_U1_L1: Lesson = {
       kind: 'match',
       id: 'i4',
       skill: 'wrd.category',
-      promptKn: 'Huza inyajwi n’ishusho',
-      promptEn: 'Match the vowel to its picture',
+      prompt: { KN: 'Huza inyajwi n’ishusho', EN: 'Match the vowel to its picture', FR: 'Associe la voyelle à son image' },
       pairs: [
-        { id: 'a', left: 'a', right: '🍎' },
-        { id: 'i', left: 'i', right: '🐟' },
-        { id: 'u', left: 'u', right: '🌂' },
+        { id: 'a', left: { KN: 'a', EN: 'a', FR: 'a' }, right: '🍎' },
+        { id: 'i', left: { KN: 'i', EN: 'i', FR: 'i' }, right: '🐟' },
+        { id: 'u', left: { KN: 'u', EN: 'u', FR: 'u' }, right: '🌂' },
       ],
     },
     {
       kind: 'listen-pick',
       id: 'i5',
       skill: 'snd.vowel.recognise',
-      promptKn: 'Kanda kuri «u»',
-      promptEn: 'Tap the u',
+      prompt: { KN: 'Kanda kuri «u»', EN: 'Tap the u', FR: 'Touche le u' },
       token: 'u',
       choices: [
         { id: 'i', glyph: 'i' },
@@ -200,8 +195,7 @@ export const LESSON_U1_L1: Lesson = {
 export const LESSON_U2_L1: Lesson = {
   id: 'u2l1',
   unit: 2,
-  titleKn: 'Turabara',
-  titleEn: 'How many?',
+  title: { KN: 'Turabara', EN: 'How many?', FR: 'Combien?' },
   curriculum: {
     skills: ['num.subitise3', 'num.count5', 'num.cardinal5'],
     level: 'L2',
@@ -233,8 +227,7 @@ export const LESSON_U2_L1: Lesson = {
       kind: 'count',
       id: 'c1',
       skill: 'num.subitise3',
-      promptKn: 'Ni imyembe ingahe?',
-      promptEn: 'How many mangoes?',
+      prompt: { KN: 'Ni imyembe ingahe?', EN: 'How many mangoes?', FR: 'Combien de mangues?' },
       count: 3,
       glyph: '🥭',
       choices: [2, 3, 4],
@@ -243,8 +236,7 @@ export const LESSON_U2_L1: Lesson = {
       kind: 'count',
       id: 'c2',
       skill: 'num.cardinal5',
-      promptKn: 'Ni inka zingahe?',
-      promptEn: 'How many cows?',
+      prompt: { KN: 'Ni inka zingahe?', EN: 'How many cows?', FR: 'Combien de vaches?' },
       count: 5,
       glyph: '🐄',
       choices: [3, 4, 5, 6],
@@ -253,8 +245,7 @@ export const LESSON_U2_L1: Lesson = {
       kind: 'count',
       id: 'c3',
       skill: 'num.cardinal5',
-      promptKn: 'Ni amababi angahe?',
-      promptEn: 'How many leaves?',
+      prompt: { KN: 'Ni amababi angahe?', EN: 'How many leaves?', FR: 'Combien de feuilles?' },
       count: 4,
       glyph: '🍃',
       choices: [2, 4, 5, 6],
@@ -263,12 +254,11 @@ export const LESSON_U2_L1: Lesson = {
       kind: 'match',
       id: 'c4',
       skill: 'num.count5',
-      promptKn: 'Huza umubare n’ibintu',
-      promptEn: 'Match the number to the group',
+      prompt: { KN: 'Huza umubare n’ibintu', EN: 'Match the number to the group', FR: 'Associe le chiffre au groupe' },
       pairs: [
-        { id: 'one', left: '1', right: '⭐' },
-        { id: 'two', left: '2', right: '⭐⭐' },
-        { id: 'three', left: '3', right: '⭐⭐⭐' },
+        { id: 'one', left: { KN: '1', EN: '1', FR: '1' }, right: '⭐' },
+        { id: 'two', left: { KN: '2', EN: '2', FR: '2' }, right: '⭐⭐' },
+        { id: 'three', left: { KN: '3', EN: '3', FR: '3' }, right: '⭐⭐⭐' },
       ],
     },
   ],
@@ -288,8 +278,7 @@ export const LESSON_U2_L1: Lesson = {
 export const LESSON_U3_L1: Lesson = {
   id: 'u3l1',
   unit: 3,
-  titleKn: 'Karaba amaboko',
-  titleEn: 'Washing hands',
+  title: { KN: 'Karaba amaboko', EN: 'Washing hands', FR: 'Se laver les mains' },
   curriculum: {
     skills: ['phy.hand.sequence', 'phy.hand.when'],
     level: 'L2',
@@ -325,22 +314,20 @@ export const LESSON_U3_L1: Lesson = {
       kind: 'sequence',
       id: 'h1',
       skill: 'phy.hand.sequence',
-      promptKn: 'Shyira mu murongo: gukaraba amaboko',
-      promptEn: 'Put the handwashing steps in order',
+      prompt: { KN: 'Shyira mu murongo: gukaraba amaboko', EN: 'Put the handwashing steps in order', FR: 'Mets les étapes du lavage des mains dans l\'ordre' },
       steps: [
-        { id: 'water', glyph: '💧', labelKn: 'Amazi', labelEn: 'Water' },
-        { id: 'soap', glyph: '🧼', labelKn: 'Isabune', labelEn: 'Soap' },
-        { id: 'scrub', glyph: '🫧', labelKn: 'Gukanda', labelEn: 'Scrub' },
-        { id: 'rinse', glyph: '🚿', labelKn: 'Koza', labelEn: 'Rinse' },
-        { id: 'dry', glyph: '🤲', labelKn: 'Kumutsa', labelEn: 'Dry' },
+        { id: 'water', glyph: '💧', label: { KN: 'Amazi', EN: 'Water', FR: 'Eau' } },
+        { id: 'soap', glyph: '🧼', label: { KN: 'Isabune', EN: 'Soap', FR: 'Savon' } },
+        { id: 'scrub', glyph: '🫧', label: { KN: 'Gukanda', EN: 'Scrub', FR: 'Frotter' } },
+        { id: 'rinse', glyph: '🚿', label: { KN: 'Koza', EN: 'Rinse', FR: 'Rincer' } },
+        { id: 'dry', glyph: '🤲', label: { KN: 'Kumutsa', EN: 'Dry', FR: 'Sécher' } },
       ],
     },
     {
       kind: 'listen-pick',
       id: 'h2',
       skill: 'phy.hand.when',
-      promptKn: 'Ni ryari dukaraba amaboko?',
-      promptEn: 'When do we wash our hands?',
+      prompt: { KN: 'Ni ryari dukaraba amaboko?', EN: 'When do we wash our hands?', FR: 'Quand se lave-t-on les mains?' },
       token: '🍽️',
       choices: [
         { id: 'eat', glyph: '🍽️', correct: true },
@@ -352,8 +339,7 @@ export const LESSON_U3_L1: Lesson = {
       kind: 'listen-pick',
       id: 'h3',
       skill: 'phy.hand.when',
-      promptKn: 'Na nyuma yo gukoresha ubwiherero?',
-      promptEn: 'And after using the toilet?',
+      prompt: { KN: 'Na nyuma yo gukoresha ubwiherero?', EN: 'And after using the toilet?', FR: 'Et après les toilettes?' },
       token: '🚽',
       choices: [
         { id: 'book', glyph: '📖' },
@@ -365,12 +351,15 @@ export const LESSON_U3_L1: Lesson = {
       kind: 'match',
       id: 'h4',
       skill: 'phy.hand.sequence',
-      promptKn: "Huza intambwe n'ishusho",
-      promptEn: 'Match each step to its picture',
+      prompt: {
+        KN: "Huza intambwe n'ishusho",
+        EN: 'Match each step to its picture',
+        FR: 'Associe chaque étape à son image',
+      },
       pairs: [
-        { id: 'water', left: 'Amazi', right: '💧' },
-        { id: 'soap', left: 'Isabune', right: '🧼' },
-        { id: 'dry', left: 'Kumutsa', right: '🤲' },
+        { id: 'water', left: { KN: 'Amazi', EN: 'Water', FR: 'Eau' }, right: '💧' },
+        { id: 'soap', left: { KN: 'Isabune', EN: 'Soap', FR: 'Savon' }, right: '🧼' },
+        { id: 'dry', left: { KN: 'Kumutsa', EN: 'Dry', FR: 'Sécher' }, right: '🤲' },
       ],
     },
   ],

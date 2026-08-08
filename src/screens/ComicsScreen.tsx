@@ -60,7 +60,7 @@ export default function ComicsScreen() {
                 <span
                   className="rounded-full grid place-items-center flex-none"
                   style={{ width: 44, height: 44, background: '#2FBF6B' }}
-                  aria-label="Read"
+                  aria-label={t('comics.read')}
                 >
                   <span
                     className="block border-l-[5px] border-b-[5px] border-white rounded-[2px]"

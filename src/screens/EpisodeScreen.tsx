@@ -25,7 +25,7 @@ const SPRING = { type: 'spring' as const, stiffness: 900, damping: 34, mass: 0.5
 export default function EpisodeScreen() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { language } = useI18n();
+  const { t, language } = useI18n();
   const { markEpisodeWatched, isEpisodeWatched } = useProgress();
 
   const episode = getEpisode(id);
@@ -98,7 +98,7 @@ export default function EpisodeScreen() {
         {episode.gameId && (
           <motion.button
             onClick={() => navigate(`/game/${episode.gameId}`)}
-            aria-label="Play the game"
+            aria-label={t('a11y.playGame')}
             whileTap={{ y: 6, boxShadow: '0 2px 0 #D89A00' }}
             transition={SPRING}
             className="w-full rounded-[24px] flex items-center gap-4 px-5"

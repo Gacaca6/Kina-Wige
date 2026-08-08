@@ -11,8 +11,8 @@ import { useParentData } from '../hooks/useParentData';
 import { useStars } from '../hooks/useStars';
 import { useSkillEvidence } from '../hooks/useSkillEvidence';
 import SkillReport from '../components/parent/SkillReport';
-
-const DAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+import ActivityReport from '../components/parent/ActivityReport';
+import { useProgress } from '../hooks/useProgress';
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
@@ -28,9 +28,13 @@ export default function ParentScreen() {
   const { activities, weeklyDays, toggleActivity, toggleDay, progressKey, progressPercent } = useParentData();
   const { stars } = useStars();
   const { store } = useSkillEvidence();
+  const { progress } = useProgress();
+  // Weekday initials are language-specific — English M T W T F S S meant nothing
+  // to a parent reading the rest of the screen in Kinyarwanda.
+  const DAYS = t('parents.dayLetters').split(',');
 
   return (
-    <ParentShell title={t('parents.title')} hint="Progress, activities and settings">
+    <ParentShell title={t('parents.title')} hint={t('parents.hint')}>
       <div className="flex flex-col gap-4">
         {/* Welcome */}
         <Card tone="parent">
@@ -53,6 +57,13 @@ export default function ParentScreen() {
           <SkillReport store={store} />
         </Card>
 
+        {/* What they have been doing — the conversation starter. A parent who
+            knows what their child is into has something to ask at dinner. */}
+        <Card tone="parent">
+          <Label>{t('report.activityTitle')}</Label>
+          <ActivityReport progress={progress} />
+        </Card>
+
         {/* This week */}
         <div className="rounded-[20px] p-5" style={{ background: '#1565C0', color: '#fff' }}>
           <div className="flex items-end justify-between gap-3">
@@ -69,7 +80,7 @@ export default function ParentScreen() {
               <button
                 key={i}
                 onClick={() => toggleDay(i)}
-                aria-label={`Day ${i + 1}`}
+                aria-label={`${t('parents.day')} ${i + 1}`}
                 aria-pressed={!!weeklyDays[i]}
                 className="flex flex-col items-center gap-1.5 min-w-0"
                 style={{ minHeight: 68 }}
@@ -101,7 +112,7 @@ export default function ParentScreen() {
           </div>
 
           <p className="font-body font-bold text-[13px] opacity-85 mt-4">
-            Stars collected: <span className="font-black tabular-nums">{stars}</span> — stars only ever go up.
+            {t('parents.stars')}: <span className="font-black tabular-nums">{stars}</span> — {t('parents.starsNote')}.
           </p>
         </div>
 
@@ -169,14 +180,14 @@ export default function ParentScreen() {
             className="rounded-[16px] font-body font-black text-[15px]"
             style={{ minHeight: 56, background: '#1565C0', color: '#fff' }}
           >
-            Plan
+            {t('parents.plan')}
           </button>
           <button
             onClick={() => navigate('/settings')}
             className="rounded-[16px] font-body font-black text-[15px]"
             style={{ minHeight: 56, background: '#FFFFFF', color: '#1565C0', border: '2px solid #90CAF9' }}
           >
-            Settings
+            {t('settings.title')}
           </button>
         </div>
       </div>

@@ -19,7 +19,7 @@ interface Message {
 
 export default function BazaKezaScreen() {
   const navigate = useNavigate();
-  const { language } = useI18n();
+  const { t, language } = useI18n();
   const { play } = useSound();
   const haptic = useHaptic();
 
@@ -286,7 +286,7 @@ export default function BazaKezaScreen() {
                   }}
                 >
                   {msg.isThinking ? (
-                    <div className="flex items-center gap-1.5 py-1" aria-label="Thinking">
+                    <div className="flex items-center gap-1.5 py-1" aria-label={t('a11y.thinking')}>
                       {[0, 1, 2].map((i) => (
                         <motion.span
                           key={i}
@@ -312,7 +312,7 @@ export default function BazaKezaScreen() {
                           onClick={() => speakMessage(msg.text)}
                           className="mt-2 font-body font-black flex items-center gap-1.5"
                           style={{ fontSize: 12, color: '#2FBF6B', minHeight: 44, paddingTop: 6, paddingBottom: 6 }}
-                          aria-label="Listen"
+                          aria-label={t('a11y.listen')}
                         >
                           🔊 {language === 'KN' ? 'Umva' : language === 'FR' ? 'Écouter' : 'Listen'}
                         </button>
@@ -335,7 +335,7 @@ export default function BazaKezaScreen() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowKeyboard(false)}
-                aria-label="Use the microphone"
+                aria-label={t('a11y.mic')}
                 className="rounded-[18px] grid place-items-center flex-none"
                 style={{ width: 56, height: 56, background: '#EFEBE1' }}
               >
@@ -364,7 +364,7 @@ export default function BazaKezaScreen() {
                 <button
                   onClick={handleTextSubmit}
                   disabled={!textInput.trim() || isThinking}
-                  aria-label="Send"
+                  aria-label={t('a11y.send')}
                   className="rounded-[14px] grid place-items-center flex-none"
                   style={{
                     width: 44,
@@ -381,7 +381,7 @@ export default function BazaKezaScreen() {
             <div className="flex items-center justify-center gap-4">
               <button
                 onClick={() => setShowKeyboard(true)}
-                aria-label="Type instead"
+                aria-label={t('a11y.typeInstead')}
                 className="rounded-[18px] grid place-items-center flex-none"
                 style={{ width: 60, height: 60, background: '#EFEBE1', boxShadow: '0 5px 0 #D9D2C4' }}
               >

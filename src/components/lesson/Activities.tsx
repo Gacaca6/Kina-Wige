@@ -11,6 +11,7 @@
 import { useCallback, useRef, useState } from 'react';
 import type { PointerEvent as ReactPointerEvent } from 'react';
 import { motion } from 'motion/react';
+import { useI18n } from '../../i18n/context';
 import type { CountItem, ListenPickItem, MatchItem, SequenceItem, TraceItem } from '../../data/lessons';
 
 const SPRING = { type: 'spring' as const, stiffness: 700, damping: 30, mass: 0.6 };
@@ -126,6 +127,7 @@ export function CountActivity({
 
 /* ── 12 · Match pairs ───────────────────────────────────────────────── */
 export function MatchActivity({ item, onSelect }: ActivityProps & { item: MatchItem }) {
+  const { language } = useI18n();
   const [active, setActive] = useState<string | null>(null);
   const [solved, setSolved] = useState<string[]>([]);
   const [wrongPair, setWrongPair] = useState<string | null>(null);
@@ -161,7 +163,7 @@ export function MatchActivity({ item, onSelect }: ActivityProps & { item: MatchI
             <motion.button
               key={p.id}
               onClick={() => !done && setActive(p.id)}
-              aria-label={p.left}
+              aria-label={p.left[language]}
               aria-pressed={isActive}
               disabled={done}
               whileTap={done ? undefined : { y: 5 }}
@@ -171,7 +173,7 @@ export function MatchActivity({ item, onSelect }: ActivityProps & { item: MatchI
               style={{ minHeight: 84, boxShadow: cardShadow(isActive || done) }}
             >
               <span className="font-display font-extrabold text-ink" style={{ fontSize: 36, lineHeight: 1 }}>
-                {p.left}
+                {p.left[language]}
               </span>
             </motion.button>
           );
@@ -226,6 +228,7 @@ export function MatchActivity({ item, onSelect }: ActivityProps & { item: MatchI
  * the try-again sheet never interrupts a half-built sequence.
  */
 export function SequenceActivity({ item, onSelect }: ActivityProps & { item: SequenceItem }) {
+  const { language } = useI18n();
   const [placed, setPlaced] = useState<string[]>([]);
   const [wrong, setWrong] = useState<string | null>(null);
 
@@ -294,7 +297,7 @@ export function SequenceActivity({ item, onSelect }: ActivityProps & { item: Seq
               key={s.id}
               onClick={() => tap(s.id)}
               disabled={done}
-              aria-label={`${s.labelEn} — ${s.labelKn}`}
+              aria-label={s.label[language]}
               whileTap={done ? undefined : { y: 5 }}
               animate={{ opacity: done ? 0.35 : 1, x: isWrong ? [0, -6, 6, 0] : 0 }}
               transition={isWrong ? { duration: 0.4 } : SPRING}
@@ -309,7 +312,7 @@ export function SequenceActivity({ item, onSelect }: ActivityProps & { item: Seq
               }}
             >
               <span style={{ fontSize: 36, lineHeight: 1 }}>{s.glyph}</span>
-              <span className="font-body font-black text-[12px] text-ink leading-none">{s.labelKn}</span>
+              <span className="font-body font-black text-[12px] text-ink leading-none">{s.label[language]}</span>
             </motion.button>
           );
         })}
@@ -320,6 +323,7 @@ export function SequenceActivity({ item, onSelect }: ActivityProps & { item: Seq
 
 /* ── 13 · Trace ─────────────────────────────────────────────────────── */
 export function TraceActivity({ item, onSelect }: ActivityProps & { item: TraceItem }) {
+  const { t } = useI18n();
   const [hit, setHit] = useState(0);
   const box = useRef<HTMLDivElement | null>(null);
   const done = hit >= item.waypoints.length;
@@ -373,7 +377,7 @@ export function TraceActivity({ item, onSelect }: ActivityProps & { item: TraceI
         </svg>
       </div>
       <div className="font-body font-extrabold text-[14px] text-ink-soft">
-        {done ? 'Byakunze!' : `${hit} / ${item.waypoints.length}`}
+        {done ? t('activity.done') : `${hit} / ${item.waypoints.length}`}
       </div>
     </div>
   );

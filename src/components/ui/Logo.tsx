@@ -21,7 +21,7 @@ export default function Logo({ variant = 'splash', className = '' }: LogoProps) 
       <div className="w-56 h-56 rounded-3xl overflow-hidden shadow-2xl bg-white/10 backdrop-blur-sm p-2">
         <img
           src="/splash-logo.jpeg"
-          alt="Kina Wige Logo"
+          alt=""
           className="w-full h-full object-contain rounded-2xl"
         />
       </div>

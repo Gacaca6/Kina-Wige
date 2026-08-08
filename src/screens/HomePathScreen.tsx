@@ -20,36 +20,42 @@ import Kina from '../components/characters/Kina';
 import BottomNav from '../components/ui/BottomNav';
 import LanguageToggle from '../components/ui/LanguageToggle';
 import { LESSONS } from '../data/lessons';
+import { useI18n } from '../i18n/context';
+import { useProgress } from '../hooks/useProgress';
 
 interface PathNode {
   id: string;
   x: number;
   y: number;
-  state: 'done' | 'current' | 'locked';
-  to?: string;
+  to: string;
+  /** What has to be finished for this node to show a tick. */
+  kind: 'lesson' | 'episode';
+  contentId: string;
 }
 
+type NodeState = 'done' | 'current' | 'locked';
+
+// Wired to content that already ships. State is NOT stored here — a freshly
+// installed app used to show three finished nodes a child had never touched,
+// which is a lie told to a four-year-old the first time they open it. Ticks are
+// now earned: they appear only once that lesson or episode is actually done.
 const NODES: PathNode[] = [
-  // Wired to content that already ships: lessons from data/lessons.ts and
-  // episodes from data/episodes.ts.
-  { id: 'n1', x: 62, y: 0, state: 'done', to: '/lesson/u1l1' },
-  { id: 'n2', x: 178, y: 96, state: 'done', to: '/episode/alphabet' },
-  { id: 'n3', x: 108, y: 188, state: 'done', to: '/lesson/u2l1' },
-  // The handwashing lesson — the vertical slice (Architecture §21). It is the
-  // current node on purpose: it is the one lesson that ends off the screen.
-  { id: 'n4', x: 194, y: 292, state: 'current', to: '/lesson/u3l1' },
+  { id: 'n1', x: 62, y: 0, to: '/lesson/u1l1', kind: 'lesson', contentId: 'u1l1' },
+  { id: 'n2', x: 178, y: 96, to: '/episode/alphabet', kind: 'episode', contentId: 'alphabet' },
+  { id: 'n3', x: 108, y: 188, to: '/lesson/u2l1', kind: 'lesson', contentId: 'u2l1' },
+  { id: 'n4', x: 194, y: 292, to: '/lesson/u3l1', kind: 'lesson', contentId: 'u3l1' },
 ];
 
 const TRAIL =
   'M120 20 C 250 60, 60 120, 190 170 C 320 220, 100 250, 200 320 C 260 360, 200 380, 160 396';
-const TRAIL_DONE = 'M120 20 C 250 60, 60 120, 190 170 C 320 220, 100 250, 200 320';
 
-/** The banner follows the current node rather than being hardcoded to unit 1. */
-function currentLesson() {
-  const current = NODES.find((n) => n.state === 'current');
-  const id = current?.to?.startsWith('/lesson/') ? current.to.slice('/lesson/'.length) : undefined;
-  return id ? LESSONS[id] : undefined;
-}
+// How much green is painted behind the child, per number of finished nodes.
+const TRAIL_DONE = [
+  '',
+  'M120 20 C 250 60, 60 120, 190 170',
+  'M120 20 C 250 60, 60 120, 190 170 C 320 220, 100 250, 200 320',
+  'M120 20 C 250 60, 60 120, 190 170 C 320 220, 100 250, 200 320 C 260 360, 200 380, 160 396',
+];
 
 /* ── Pictorial nav icons. A 4-year-old reads the picture, not the label. ── */
 
@@ -57,8 +63,26 @@ function currentLesson() {
 
 export default function HomePathScreen() {
   const navigate = useNavigate();
+  const { t, language } = useI18n();
+  const { isLessonDone, isEpisodeWatched } = useProgress();
   const [look, setLook] = useState<{ x: number; y: number } | null>(null);
-  const unit = currentLesson();
+
+  // Ticks are earned, never assumed. A node is done when its content is done;
+  // the first unfinished node is where the child is now; everything after it
+  // waits. Play a game or finish a lesson and the path fills in behind you.
+  const doneFlags = NODES.map((n) =>
+    n.kind === 'lesson' ? isLessonDone(n.contentId) : isEpisodeWatched(n.contentId),
+  );
+  const firstUnfinished = doneFlags.indexOf(false);
+  const stateOf = (i: number): NodeState =>
+    doneFlags[i] ? 'done' : i === firstUnfinished ? 'current' : 'locked';
+
+  const doneCount = doneFlags.filter(Boolean).length;
+  const trailDone = TRAIL_DONE[Math.min(doneCount, TRAIL_DONE.length - 1)];
+
+  // The banner follows wherever the child actually is.
+  const currentNode = firstUnfinished === -1 ? NODES[NODES.length - 1] : NODES[firstUnfinished];
+  const unit = currentNode.kind === 'lesson' ? LESSONS[currentNode.contentId] : undefined;
 
   function track(e: ReactPointerEvent<HTMLDivElement>) {
     const r = e.currentTarget.getBoundingClientRect();
@@ -76,25 +100,12 @@ export default function HomePathScreen() {
     >
       {/* ── Header. Stars only — no streak, no gems, nothing that can go down. ── */}
       <header className="bg-forest text-white px-5 pt-safe pb-5">
+        {/* No grown-up door here. A padlock is not a child's idea, and the
+            child's world should contain nothing addressed to an adult. Parents
+            reach their area from the splash screen, before the child lane
+            begins. */}
         <div className="flex items-center justify-end gap-3">
           <LanguageToggle />
-
-          {/* The only way into the grown-up lane from the child's world.
-              Blue on purpose — blue always means "an adult should hold this". */}
-          <button
-            onClick={() => navigate('/parents')}
-            className="flex items-center justify-center bg-forest-deep rounded-[16px]"
-            style={{ minHeight: 72, minWidth: 72 }}
-            aria-label="Grown-ups area"
-          >
-            <span className="relative block" style={{ width: 22, height: 24 }} aria-hidden>
-              <span className="absolute bottom-0 left-0 right-0 rounded-[5px] bg-sky" style={{ height: 15 }} />
-              <span
-                className="absolute top-0 left-[4px] right-[4px] rounded-t-[8px] border-[3px] border-b-0 border-sky box-border"
-                style={{ height: 11 }}
-              />
-            </span>
-          </button>
         </div>
       </header>
 
@@ -111,10 +122,10 @@ export default function HomePathScreen() {
           </div>
           <div>
             <div className="font-body font-extrabold text-[12px] tracking-[.14em] text-[#8A6A00]">
-              IGICE {unit?.unit ?? 1} · UNIT {unit?.unit ?? 1}
+              {t('home.unit')} {unit?.unit ?? 1}
             </div>
             <div className="font-body font-black text-[22px] text-ink leading-tight">
-              {unit?.titleKn ?? 'Amagambo yambere'}
+              {unit ? unit.title[language] : ''}
             </div>
           </div>
         </div>
@@ -124,18 +135,19 @@ export default function HomePathScreen() {
       <div className="relative flex-1 min-h-[400px] overflow-hidden pt-6">
         <svg viewBox="0 0 390 400" className="absolute inset-0 w-full h-full" aria-hidden>
           <path d={TRAIL} fill="none" stroke="#E4DDCE" strokeWidth={16} strokeLinecap="round" strokeDasharray="2 28" />
-          <path d={TRAIL_DONE} fill="none" stroke="#2FBF6B" strokeWidth={16} strokeLinecap="round" strokeDasharray="2 28" />
+          <path d={trailDone} fill="none" stroke="#2FBF6B" strokeWidth={16} strokeLinecap="round" strokeDasharray="2 28" />
         </svg>
 
-        {NODES.map((n) => {
-          if (n.state === 'done') {
+        {NODES.map((n, i) => {
+          const state = stateOf(i);
+          if (state === 'done') {
             return (
               <button
                 key={n.id}
-                onClick={() => n.to && navigate(n.to)}
+                onClick={() => navigate(n.to)}
                 className="absolute rounded-full bg-grass grid place-items-center chunk"
                 style={{ left: n.x, top: n.y, width: 88, height: 88, boxShadow: '0 8px 0 #1E8C4C' }}
-                aria-label="Lesson complete — play again"
+                aria-label={t('home.nodeDone')}
               >
                 <span
                   className="block border-l-[9px] border-b-[9px] border-white rounded-[2px]"
@@ -144,13 +156,13 @@ export default function HomePathScreen() {
               </button>
             );
           }
-          if (n.state === 'locked') {
+          if (state === 'locked') {
             return (
               <div
                 key={n.id}
                 className="absolute rounded-full bg-locked grid place-items-center"
                 style={{ left: n.x, top: n.y, width: 84, height: 84, boxShadow: '0 7px 0 #C9C0AE' }}
-                aria-label="Locked — finish the lesson before this one"
+                aria-label={t('home.nodeLocked')}
               >
                 <span className="relative block w-[30px] h-[26px] rounded-md bg-[#A8A090]">
                   <span className="absolute -top-3 left-1.5 right-1.5 h-3.5 rounded-t-[10px] border-4 border-b-0 border-[#A8A090] box-border" />
@@ -173,13 +185,13 @@ export default function HomePathScreen() {
                 animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
               >
-                TANGIRA
+                {t('home.start')}
               </motion.div>
               <button
-                onClick={() => n.to && navigate(n.to)}
+                onClick={() => navigate(n.to)}
                 className="rounded-full bg-sun grid place-items-center chunk"
                 style={{ width: 108, height: 108, boxShadow: '0 9px 0 #D89A00' }}
-                aria-label="Start this lesson"
+                aria-label={t('home.nodeStart')}
               >
                 <Kina mood="idle" lookAt={look} style={{ width: 70, height: 68 }} />
               </button>

@@ -29,20 +29,23 @@ export type DomainId = 'D1' | 'D2' | 'D3' | 'D4' | 'D5' | 'D6';
 
 export interface Domain {
   id: DomainId;
+  /** Internal/English name, used by docs and the build checks. */
   name: string;
   /** Machine-written Kinyarwanda — in the ROADMAP review queue. */
   nameKn: string;
+  /** What a PARENT sees. Trilingual, because the report is a real screen. */
+  label: Record<Language, string>;
   /** Share of content commissioning, not of screen time. */
   weight: number;
 }
 
 export const DOMAINS: readonly Domain[] = [
-  { id: 'D1', name: 'Language & Literacy', nameKn: "Ururimi n'ubumenyi bwo gusoma", weight: 0.25 },
-  { id: 'D2', name: 'Numeracy', nameKn: 'Imibare', weight: 0.2 },
-  { id: 'D3', name: 'Discovery of the World', nameKn: 'Gushakashaka isi', weight: 0.15 },
-  { id: 'D4', name: 'Physical & Health', nameKn: "Ubuzima n'umubiri", weight: 0.15 },
-  { id: 'D5', name: 'Social & Emotional', nameKn: "Imyifatire n'amarangamutima", weight: 0.15 },
-  { id: 'D6', name: 'Creative Arts & Culture', nameKn: "Ubuhanzi n'umuco", weight: 0.1 },
+  { id: 'D1', name: 'Language & Literacy', nameKn: "Ururimi n'ubumenyi bwo gusoma", label: { KN: "Ururimi n'ubumenyi bwo gusoma", EN: 'Language & Literacy', FR: 'Langue et lecture' }, weight: 0.25 },
+  { id: 'D2', name: 'Numeracy', nameKn: 'Imibare', label: { KN: "Imibare", EN: 'Numeracy', FR: 'Les nombres' }, weight: 0.2 },
+  { id: 'D3', name: 'Discovery of the World', nameKn: 'Gushakashaka isi', label: { KN: "Gushakashaka isi", EN: 'Discovery of the World', FR: 'Découverte du monde' }, weight: 0.15 },
+  { id: 'D4', name: 'Physical & Health', nameKn: "Ubuzima n'umubiri", label: { KN: "Ubuzima n'umubiri", EN: 'Physical & Health', FR: 'Corps et santé' }, weight: 0.15 },
+  { id: 'D5', name: 'Social & Emotional', nameKn: "Imyifatire n'amarangamutima", label: { KN: "Imyifatire n'amarangamutima", EN: 'Social & Emotional', FR: 'Social et émotionnel' }, weight: 0.15 },
+  { id: 'D6', name: 'Creative Arts & Culture', nameKn: "Ubuhanzi n'umuco", label: { KN: "Ubuhanzi n'umuco", EN: 'Creative Arts & Culture', FR: 'Arts et culture' }, weight: 0.1 },
 ];
 
 // ─── Levels ─────────────────────────────────────────────────────────────────

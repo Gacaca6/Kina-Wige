@@ -100,7 +100,7 @@ export default function HandwashGame() {
             className="absolute -top-6 -right-4 bg-white font-body font-black px-4 py-2 rounded-[16px] rounded-bl-none z-20"
             style={{ color: '#17543C', fontSize: 14, boxShadow: '0 4px 0 #DDD6C8' }}
           >
-            Amaboko yanjye asa n'ayera!
+            {t('game.cleanHands')}
           </div>
         </div>
         <h1 className="font-display font-extrabold text-white mb-8" style={{ fontSize: 30 }}>
@@ -113,7 +113,7 @@ export default function HandwashGame() {
           className="chunk rounded-[22px] px-14"
           style={{ minHeight: 76, background: '#FFFFFF', boxShadow: '0 8px 0 #D9D2C4' }}
         >
-          <span className="font-display font-extrabold" style={{ color: '#17543C', fontSize: 24 }}>Tangira!</span>
+          <span className="font-display font-extrabold" style={{ color: '#17543C', fontSize: 24 }}>{t('splash.start')}</span>
         </motion.button>
       </motion.div>
     );
@@ -134,10 +134,10 @@ export default function HandwashGame() {
           transition={{ type: 'spring', stiffness: 400, damping: 14, mass: 0.9 }}
           className="w-56 h-56 mb-6"
         >
-          <img src={images.hirwaFull} alt="Hirwa Clean" className="w-full h-full object-contain" />
+          <img src={images.hirwaFull} alt="" className="w-full h-full object-contain" />
         </motion.div>
 
-        <h1 className="font-display font-extrabold text-white mb-2" style={{ fontSize: 34 }}>⭐ Wabikoze neza!</h1>
+        <h1 className="font-display font-extrabold text-white mb-2" style={{ fontSize: 34 }}>⭐ {t('quiz.success')}</h1>
         <p className="font-body font-bold text-white/85 mb-6" style={{ fontSize: 17 }}>{t('game.done')}</p>
 
         <div className="flex items-center gap-3 rounded-[20px] px-6 mb-8" style={{ minHeight: 60, background: '#0E3626' }}>
@@ -212,7 +212,7 @@ export default function HandwashGame() {
 
         <div className="relative w-full max-w-lg aspect-square flex items-center justify-center mt-12">
           <div className="relative w-72 h-72 lg:w-96 lg:h-96 bg-white rounded-full flex items-center justify-center overflow-visible" style={{ boxShadow: '0 10px 0 #DDD6C8', border: '8px solid #E7F7EE' }}>
-            <img src={images.hands} alt="Hands" className={`w-4/5 h-4/5 object-contain z-10 transition-all duration-500 ${gameState === 'water' ? 'brightness-90 sepia-[0.2] hue-rotate-180' : gameState === 'dry' ? 'brightness-110 contrast-125' : ''}`} />
+            <img src={images.hands} alt="" className={`w-4/5 h-4/5 object-contain z-10 transition-all duration-500 ${gameState === 'water' ? 'brightness-90 sepia-[0.2] hue-rotate-180' : gameState === 'dry' ? 'brightness-110 contrast-125' : ''}`} />
 
             {gameState === 'water' && (
               <div className="absolute inset-0 z-20 flex flex-col items-center justify-start pt-4 cursor-pointer" onClick={handleWaterTap}>

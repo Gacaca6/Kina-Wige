@@ -68,7 +68,7 @@ export default function ParentGate({ children }: { children: React.ReactNode }) 
     >
       <button
         onClick={() => navigate('/home')}
-        aria-label="Back to home"
+        aria-label={t('common.back')}
         className="absolute top-4 left-4 w-11 h-11 flex items-center justify-center rounded-full bg-white/15 text-white active:scale-95 transition-transform"
       >
         <ArrowLeft className="w-5 h-5" />

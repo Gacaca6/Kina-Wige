@@ -95,7 +95,7 @@ export default function VisualQuiz({ onComplete }: { onComplete: () => void }) {
         <button
           onClick={() => { setUserStartedQuiz(true); speakQuestion(); }}
           className="p-4 bg-primary/10 rounded-full hover:bg-primary/20 hover:scale-105 transition-all animate-pulse"
-          aria-label="Play audio"
+          aria-label={t('a11y.playAudio')}
         >
           <Volume2 className="w-8 h-8 text-primary" />
         </button>

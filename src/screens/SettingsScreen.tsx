@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ParentShell, Card } from '../components/ui/Shell';
 import { useI18n } from '../i18n/context';
-import type { Language } from '../i18n/translations';
+import type { Language, TranslationKey } from '../i18n/translations';
 import { episodes } from '../data/episodes';
 import { comics } from '../data/comics';
 
@@ -65,7 +65,7 @@ function Label({ children }: { children: React.ReactNode }) {
 
 export default function SettingsScreen() {
   const navigate = useNavigate();
-  const { language, setLanguage } = useI18n();
+  const { t, language, setLanguage } = useI18n();
   const [cleared, setCleared] = useState(false);
 
   function resetProgress() {
@@ -80,10 +80,10 @@ export default function SettingsScreen() {
   }
 
   return (
-    <ParentShell title="Settings" hint="Language, data and about" onBack={() => navigate('/parents')}>
+    <ParentShell title={t('settings.title')} hint={t('settings.language')} onBack={() => navigate('/parents')}>
       <div className="flex flex-col gap-4">
         <Card tone="parent">
-          <Label>Language</Label>
+          <Label>{t('settings.language')}</Label>
           <div className="flex gap-2">
             {LANGUAGES.map((l) => {
               const on = language === l.code;
@@ -111,47 +111,41 @@ export default function SettingsScreen() {
         </Card>
 
         <Card tone="parent">
-          <Label>What is stored</Label>
+          <Label>{t('settings.data')}</Label>
           <ul className="flex flex-col gap-2">
             {[
-              'Stars and lesson progress',
-              'Which episodes and stories were opened',
-              'What your child can do (the progress report)',
-              'Chosen language',
-            ].map((t) => (
-              <li key={t} className="flex items-start gap-2 font-body font-bold text-[14px]" style={{ color: '#213B4A' }}>
+              'settings.stored.stars',
+              'settings.stored.opened',
+              'settings.stored.report',
+              'settings.stored.language',
+            ].map((key) => (
+              <li key={key} className="flex items-start gap-2 font-body font-bold text-[14px]" style={{ color: '#213B4A' }}>
                 <span className="mt-1.5 rounded-full flex-none" style={{ width: 7, height: 7, background: '#42A5F5' }} />
-                {t}
+                {t(key as TranslationKey)}
               </li>
             ))}
           </ul>
           <p className="font-body font-bold text-[13px] mt-3 leading-relaxed" style={{ color: '#5B7A94' }}>
-            Everything stays on this phone. There is no account, no analytics and
-            no network call — nothing is ever transmitted.
+{t('report.private')}
           </p>
           <button
             onClick={resetProgress}
             className="w-full rounded-[14px] font-body font-black text-[15px] mt-4"
             style={{ minHeight: 48, background: cleared ? '#E3F2FD' : '#C62828', color: cleared ? '#1565C0' : '#fff' }}
           >
-            {cleared ? 'Progress cleared' : 'Delete all progress'}
+            {cleared ? t('settings.resetDone') : t('settings.reset')}
           </button>
         </Card>
 
         {/* Thanks. Placed before About on purpose — the people who made the
             work we build on come before the version number. */}
         <Card tone="parent">
-          <Label>Thanks</Label>
+          <Label>{t('settings.thanks')}</Label>
           <p className="font-body font-bold text-[14px] leading-relaxed" style={{ color: '#213B4A' }}>
-            Kina Wige stands on work generously shared by others. Our thanks to{' '}
-            <span className="font-black">Ubongo</span> — whose Toolkit provides the
-            alphabet songs and the Letter A episode — and to{' '}
-            <span className="font-black">Book Dash</span>, whose freely licensed
-            illustrations became one of our storybooks.
+            {t('settings.thanksBody')}
           </p>
           <p className="font-body font-bold text-[13px] mt-3 leading-relaxed" style={{ color: '#5B7A94' }}>
-            Ubongo makes African educational media for African children, reaching
-            families across the continent. Kina Wige exists in the same spirit.
+            {t('settings.thanksBody2')}
           </p>
 
           <ul className="flex flex-col gap-1.5 mt-4">
@@ -169,13 +163,12 @@ export default function SettingsScreen() {
         </Card>
 
         <Card tone="parent">
-          <Label>About</Label>
+          <Label>{t('settings.about')}</Label>
           <p className="font-body font-bold text-[14px] leading-relaxed" style={{ color: '#213B4A' }}>
-            Kina Wige — a Kinyarwanda-first learning app for children aged 3–6.
-            Works fully offline.
+{t('settings.aboutBody')}
           </p>
           <p className="font-body font-bold text-[13px] mt-3" style={{ color: '#5B7A94' }}>
-            Version {APP_VERSION}
+            {t('settings.version')} {APP_VERSION}
             <br />
             <a href={`mailto:${CONTACT_EMAIL}`} style={{ color: '#1565C0' }}>
               {CONTACT_EMAIL}

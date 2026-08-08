@@ -8,6 +8,7 @@
 // on top of a lesson, a game or a reader, where it would cover the activity.
 
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useI18n } from '../../i18n/context';
 import { motion } from 'motion/react';
 
 /** Screens that own the whole viewport, or belong to grown-ups. */
@@ -23,6 +24,7 @@ const HIDDEN_ON = [
 ];
 
 export default function AskKeza() {
+  const { t } = useI18n();
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
@@ -33,7 +35,7 @@ export default function AskKeza() {
   return (
     <motion.button
       onClick={() => navigate('/baza-keza')}
-      aria-label="Baza Keza — ask a question"
+      aria-label={t('a11y.askKeza')}
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ type: 'spring', stiffness: 400, damping: 15, mass: 0.9, delay: 0.4 }}

@@ -13,10 +13,12 @@ import type { PointerEvent as ReactPointerEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import Kina from '../components/characters/Kina';
+import { useI18n } from '../i18n/context';
 
 const SPRING = { type: 'spring' as const, stiffness: 900, damping: 34, mass: 0.5 };
 
 export default function SplashScreen() {
+  const { t } = useI18n();
   const navigate = useNavigate();
   const [look, setLook] = useState<{ x: number; y: number } | null>(null);
 
@@ -72,7 +74,7 @@ export default function SplashScreen() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.22 }}
         >
-          Kina. Wige. Ukure.
+          {t('splash.motto')}
         </motion.p>
       </div>
 
@@ -81,7 +83,7 @@ export default function SplashScreen() {
         {/* Child door — dominant, usable without reading a word */}
         <motion.button
           onClick={() => navigate('/home-path')}
-          aria-label="Play and learn"
+          aria-label={t('splash.play')}
           whileTap={{ y: 6, boxShadow: '0 3px 0 #1E8C4C' }}
           transition={SPRING}
           initial={{ opacity: 0, y: 24 }}
@@ -112,7 +114,7 @@ export default function SplashScreen() {
               Kina
             </span>
             <span className="block font-body font-extrabold text-white/85 text-[13px] mt-0.5">
-              Play &amp; learn · for children
+              {t('splash.forChildren')}
             </span>
           </span>
         </motion.button>
@@ -120,7 +122,7 @@ export default function SplashScreen() {
         {/* Grown-up door — findable, deliberately dull, blue from here on */}
         <motion.button
           onClick={() => navigate('/parents')}
-          aria-label="Grown-ups area"
+          aria-label={t('splash.grownups')}
           whileTap={{ y: 5, boxShadow: '0 2px 0 #0B2A1D' }}
           transition={SPRING}
           initial={{ opacity: 0, y: 24 }}
@@ -135,11 +137,11 @@ export default function SplashScreen() {
               style={{ height: 11 }}
             />
           </span>
-          <span className="font-body font-black text-sky text-[17px]">Ababyeyi · Grown-ups</span>
+          <span className="font-body font-black text-sky text-[17px]">{t('splash.grownups')}</span>
         </motion.button>
 
         <p className="text-center font-body font-bold text-[12px]" style={{ color: 'rgba(207,235,220,.7)' }}>
-          No account. No internet needed.
+          {t('splash.noAccount')}
         </p>
       </div>
     </div>

@@ -102,7 +102,7 @@ export default function SkillReport({ store }: { store: EvidenceStore }) {
         .map((domain) => (
         <div key={domain.id}>
           <h3 className="font-body font-black text-[12px] tracking-[.08em] uppercase mb-2" style={{ color: '#42A5F5' }}>
-            {domain.name}
+            {domain.label[language]}
           </h3>
           <ul className="flex flex-col gap-2">
             {(byDomain.get(domain.id) ?? []).map(({ id, band }) => (

@@ -9,16 +9,18 @@
 
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useI18n } from '../../i18n/context';
 import BottomNav from './BottomNav';
 import LanguageToggle from './LanguageToggle';
 
 /* ── Back button, sized for a small hand ── */
 function BackButton({ onClick, tone }: { onClick: () => void; tone: 'child' | 'parent' }) {
+  const { t } = useI18n();
   const child = tone === 'child';
   return (
     <button
       onClick={onClick}
-      aria-label="Go back"
+      aria-label={t('common.back')}
       className="rounded-[18px] grid place-items-center flex-none"
       style={{
         width: child ? 60 : 48,
@@ -37,11 +39,12 @@ function BackButton({ onClick, tone }: { onClick: () => void; tone: 'child' | 'p
 
 /* ── The grown-up lock. The only door out of the child's world. ── */
 export function GrownUpLock({ className = '' }: { className?: string }) {
+  const { t } = useI18n();
   const navigate = useNavigate();
   return (
     <button
       onClick={() => navigate('/parents')}
-      aria-label="Grown-ups area"
+      aria-label={t('splash.grownups')}
       className={`rounded-[16px] grid place-items-center flex-none ${className}`}
       style={{ width: 60, height: 60, background: '#0E3626' }}
     >
@@ -117,6 +120,7 @@ export interface ParentShellProps {
 }
 
 export function ParentShell({ title, hint, onBack, children }: ParentShellProps) {
+  const { t } = useI18n();
   const navigate = useNavigate();
   return (
     <div className="flex flex-col" style={{ minHeight: '100dvh', background: '#F5FAFE' }}>
@@ -135,7 +139,7 @@ export function ParentShell({ title, hint, onBack, children }: ParentShellProps)
           className="font-body font-black text-[11px] tracking-[.12em] px-3 py-2 rounded-[10px] flex-none"
           style={{ background: '#1565C0', color: '#fff' }}
         >
-          GROWN-UPS
+          {t('splash.grownups')}
         </span>
       </header>
 

@@ -9,9 +9,13 @@ interface Progress {
   episodesWatched: Record<string, true>;
   gamesCompleted: Record<string, number>;
   comicsRead: Record<string, true>;
+  /** Iga lessons finished. Drives the ticks on the learning path. */
+  lessonsCompleted: Record<string, number>;
 }
 
-const emptyProgress: Progress = { episodesWatched: {}, gamesCompleted: {}, comicsRead: {} };
+const emptyProgress: Progress = {
+  episodesWatched: {}, gamesCompleted: {}, comicsRead: {}, lessonsCompleted: {},
+};
 
 function loadProgress(): Progress {
   try {
@@ -22,6 +26,7 @@ function loadProgress(): Progress {
       episodesWatched: parsed.episodesWatched ?? {},
       gamesCompleted: parsed.gamesCompleted ?? {},
       comicsRead: parsed.comicsRead ?? {},
+      lessonsCompleted: parsed.lessonsCompleted ?? {},
     };
   } catch {
     return emptyProgress;
@@ -84,10 +89,31 @@ export function useProgress() {
     [progress],
   );
 
+  const markLessonDone = useCallback((id: string) => {
+    setProgress(prev => {
+      const next = {
+        ...prev,
+        lessonsCompleted: { ...prev.lessonsCompleted, [id]: (prev.lessonsCompleted[id] ?? 0) + 1 },
+      };
+      saveProgress(next);
+      return next;
+    });
+  }, []);
+
+  const isLessonDone = useCallback(
+    (id: string) => (progress.lessonsCompleted[id] ?? 0) > 0,
+    [progress],
+  );
+
   const isComicRead = useCallback(
     (id: string) => !!progress.comicsRead[id],
     [progress],
   );
 
-  return { markEpisodeWatched, markGameCompleted, markComicRead, isEpisodeWatched, gamePlayCount, isComicRead };
+  return {
+    /** The raw store — read by the parent report to show what a child enjoys. */
+    progress,
+    markEpisodeWatched, markGameCompleted, markComicRead, markLessonDone,
+    isEpisodeWatched, gamePlayCount, isComicRead, isLessonDone,
+  };
 }

@@ -28,6 +28,7 @@ import {
 import { useStars } from '../hooks/useStars';
 import { useSound } from '../hooks/useSound';
 import { useSkillEvidence } from '../hooks/useSkillEvidence';
+import { useProgress } from '../hooks/useProgress';
 import { useI18n } from '../i18n/context';
 
 type Phase = 'ask' | 'correct' | 'retry' | 'done';
@@ -81,11 +82,14 @@ export default function LessonScreen() {
 
   const { addStar } = useStars();
   const { play } = useSound();
-  const { language } = useI18n();
+  const { t, language } = useI18n();
   const { record, recordOffline } = useSkillEvidence();
+  const { markLessonDone } = useProgress();
   const [challengeDone, setChallengeDone] = useState(false);
 
   const [index, setIndex] = useState(0);
+  /** Mirrors `index` for event handlers — see next(). */
+  const indexRef = useRef(0);
   const [phase, setPhase] = useState<Phase>('ask');
   /** null = nothing chosen yet; true/false = a complete answer. */
   const [answer, setAnswer] = useState<boolean | null>(null);
@@ -140,12 +144,26 @@ export default function LessonScreen() {
   }
 
   function next() {
-    if (index + 1 >= total) {
+    // Read the position from a REF, not from the render closure.
+    //
+    // This handler is passed to a motion.div inside AnimatePresence, and that
+    // subtree can hand back a cached element whose props came from an earlier
+    // render. When it did, `index` here was frozen at 0 forever: the items
+    // still advanced (setIndex uses a functional update) but `index + 1 >=
+    // total` was permanently false, so the lesson could NEVER reach its done
+    // screen — no Kina Challenge, no parent activity, no tick on the path.
+    // A ref is read at call time and cannot go stale.
+    const i = indexRef.current;
+    if (i + 1 >= total) {
       play('victory_fanfare');
+      // This is what puts a tick on the learning path. Without it the path can
+      // never fill in, however much the child actually does.
+      markLessonDone(lesson.id);
       setPhase('done');
       return;
     }
-    setIndex((i) => i + 1);
+    indexRef.current = i + 1;
+    setIndex(i + 1);
     setAnswer(null);
     setLastPickId(null);
     setRuledOut([]);
@@ -198,10 +216,10 @@ export default function LessonScreen() {
             <Kina mood="cheer" style={{ width: 132, height: 120 }} />
           </motion.div>
           <div className="font-display font-extrabold text-white mt-5" style={{ fontSize: 40, lineHeight: 1.05 }}>
-            Wabikoze!
+            {t('lesson.complete')}
           </div>
           <div className="font-body font-extrabold text-mint mt-1.5 text-base">
-            Lesson complete · {lesson.titleEn}
+            {t('lesson.completeSub')} · {lesson.title[language]}
           </div>
 
           <div className="mt-5 flex items-center gap-3 bg-forest-deep rounded-[20px] px-6" style={{ minHeight: 68 }}>
@@ -243,7 +261,7 @@ export default function LessonScreen() {
                     style={{ minHeight: 68 }}
                     role="status"
                   >
-                    ✓ Twabikoze!
+                    ✓ {t('lesson.weDidIt')}
                   </div>
                 ) : (
                   <Chunky
@@ -258,11 +276,11 @@ export default function LessonScreen() {
                       play('success');
                     }}
                   >
-                    <span className="text-xl">Twabikoze!</span>
+                    <span className="text-xl">{t('lesson.weDidIt')}</span>
                   </Chunky>
                 )}
                 <p className="font-body font-bold text-[12px] text-ink-soft mt-2 text-center">
-                  A grown-up taps this after you do it together
+                  {t('lesson.challengeHelp')}
                 </p>
               </div>
             </motion.div>
@@ -280,28 +298,28 @@ export default function LessonScreen() {
               <div className="flex items-center gap-2">
                 <span style={{ fontSize: 24, lineHeight: 1 }} aria-hidden>👋</span>
                 <span className="font-body font-black text-[13px] tracking-[.12em] text-[#1A5C86]">
-                  KU BABYEYI · FOR THE GROWN-UP
+                  {t('lesson.forGrownUp')}
                 </span>
               </div>
               <p className="font-body font-extrabold text-[#123B57] text-[16px] leading-snug mt-2.5">
                 {parentActivity.text[language]}
               </p>
               <p className="font-body font-bold text-[12px] text-[#3E6D8A] mt-2">
-                Two minutes. The pause after you ask is the important part.
+                {t('lesson.parentHelp')}
               </p>
             </motion.div>
           )}
 
           {/* §16: we end by sending them away, never by offering more. */}
           <div className="font-body font-black text-mint text-[15px] mt-7">
-            Noneho genda ukine! · Now go and play!
+            {t('lesson.goPlay')}
           </div>
         </div>
 
         <div className="px-6 pb-safe pt-2 flex-none">
           <div className="w-full max-w-sm mx-auto">
             <Chunky bg="#FFC02E" shadow="#D89A00" color="#10241B" onClick={() => navigate('/home-path')}>
-              <span className="text-2xl">Komeza</span>
+              <span className="text-2xl">{t('lesson.continue')}</span>
             </Chunky>
           </div>
         </div>
@@ -318,7 +336,7 @@ export default function LessonScreen() {
       <div className="px-6 pt-safe flex items-center gap-3">
         <button
           onClick={() => navigate('/home-path')}
-          aria-label="Leave the lesson"
+          aria-label={t('lesson.leave')}
           className="rounded-[16px] bg-sand grid place-items-center flex-none"
           style={{ width: 56, height: 56 }}
         >
@@ -351,15 +369,15 @@ export default function LessonScreen() {
           style={{ borderRadius: '22px 22px 22px 6px', boxShadow: '0 5px 0 #C6EDD7' }}
         >
           <div className="font-display font-extrabold text-ink" style={{ fontSize: 22, lineHeight: 1.2 }}>
-            {item.promptKn}
+            {item.prompt[language]}
           </div>
-          <div className="font-body font-bold text-[13px] text-ink-soft mt-0.5">{item.promptEn}</div>
+          
         </div>
       </div>
 
       {/* ── The audio button. Big, yellow, unmissable — this is the question. ── */}
       <div className="px-6 pt-5">
-        <Chunky bg="#FFC02E" shadow="#D89A00" color="#10241B" onClick={speak} ariaLabel="Play the sound again">
+        <Chunky bg="#FFC02E" shadow="#D89A00" color="#10241B" onClick={speak} ariaLabel={t('lesson.listenAgain')}>
           <span className="flex items-center gap-4 px-5">
             <span className="rounded-[18px] bg-ink grid place-items-center flex-none" style={{ width: 56, height: 56 }}>
               <span
@@ -374,8 +392,8 @@ export default function LessonScreen() {
               />
             </span>
             <span className="flex-1 text-left">
-              <span className="block font-body font-black text-[19px]">Umva</span>
-              <span className="block font-body font-extrabold text-[12px] text-sun-deep">Listen again</span>
+              <span className="block font-body font-black text-[19px]">{t('lesson.listen')}</span>
+              <span className="block font-body font-extrabold text-[12px] text-sun-deep">{t('lesson.listenAgain')}</span>
             </span>
             {item.kind === 'listen-pick' && (
               <span className="font-display font-extrabold text-[40px] leading-none pr-2">{item.token}</span>
@@ -402,13 +420,13 @@ export default function LessonScreen() {
             style={{ borderTop: '5px solid #2FBF6B', borderRadius: '34px 34px 0 0' }}
           >
             <div className="font-display font-extrabold text-forest" style={{ fontSize: 36, lineHeight: 1 }}>
-              Yego! Ni yo!
+              {t('lesson.correct')}
             </div>
             <div className="font-body font-extrabold text-[15px] text-mint-ink mt-1.5 mb-5">
-              That&rsquo;s right · C&rsquo;est ça
+              {t('lesson.correctSub')}
             </div>
             <Chunky bg="#2FBF6B" shadow="#1E8C4C" color="#fff" onClick={next}>
-              <span className="text-2xl">Komeza</span>
+              <span className="text-2xl">{t('lesson.continue')}</span>
             </Chunky>
           </motion.div>
         ) : showRetry ? (
@@ -422,13 +440,13 @@ export default function LessonScreen() {
             style={{ background: '#FFF6DF', borderTop: '5px solid #FFC02E', borderRadius: '34px 34px 0 0' }}
           >
             <div className="font-display font-extrabold text-ink" style={{ fontSize: 32, lineHeight: 1.05 }}>
-              Ongera ugerageze
+              {t('lesson.retry')}
             </div>
             <div className="font-body font-extrabold text-[15px] text-sun-deep mt-1.5 mb-5">
-              Try again · Kina is still here
+              {t('lesson.retrySub')}
             </div>
             <Chunky bg="#FFC02E" shadow="#D89A00" color="#10241B" onClick={() => setPhase('ask')}>
-              <span className="text-2xl">Ongera</span>
+              <span className="text-2xl">{t('lesson.retryBtn')}</span>
             </Chunky>
           </motion.div>
         ) : (
@@ -440,7 +458,7 @@ export default function LessonScreen() {
               disabled={answer === null}
               onClick={check}
             >
-              <span className="text-2xl">Reba</span>
+              <span className="text-2xl">{t('lesson.check')}</span>
             </Chunky>
           </motion.div>
         )}

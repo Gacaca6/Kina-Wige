@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useI18n } from '../../i18n/context';
 import { Play, Pause, Maximize, Minimize, Volume2, VolumeX, RotateCcw, RotateCw } from 'lucide-react';
 
 interface VideoPlayerProps {
@@ -9,6 +10,7 @@ interface VideoPlayerProps {
 }
 
 export default function VideoPlayer({ clips, poster, onAllClipsEnded }: VideoPlayerProps) {
+  const { t } = useI18n();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentClip, setCurrentClip] = useState(0);
   const [totalProgress, setTotalProgress] = useState(0);
@@ -264,7 +266,7 @@ export default function VideoPlayer({ clips, poster, onAllClipsEnded }: VideoPla
             <Play className="w-10 h-10 fill-current ml-1" />
           </motion.button>
           <p className="mt-4 font-headline font-bold text-white text-lg drop-shadow-lg">
-            Kanda urebe!
+            {t('video.tapToPlay')}
           </p>
         </motion.div>
       )}
@@ -286,7 +288,7 @@ export default function VideoPlayer({ clips, poster, onAllClipsEnded }: VideoPla
             <div className="absolute inset-0 flex items-center justify-center gap-8 pointer-events-none">
               <button
                 onClick={(e) => { e.stopPropagation(); skip(-10); }}
-                aria-label="Back 10 seconds"
+                aria-label={t('a11y.back10')}
                 className="pointer-events-auto relative w-12 h-12 bg-white/20 backdrop-blur-sm text-white rounded-full flex items-center justify-center hover:bg-white/30 transition-colors active:scale-90"
               >
                 <RotateCcw className="w-6 h-6" />
@@ -304,7 +306,7 @@ export default function VideoPlayer({ clips, poster, onAllClipsEnded }: VideoPla
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); skip(10); }}
-                aria-label="Forward 10 seconds"
+                aria-label={t('a11y.forward10')}
                 className="pointer-events-auto relative w-12 h-12 bg-white/20 backdrop-blur-sm text-white rounded-full flex items-center justify-center hover:bg-white/30 transition-colors active:scale-90"
               >
                 <RotateCw className="w-6 h-6" />
