@@ -50,15 +50,16 @@ export const games: GameInfo[] = [
       theme: 'T4',
       domains: ['D1'],
       minutes: 3,
-      // ⚠️ THE WEAKEST MAPPING IN THE APP — the contract's first real catch.
-      // What this game actually trains is visual working memory, which is NOT a
-      // skill in our taxonomy. The pairs (banana, avocado, goat, sunflower) are
-      // nameable, but the game never asks the child to name them, so the claim
-      // is not yet earned. Two honest ways out, both for Phase 3:
-      //   (a) speak/label the pair on match — makes wrd.name.object true, or
-      //   (b) add an attention/working-memory skill to D5 with evidence, sourced.
-      // Do not leave this note in place once one of them is done.
-      note: 'UNEARNED: trains working memory (not in taxonomy); add naming on match, or add the skill.',
+      // Was the weakest mapping in the app — the contract's first real catch.
+      // The game trained visual working memory (not in our taxonomy) while
+      // claiming wrd.name.object, and never asked the child to name anything.
+      //
+      // Now: pairs are all §18 required-presence objects (banana, goat, cow,
+      // chicken), the name appears the moment a pair is matched, and the win
+      // screen asks a grown-up to confirm the child named them. A touchscreen
+      // cannot hear a child speak and we record no audio, so the adult is the
+      // instrument — the same mechanism as the Kina Challenge (§13).
+      note: 'Naming is parent-marked: a screen cannot evidence productive vocabulary on its own.',
     },
   },
   {
@@ -73,11 +74,12 @@ export const games: GameInfo[] = [
       theme: 'T4',
       domains: ['D2'],
       minutes: 3,
-      // Round ranges are [1,3] [2,5] [3,7] [4,9] [5,10] — so the game starts at
-      // L1 and finishes at L3 inside a single sitting. It shows a group and asks
-      // for the numeral, which is cardinality + numeral matching, our headline
-      // probe. But an L1 child meets L3 content by round 4 with no way to stop.
-      note: 'Difficulty spans L1→L3 in one sitting. Should respect the child\'s level, not a fixed ramp.',
+      // The ramp used to run to 10 for every child, so a three-year-old met L3
+      // numbers by round 4 with no way to stop. The ceiling now rises only with
+      // evidence: no cardinality to 5 yet means the whole game stays inside 5,
+      // distractors included. This game also RECORDS evidence — before that,
+      // only lessons did, which left ⭐ Applying practically unreachable.
+      note: 'Ceiling follows the child (5 / 7 / 10). Records cardinality evidence under source game:counting.',
     },
   },
   {

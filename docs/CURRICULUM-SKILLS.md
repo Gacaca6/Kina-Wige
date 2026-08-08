@@ -320,18 +320,27 @@ recording:
 
 ### Raised by Phase 2 — the contract's first catches
 
-- **The Memory game cannot honestly declare any skill we have.** It trains
-  visual working memory, which is not in this taxonomy. It currently declares
-  `wrd.name.object`, which is **not yet earned** — the game never asks the child
-  to name anything. Two honest fixes, and we must pick one:
-  **(a)** speak the pair's name on match, making the claim true; or
-  **(b)** add an attention/working-memory skill with a sourced evidence
-  statement. Option (b) must not be done by invention — it needs a source.
-- **The Counting game spans L1→L3 in a single sitting.** Its round ranges are
-  `[1,3] [2,5] [3,7] [4,9] [5,10]`, so a three-year-old meets L3 content by
-  round 4 with no way to stop. Difficulty should follow the child's level, not a
-  fixed ramp. This conflicts with "levels are not gates" (§7) only in appearance:
-  the issue is that the ramp ignores the child entirely.
+- ~~**The Memory game cannot honestly declare any skill we have.**~~ **Closed
+  2026-08-08.** It claimed `wrd.name.object` while never asking the child to
+  name anything. Resolved by option (a), plus the recognition that
+  `wrd.name.object` is *productive* — a touchscreen cannot hear a child speak
+  and we record no audio, so **the grown-up is the instrument**, exactly as for
+  the Kina Challenge. The name now appears on match, and the win screen asks an
+  adult to confirm the child said them. The pairs also changed from
+  banana/avocado/goat/**sunflower** to banana/goat/**cow/chicken** — all four on
+  §18's required-presence list; a sunflower is nobody's daily object here.
+- ~~**The Counting game spans L1→L3 in a single sitting.**~~ **Closed
+  2026-08-08.** The ceiling now rises only with evidence — 5 by default, 7 once
+  `num.cardinal5` is 🌳 Demonstrated, 10 once `num.cardinal10` is. Distractors
+  respect the ceiling too: offering "9" to a child working within 5 only widens
+  the guess. This does not make levels into gates (§7); it stops a fixed ramp
+  from ignoring the child entirely.
+- **Games now record evidence, not just lessons.** *(Found while closing the
+  above.)* Until now only `Iga` wrote to the evidence store, which meant the
+  `source` set could almost never hold two entries and **⭐ Applying was
+  practically unreachable** — the band exists precisely to describe a skill met
+  in a lesson and then used somewhere else. Verified: a child who demonstrates
+  cardinality in `u2l1` and then counts in the game is promoted to ⭐ Applying.
 - **`letter-a` is 11 minutes** of a 12-minute session cap. One item can consume
   a whole day's session.
 - **`twinkle` is culturally imported** and teaches one listening skill. It cannot

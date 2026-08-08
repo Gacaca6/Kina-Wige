@@ -6,12 +6,11 @@ import { useSound, useHaptic } from '../../hooks/useSound';
 import { useStars } from '../../hooks/useStars';
 import { useProgress } from '../../hooks/useProgress';
 import { games } from '../../data/games';
+import { useSkillEvidence } from '../../hooks/useSkillEvidence';
 import { KidShell, Card } from '../../components/ui/Shell';
 import GameCelebration from '../../components/game/GameCelebration';
 
 const TOTAL_ROUNDS = 5;
-// Difficulty rises with each round: [min, max] target count
-const ROUND_RANGES: [number, number][] = [[1, 3], [2, 5], [3, 7], [4, 9], [5, 10]];
 const ROUND_EMOJIS = ['🍊', '🐔', '🌽', '🐄', '🥭'];
 
 interface Round {
@@ -24,13 +23,39 @@ function randInt(min: number, max: number): number {
   return min + Math.floor(Math.random() * (max - min + 1));
 }
 
-function makeRound(roundIndex: number): Round {
-  const [min, max] = ROUND_RANGES[Math.min(roundIndex, ROUND_RANGES.length - 1)];
+/**
+ * How high this child counts today.
+ *
+ * The game used to run a fixed ramp to 10 for everyone, so a three-year-old met
+ * L3 numbers by round 4 with no way to stop. Levels are not gates (§7) — but a
+ * ramp that ignores the child entirely is not a level-free design, it is just a
+ * design that has not met them.
+ *
+ * The ceiling only ever RISES with evidence. A child who has not yet shown
+ * cardinality to 5 stays inside 5, where the work actually is.
+ */
+function ceilingFor(cardinal5: string | null, cardinal10: string | null): number {
+  const strong = (b: string | null) => b === 'demonstrated' || b === 'applying';
+  if (strong(cardinal10)) return 10;
+  if (strong(cardinal5)) return 7;
+  return 5;
+}
+
+/** Five rounds that climb toward the ceiling without ever exceeding it. */
+function rangesFor(ceiling: number): [number, number][] {
+  if (ceiling <= 5) return [[1, 2], [1, 3], [2, 4], [2, 5], [3, 5]];
+  if (ceiling <= 7) return [[1, 3], [2, 5], [3, 6], [3, 7], [4, 7]];
+  return [[1, 3], [2, 5], [3, 7], [4, 9], [5, 10]];
+}
+
+function makeRound(roundIndex: number, ranges: [number, number][], ceiling: number): Round {
+  const [min, max] = ranges[Math.min(roundIndex, ranges.length - 1)];
   const count = randInt(min, max);
   const options = new Set<number>([count]);
+  // Distractors stay inside the child's ceiling too — offering "9" to a child
+  // working within 5 teaches nothing and only widens the guess.
   while (options.size < 3) {
-    const distractor = randInt(Math.max(1, count - 3), Math.min(10, count + 3));
-    options.add(distractor);
+    options.add(randInt(Math.max(1, count - 3), Math.min(ceiling, count + 3)));
   }
   return {
     count,
@@ -46,9 +71,17 @@ export default function CountingGame() {
   const haptic = useHaptic();
   const { stars, addStar } = useStars();
   const { markGameCompleted } = useProgress();
+  const { record, band } = useSkillEvidence();
+
+  // Read the child's level ONCE, at mount. Difficulty must not shift under a
+  // child mid-game just because they got one right.
+  const [{ ceiling, ranges }] = useState(() => {
+    const c = ceilingFor(band('num.cardinal5'), band('num.cardinal10'));
+    return { ceiling: c, ranges: rangesFor(c) };
+  });
 
   const [roundIndex, setRoundIndex] = useState(0);
-  const [round, setRound] = useState<Round>(() => makeRound(0));
+  const [round, setRound] = useState<Round>(() => makeRound(0, ranges, ceiling));
   const [wrongPick, setWrongPick] = useState<number | null>(null);
   const [correctPicked, setCorrectPicked] = useState(false);
   const [won, setWon] = useState(false);
@@ -58,6 +91,14 @@ export default function CountingGame() {
 
   const handlePick = (n: number) => {
     if (correctPicked || won) return;
+
+    // Games record evidence too, not just lessons. Before this, ONLY lessons
+    // wrote, so `sources.size >= 2` could almost never happen and ⭐ Applying —
+    // "uses it in a new situation" — was effectively unreachable. A skill met
+    // in a lesson and then used in a game is exactly the situation that band
+    // was written to describe.
+    record(round.count <= 5 ? 'num.cardinal5' : 'num.cardinal10', n === round.count, 'game:counting');
+
     if (n === round.count) {
       setCorrectPicked(true);
       play('clean_chime');
@@ -72,7 +113,7 @@ export default function CountingGame() {
         } else {
           const next = roundIndex + 1;
           setRoundIndex(next);
-          setRound(makeRound(next));
+          setRound(makeRound(next, ranges, ceiling));
           setCorrectPicked(false);
           setWrongPick(null);
         }
@@ -88,7 +129,7 @@ export default function CountingGame() {
 
   const restart = () => {
     setRoundIndex(0);
-    setRound(makeRound(0));
+    setRound(makeRound(0, ranges, ceiling));
     setWrongPick(null);
     setCorrectPicked(false);
     setMistakes(0);

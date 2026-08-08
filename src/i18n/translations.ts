@@ -33,6 +33,10 @@ export const translations = {
     'games.subtitle': 'Imikino igufasha gutekereza!',
     'games.play': 'Kina nonaha',
     'memory.instructions': 'Kanda ku dukarita ubone utuntu tumwe!',
+    // Connect step — a screen cannot hear a child speak, so a grown-up confirms.
+    'memory.nameThem': 'Saba umwana wawe kuvuga izina rya buri kimwe.',
+    'memory.theySaid': 'Yabivuze!',
+    'memory.named': 'Byakozwe!',
     'counting.question': 'Hano hari bingahe?',
     'pattern.instructions': 'Reba urutonde, uhitemo igikurikira!',
     'sorting.question': 'Iki kiryo ni cyiza ku buzima?',
@@ -146,6 +150,10 @@ export const translations = {
     'games.subtitle': 'Games that make you think!',
     'games.play': 'Play now',
     'memory.instructions': 'Flip the cards and find the matching pairs!',
+    // Connect step — a screen cannot hear a child speak, so a grown-up confirms.
+    'memory.nameThem': 'Ask your child to name each one.',
+    'memory.theySaid': 'They named them!',
+    'memory.named': 'Done!',
     'counting.question': 'How many do you see?',
     'pattern.instructions': 'Look at the pattern and pick what comes next!',
     'sorting.question': 'Is this food healthy?',
@@ -259,6 +267,10 @@ export const translations = {
     'games.subtitle': 'Des jeux qui font réfléchir!',
     'games.play': 'Jouer',
     'memory.instructions': 'Retourne les cartes et trouve les paires!',
+    // Connect step — a screen cannot hear a child speak, so a grown-up confirms.
+    'memory.nameThem': 'Demandez à votre enfant de nommer chacun.',
+    'memory.theySaid': 'Il les a nommés!',
+    'memory.named': 'C\'est fait!',
     'counting.question': 'Combien en vois-tu?',
     'pattern.instructions': 'Regarde la suite et choisis ce qui vient après!',
     'sorting.question': 'Cet aliment est-il bon pour la santé?',

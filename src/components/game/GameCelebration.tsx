@@ -3,6 +3,7 @@
 // "I did it" the same way whether they just read a story or won a game.
 
 import { motion } from 'motion/react';
+import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../../i18n/context';
 import Kina from '../characters/Kina';
@@ -12,9 +13,14 @@ const SPRING = { type: 'spring' as const, stiffness: 900, damping: 34, mass: 0.5
 interface GameCelebrationProps {
   onPlayAgain: () => void;
   scoreLabel?: string;
+  /**
+   * Optional slot between the score and the buttons. Used for a Connect step —
+   * something to do with a grown-up before playing again (Architecture §11).
+   */
+  extra?: ReactNode;
 }
 
-export default function GameCelebration({ onPlayAgain, scoreLabel }: GameCelebrationProps) {
+export default function GameCelebration({ onPlayAgain, scoreLabel, extra }: GameCelebrationProps) {
   const navigate = useNavigate();
   const { t } = useI18n();
 
@@ -49,6 +55,8 @@ export default function GameCelebration({ onPlayAgain, scoreLabel }: GameCelebra
           </span>
         )}
       </div>
+
+      {extra}
 
       <div className="flex flex-col gap-3 w-full max-w-xs mt-8">
         <motion.button
