@@ -3,13 +3,22 @@
 **Version:** 1.0 · 2026-08-02
 **Status:** Canonical. The authoritative list of everything Kina Wige teaches.
 **Parent document:** `docs/CURRICULUM-ARCHITECTURE.md`
-**Implements:** Phase 2 design. This is the specification `src/data/curriculum.ts`
-will transcribe — no code is written yet, by instruction.
+**Implemented in:** `src/data/curriculum.ts` — this document and that file must
+agree. The file is executable; where they differ, **the file wins** and this
+document is the one that needs correcting.
 
-> **Contract.** Every episode, game, book and lesson declares one or more `id`s
-> from this file. A build check fails on an empty or unknown skill reference
-> (Architecture §17). **Ids are permanent and are never renamed** — content
-> references them forever. To retire a skill, mark it `deprecated`, never delete.
+> **Contract — now enforced, not aspirational.** Every episode, game, book and
+> lesson declares one or more `id`s from this file.
+>
+> - An **unknown or misspelled** id does not compile (`SkillId` is derived from
+>   the table, so TypeScript even suggests the correct spelling).
+> - An **empty** `skills: []` does not compile (`SkillRefs` is a non-empty tuple).
+> - **Domain drift, level mismatch, prerequisite cycles, a missing Kina
+>   Challenge** and over-cap session lengths fail `npm run curriculum:check`,
+>   which runs as the first step of `npm run build`.
+>
+> **Ids are permanent and are never renamed** — content references them forever.
+> To retire a skill, mark it `deprecated`, never delete.
 
 ---
 
@@ -187,22 +196,49 @@ Mastery requires 4 of 5 correct **across two separate sessions**.
 
 ## Coverage summary
 
+> These counts are now **computed from `src/data/curriculum.ts`**, not tallied by
+> hand. Run `npm run curriculum:check` to regenerate. The first run corrected
+> five of the six domains — the hand-tallied per-level figures in v1.0 were
+> wrong, which is precisely the class of error the machine-readable form exists
+> to prevent.
+
 | Domain | Skills | L1 | L2 | L3 | Weight |
 | --- | --- | --- | --- | --- | --- |
-| D1 Language & Literacy | 23 | 6 | 9 | 8 | 25% |
-| D2 Numeracy | 18 | 5 | 8 | 5 | 20% |
-| D3 Discovery | 11 | 3 | 5 | 3 | 15% |
-| D4 Physical & Health | 12 | 5 | 6 | 1 | 15% |
-| D5 Social & Emotional | 12 | 3 | 6 | 3 | 15% |
+| D1 Language & Literacy | 23 | 7 | 10 | 6 | 25% |
+| D2 Numeracy | 18 | 4 | 7 | 7 | 20% |
+| D3 Discovery | 11 | 2 | 5 | 4 | 15% |
+| D4 Physical & Health | 12 | 4 | 6 | 2 | 15% |
+| D5 Social & Emotional | 12 | 2 | 7 | 3 | 15% |
 | D6 Creative & Culture | 10 | 3 | 4 | 3 | 10% |
-| **Total** | **86** | **25** | **38** | **23** | |
+| **Total** | **86** | **22** | **39** | **25** | |
 
 **Observations to act on:**
-- **L3 Physical & Health is thin (1 skill).** Either it genuinely completes early
-  — defensible for hygiene — or we are under-specifying school-readiness motor
-  skills. Review before Phase 5.
-- **L2 carries 44% of all skills.** That is the year most content should target.
+- **L3 Physical & Health is thin (2 skills).** Either it genuinely completes
+  early — defensible for hygiene — or we are under-specifying school-readiness
+  motor skills. Review before Phase 5.
+- **L2 carries 45% of all skills.** That is the year most content should target.
+- **L1 is the thinnest level (22 skills)** and it is the entry point — the first
+  experience a 3-year-old has of Kina Wige. Worth a deliberate look.
 - **D6 has the fewest skills and the least content** — a compounding gap.
+
+### Live coverage — what content actually teaches
+
+Reported by `npm run curriculum:check` against the 14 items now in the app:
+
+| Domain | Skills taught | Content items |
+| --- | --- | --- |
+| D1 Language & Literacy | 7 / 23 | 8 |
+| D2 Numeracy | 9 / 18 | 4 |
+| D3 Discovery of the World | **0 / 11** | **0** |
+| D4 Physical & Health | 4 / 12 | 5 |
+| D5 Social & Emotional | 1 / 12 | 1 |
+| D6 Creative Arts & Culture | **0 / 10** | **0** |
+| **Total** | **21 / 86 (24%)** | **14** |
+
+**D3 and D6 have no content at all** — 25% of the curriculum by weight, entirely
+unserved. §10 of the Architecture predicted the D6 gap from the section×domain
+matrix; the D3 gap it did not, and that is the more surprising finding, because
+Discovery is described there as "the cheapest domain to teach well".
 
 ---
 
@@ -210,17 +246,33 @@ Mastery requires 4 of 5 correct **across two separate sessions**.
 
 The handwashing slice must demonstrably teach:
 
-| Section | Skills |
-| --- | --- |
-| Iga lesson | `phy.hand.sequence` · `phy.hand.when` |
-| Amasomo episode | `phy.hand.why` · `self.feel.other` |
-| Imikino game | `phy.hand.sequence` · `num.count5` |
-| Ibitabo book | `wrd.story.recall` · `phy.hand.when` |
-| Kina Challenge | `phy.hand.sequence` (real basin, parent-marked) |
-| Parent activity | `wrd.sentence.speak` (serve-and-return) |
+| Section | Planned skills | Status today |
+| --- | --- | --- |
+| Iga lesson | `phy.hand.sequence` · `phy.hand.when` | ❌ **does not exist** — the slice's real gap |
+| Amasomo episode | `phy.hand.why` · `self.feel.other` | ⚠️ ep 1+2 carry `sequence`/`when`; neither reaches `why` |
+| Imikino game | `phy.hand.sequence` · `num.count5` | ⚠️ `sequence` only — **the game does not count anything** |
+| Ibitabo book | `wrd.story.recall` · `phy.hand.when` | ✅ `clean-hands`, and it also carries `phy.hand.why` |
+| Kina Challenge | `phy.hand.sequence` (real basin, parent-marked) | ❌ not authored |
+| Parent activity | `wrd.sentence.speak` (serve-and-return) | ❌ not authored |
 
 That is **8 distinct skills across 4 domains from one theme** — the proof that
 the integrated thematic approach works in our structure.
+
+**What Phase 2 changed about this plan.** Writing the mappings against the real
+code, rather than against the titles, moved two rows:
+
+1. `num.count5` was assigned to the handwashing game. The game walks
+   water → soap → scrub → rinse → dry and **counts nothing**. Either the game
+   gains a counting step or the slice claims 7 skills, not 8. Do not quietly
+   keep claiming it.
+2. `phy.hand.why` was assigned to the episode. The episode says "clean hands
+   keep us healthy"; the skill's evidence is "refers to germs we cannot see".
+   Only the `clean-hands` book actually does that — in a single panel. **That
+   one panel is the sole carrier of `phy.hand.why` in the entire app.**
+
+The slice is therefore **3 of 6 rows short**, and all three missing rows are the
+Iga lesson and its Connect step — exactly the parts Architecture §11 warns are
+"the two most commonly skipped under deadline pressure".
 
 ---
 
@@ -247,3 +299,25 @@ the integrated thematic approach works in our structure.
 - **Off-screen evidence** (`phy.gross.move`, `art.perform`, Kina Challenge) is
   parent-marked. Phase 4 must make that honest and effortless — a single tap,
   never a form.
+
+### Raised by Phase 2 — the contract's first catches
+
+- **The Memory game cannot honestly declare any skill we have.** It trains
+  visual working memory, which is not in this taxonomy. It currently declares
+  `wrd.name.object`, which is **not yet earned** — the game never asks the child
+  to name anything. Two honest fixes, and we must pick one:
+  **(a)** speak the pair's name on match, making the claim true; or
+  **(b)** add an attention/working-memory skill with a sourced evidence
+  statement. Option (b) must not be done by invention — it needs a source.
+- **The Counting game spans L1→L3 in a single sitting.** Its round ranges are
+  `[1,3] [2,5] [3,7] [4,9] [5,10]`, so a three-year-old meets L3 content by
+  round 4 with no way to stop. Difficulty should follow the child's level, not a
+  fixed ramp. This conflicts with "levels are not gates" (§7) only in appearance:
+  the issue is that the ramp ignores the child entirely.
+- **`letter-a` is 11 minutes** of a 12-minute session cap. One item can consume
+  a whole day's session.
+- **`twinkle` is culturally imported** and teaches one listening skill. It cannot
+  claim `art.sing.rwanda` — it is not a Rwandan song. Replacing it with one would
+  serve D6, our most under-served domain, and satisfy §18 at the same time.
+- **Three episodes still say `attribution: TODO`.** Not a curriculum matter, but
+  it is a shipping blocker and the contract work surfaced it.

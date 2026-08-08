@@ -13,6 +13,7 @@
 //      /comic/<id> route automatically.
 
 import type { Language } from '../i18n/translations';
+import type { ContentMeta } from './curriculum';
 import { images } from '../assets/images';
 import { mySpecialHair } from '../assets/comics/mySpecialHair';
 
@@ -28,6 +29,8 @@ export interface Comic {
   cover: string;
   panels: ComicPanel[];
   attribution?: string; // shown on the card/reader; required for CC-licensed art
+  /** REQUIRED — what this book teaches (Architecture §17). */
+  curriculum: ContentMeta;
 }
 
 export interface UpcomingComic {
@@ -46,6 +49,17 @@ export const comics: Comic[] = [
     category: { KN: '💛 Kwikunda', EN: '💛 Self-love', FR: "💛 S'aimer" },
     cover: mySpecialHair.cover,
     attribution: 'Illustrations: Book Dash (bookdash.org) · CC BY 4.0',
+    curriculum: {
+      skills: ['self.confidence', 'wrd.story.recall'],
+      level: 'L2',
+      theme: 'T1',
+      domains: ['D1', 'D5'],
+      minutes: 4,
+      // Currently the only content carrying D6 territory (self-expression), and
+      // it does so through D5. Architecture §10 names this: Creative Arts &
+      // Culture has no strong home and Books carry it alone.
+      note: 'D6 is still uncovered by this — see the coverage report.',
+    },
     panels: [
       {
         image: mySpecialHair.p04,
@@ -146,6 +160,17 @@ export const comics: Comic[] = [
     },
     category: { KN: '🫧 Isuku', EN: '🫧 Hygiene', FR: '🫧 Hygiène' },
     cover: images.hirwaFull,
+    curriculum: {
+      skills: ['phy.hand.why', 'phy.hand.when', 'wrd.story.recall'],
+      level: 'L3',
+      theme: 'T6',
+      domains: ['D1', 'D4'],
+      minutes: 4,
+      // Panel 2 is the only place in the whole app that says germs are there and
+      // you cannot see them — the exact evidence statement for phy.hand.why.
+      // The vertical slice depends on this book.
+      note: 'Sole carrier of phy.hand.why. Do not remove without replacing the germ panel.',
+    },
     panels: [
       {
         image: images.hirwaFull,

@@ -11,15 +11,12 @@
 //   match        pairing, categorisation
 //   trace        letter formation (a top-5 predictor of later literacy)
 
-export type SkillId =
-  | 'snd.vowel.recognise'
-  | 'snd.vowel.name'
-  | 'snd.write.trace'
-  | 'snd.syllable.hear'
-  | 'num.subitise3'
-  | 'num.count5'
-  | 'num.cardinal5'
-  | 'wrd.category';
+// Skill ids come from the curriculum itself — this file used to keep its own
+// short list, which meant a lesson could reference a skill the curriculum had
+// never heard of. Now every id here is checked against the taxonomy.
+import type { ContentMeta, SkillId } from './curriculum';
+
+export type { SkillId };
 
 export type ItemKind = 'listen-pick' | 'count' | 'match' | 'trace';
 
@@ -72,6 +69,13 @@ export interface Lesson {
   titleKn: string;
   titleEn: string;
   items: LessonItem[];
+  /**
+   * REQUIRED — and for Iga lessons, `offline` and `parent` are required too.
+   * Steps 6 (Create) and 7 (Connect) of the lesson loop "are not optional …
+   * and they are the two most commonly skipped under deadline pressure"
+   * (Architecture §11). The build check enforces that here.
+   */
+  curriculum: ContentMeta;
 }
 
 /** Unit 1 · Amagambo yambere — the five vowels. */
@@ -80,6 +84,30 @@ export const LESSON_U1_L1: Lesson = {
   unit: 1,
   titleKn: 'Inyajwi',
   titleEn: 'The vowels',
+  curriculum: {
+    skills: ['snd.vowel.recognise', 'snd.write.trace', 'wrd.category'],
+    level: 'L2',
+    theme: 'T8',
+    domains: ['D1'],
+    minutes: 5,
+    offline: {
+      // Concrete may be off-screen, and is often the better step (Architecture §12).
+      text: {
+        KN: 'Shakisha ikintu mu rugo gitangira na «a». Kibwire umuntu mukuru.',
+        EN: 'Find something at home that starts with "a". Say its name to a grown-up.',
+        FR: 'Trouve une chose à la maison qui commence par «a». Dis son nom à un adulte.',
+      },
+      skills: ['snd.vowel.recognise'],
+    },
+    parent: {
+      text: {
+        KN: 'Saba umwana wawe kuvuga inyajwi eshanu muri kumwe: a, e, i, o, u.',
+        EN: 'Ask your child to say the five vowels with you: a, e, i, o, u.',
+        FR: 'Demandez à votre enfant de dire les cinq voyelles avec vous: a, e, i, o, u.',
+      },
+      skills: ['snd.vowel.recognise'],
+    },
+  },
   items: [
     {
       kind: 'listen-pick',
@@ -159,6 +187,32 @@ export const LESSON_U2_L1: Lesson = {
   unit: 2,
   titleKn: 'Turabara',
   titleEn: 'How many?',
+  curriculum: {
+    skills: ['num.subitise3', 'num.count5', 'num.cardinal5'],
+    level: 'L2',
+    theme: 'T4',
+    domains: ['D2'],
+    minutes: 5,
+    offline: {
+      // Real stones, real touching — this is the Concrete step done properly,
+      // and it is the only content that produces evidence for num.oneToOne.
+      text: {
+        KN: 'Shakisha amabuye atanu hanze. Muyabare muri kumwe. Hanyuma umubaze uti: ni angahe?',
+        EN: 'Find five stones outside. Count them together. Then ask: how many?',
+        FR: 'Trouve cinq cailloux dehors. Comptez-les ensemble. Puis demande: combien?',
+      },
+      skills: ['num.oneToOne', 'num.cardinal5'],
+    },
+    parent: {
+      text: {
+        KN: 'Nyuma yo kubara, buri gihe umubaze uti «ni angahe?» — icyo kibazo ni cyo gitandukanya indirimbo no kubara nyakuri.',
+        EN: 'After your child counts, always ask "so how many?" — that one question is the difference between a song and real counting.',
+        FR: "Après que votre enfant compte, demandez toujours «alors, combien?» — cette question distingue une chanson d'un vrai comptage.",
+      },
+      skills: ['num.cardinal5'],
+    },
+    note: 'The cardinality probe, our headline metric, reaches the parent here in plain words.',
+  },
   items: [
     {
       kind: 'count',

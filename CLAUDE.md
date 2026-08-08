@@ -28,9 +28,18 @@ videos + brain-training games + offline Q&A buddy. Owner: GACACA Godwin.
 
 ## Architecture map
 
+- `src/data/curriculum.ts` — **the curriculum, in the type system.** 86 skills
+  with permanent ids, prerequisites and evidence statements, plus the
+  `ContentMeta` contract. **Every episode, game, book and lesson must declare a
+  non-empty `curriculum.skills`** — this does not compile otherwise, and
+  `npm run build` runs `scripts/check-curriculum.mjs` first and refuses to build
+  on a contract violation. Ids are permanent: deprecate, never rename or delete.
+  Map what the content's CODE does, not what its title implies. See
+  `docs/CURRICULUM-ARCHITECTURE.md` §17.
 - `src/data/episodes.ts` — episode registry. Adding an episode = MP4 in
-  `public/videos/` + thumbnail in `src/assets/images.ts` + one entry here.
-  Routes, home cards, offline prefetch all derive from it.
+  `public/videos/` + thumbnail in `src/assets/images.ts` + one entry here
+  (including its `curriculum` block). Routes, home cards, offline prefetch all
+  derive from it.
 - `src/data/games.ts` — game registry (id, trilingual title/skill, emoji, color).
   Component lives in `src/screens/games/`, mapped in `src/screens/GameScreen.tsx`.
 - `src/data/kezaQA.ts` — offline Q&A database (keyword-matched, trilingual).
@@ -50,9 +59,10 @@ videos + brain-training games + offline Q&A buddy. Owner: GACACA Godwin.
 ## Commands & verification (mandatory before any commit)
 
 ```bash
-npm run lint      # tsc --noEmit — must pass
-npm run build     # must pass; verify no secrets: grep dist for "AIzaSy" = empty
-npm run preview   # serve dist; test in browser
+npm run lint              # tsc --noEmit — must pass
+npm run curriculum:check  # content contract + coverage report — must pass
+npm run build             # runs the check first; verify no secrets: grep dist for "AIzaSy" = empty
+npm run preview           # serve dist; test in browser
 ```
 
 Browser verification for any user-facing change: load the built app,

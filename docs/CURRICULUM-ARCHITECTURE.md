@@ -467,9 +467,22 @@ Applied to **every** episode, game, book and lesson. Then:
 - A coverage report prints skills with **no** content (gaps) and skills with
   **excess** content (over-served).
 
-This is roughly two hours of work and it is the difference between a curriculum
-and a wish. It is Phase 2 (§21) and it is deliberately not yet implemented,
-because the taxonomy must be stable first.
+**Status: implemented (2026-08-08).** `src/data/curriculum.ts` holds the
+taxonomy; `scripts/check-curriculum.mjs` is the gate and runs as the first step
+of `npm run build`. The division of labour:
+
+| Caught by | What |
+| --- | --- |
+| **TypeScript** | Unknown or misspelled skill id (it suggests the right one); `skills: []`; missing `curriculum` block on any episode, game, book or lesson |
+| **The check script** | Prerequisite cycles · a prerequisite that outranks its own skill · declared domains that do not match the skills taught · content marked below the level it teaches · unknown theme · over the session cap · an Iga lesson with no Kina Challenge or parent activity · a lesson item teaching a skill the lesson does not declare · deprecated-skill references |
+| **The coverage report** | Skills with no content (gaps), skills with more than three items (over-served), per-domain and per-level counts |
+
+`SkillId` is **derived** from the skill table rather than written by hand, so the
+id union cannot drift from the data. Prerequisites are validated at compile time
+by a single assertion line, before the script ever runs.
+
+It was roughly two hours of work and it is the difference between a curriculum
+and a wish.
 
 ---
 
@@ -526,13 +539,27 @@ Every new piece of content passes this gate before it ships:
 
 ## 21. Delivery plan
 
-| Phase | Deliverable | Touches code? |
-| --- | --- | --- |
-| **1** | This document | No |
-| **2** | `curriculum.ts` — machine-readable taxonomy + content contract + build check | Yes |
-| **3** | **One complete vertical slice** | Yes |
-| **4** | On-device assessment + parent connection | Yes |
-| **5** | Scale themes, one at a time, each fully realised | Yes |
+| Phase | Deliverable | Touches code? | Status |
+| --- | --- | --- | --- |
+| **1** | This document | No | ✅ 2026-08-02 |
+| **2** | `curriculum.ts` — machine-readable taxonomy + content contract + build check | Yes | ✅ 2026-08-08 |
+| **3** | **One complete vertical slice** | Yes | next |
+| **4** | On-device assessment + parent connection | Yes | — |
+| **5** | Scale themes, one at a time, each fully realised | Yes | — |
+
+### What Phase 2 measured
+
+All 14 existing content items now declare what they teach. The first coverage
+report says: **21 of 86 skills are taught (24%)**, and **D3 Discovery and D6
+Creative Arts have no content at all** — 25% of the curriculum by weight,
+entirely unserved. The D6 gap was predicted by §10. The D3 gap was not, and it
+is the more surprising one, since §5 calls Discovery "the cheapest domain to
+teach well".
+
+Three mappings did not survive contact with the code, and are recorded in
+`docs/CURRICULUM-SKILLS.md`: the handwashing game counts nothing, the episodes
+never reach the germ explanation (one comic panel is its sole carrier), and the
+Memory game trains something this taxonomy does not name.
 
 ### The vertical slice (Phase 3)
 

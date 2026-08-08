@@ -224,8 +224,18 @@ All verified working in production build.
     `voice.record_prompt` ("Fata ijwi ry'izina ry'umwana"), `voice.keep`
     ("Bika"), `voice.retry` ("Ongera"), `voice.skip` ("Simbuka"),
     celebration with name ("Wabikoze, {name}!").
+  - curriculum lesson text (2026-08-08, `src/data/lessons.ts`) — **NOW IN CODE
+    and child-facing**, review first: the two Kina Challenge texts ("Shakisha
+    ikintu mu rugo gitangira na «a»…" and "Shakisha amabuye atanu hanze.
+    Muyabare muri kumwe. Hanyuma umubaze uti: ni angahe?") and the two parent
+    activities ("Saba umwana wawe kuvuga inyajwi eshanu…" and "Nyuma yo kubara,
+    buri gihe umubaze uti «ni angahe?» — icyo kibazo ni cyo gitandukanya
+    indirimbo no kubara nyakuri."). The second parent line carries our headline
+    pedagogical claim to the parent — its tone matters more than most strings
+    in the app.
   - curriculum architecture (2026-08-02, `docs/CURRICULUM-ARCHITECTURE.md` +
-    `docs/CURRICULUM-SKILLS.md`) — machine-written KN not yet in code, review
+    `docs/CURRICULUM-SKILLS.md`) — machine-written KN, now also in
+    `src/data/curriculum.ts` but NOT yet rendered to any screen, review
     before it ships: domain names (Ururimi n'ubumenyi bwo gusoma, Imibare,
     Gushakashaka isi, Ubuzima n'umubiri, Imyifatire n'amarangamutima, Ubuhanzi
     n'umuco), assessment bands (Aratangira, Aragenda, Arabishoboye,

@@ -17,6 +17,7 @@
 // Good sources: Ubongo Toolkits (CC BY-NC-ND, Kinyarwanda), Sesame Watch-Play-Learn.
 
 import type { Language } from '../i18n/translations';
+import type { ContentMeta } from './curriculum';
 import { images } from '../assets/images';
 
 export interface Episode {
@@ -31,6 +32,12 @@ export interface Episode {
   prefetch?: boolean;   // default true; set false for large/long videos (lazy cache)
   gameId?: string;      // if set, episode shows a button to the matching game
   attribution?: string; // source/licence note for third-party videos
+  /**
+   * REQUIRED — what this episode teaches (docs/CURRICULUM-ARCHITECTURE.md §17).
+   * An episode with no declared skill cannot be added: it will not compile, and
+   * `npm run curriculum:check` will fail the build.
+   */
+  curriculum: ContentMeta;
 }
 
 export interface UpcomingEpisode {
@@ -58,6 +65,13 @@ export const episodes: Episode[] = [
     },
     hasQuiz: true,
     gameId: 'karaba',
+    curriculum: {
+      skills: ['phy.hand.sequence', 'phy.hand.when'],
+      level: 'L2',
+      theme: 'T6',
+      domains: ['D4'],
+      minutes: 3,
+    },
   },
   {
     id: '2',
@@ -76,6 +90,17 @@ export const episodes: Episode[] = [
     },
     hasQuiz: true,
     gameId: 'karaba',
+    curriculum: {
+      skills: ['phy.hand.when', 'wrd.story.recall'],
+      level: 'L2',
+      theme: 'T6',
+      domains: ['D1', 'D4'],
+      minutes: 4,
+      // Deliberately NOT phy.hand.why. That skill's evidence is "refers to germs
+      // we cannot see"; this episode says "clean hands keep us healthy", which is
+      // not the same claim. The germ explanation lives in the 'clean-hands' book.
+      note: 'Stops short of the germ explanation — see comic clean-hands for phy.hand.why.',
+    },
   },
   {
     id: 'alphabet',
@@ -101,6 +126,17 @@ export const episodes: Episode[] = [
     hasQuiz: false,
     prefetch: false,
     attribution: 'TODO: confirm source & licence before public release',
+    curriculum: {
+      skills: ['snd.vowel.recognise', 'snd.vowel.name'],
+      level: 'L2',
+      theme: 'T8',
+      domains: ['D1'],
+      minutes: 8,
+      // A–E covers the vowels a and e plus three consonants. Our sequence is
+      // syllabic, not alphabetic (Architecture §6.3) — this is exposure, not
+      // the literacy path. Do not let it become the path.
+      note: 'Alphabet framing, not our syllabic sequence. Exposure only. Licence unconfirmed.',
+    },
   },
   {
     id: 'twinkle',
@@ -120,6 +156,19 @@ export const episodes: Episode[] = [
     hasQuiz: false,
     prefetch: false,
     attribution: 'Traditional melody (public domain) — confirm video source before release',
+    curriculum: {
+      skills: ['snd.listen.attend'],
+      level: 'L1',
+      theme: 'T8',
+      domains: ['D1'],
+      minutes: 3,
+      // The weakest-justified item in the app. It teaches one listening skill
+      // and it is culturally imported — an English nursery rhyme, not a Rwandan
+      // song, so it cannot claim art.sing.rwanda. Architecture §18 wants a
+      // child's own world on screen. Candidate for replacement by a Rwandan
+      // song, which would earn art.sing.rwanda honestly.
+      note: 'Culturally imported; single skill. Replace with a Rwandan song (Architecture §18).',
+    },
   },
   {
     id: 'letter-a',
@@ -139,6 +188,16 @@ export const episodes: Episode[] = [
     hasQuiz: false,
     prefetch: false,
     attribution: 'TODO: confirm source & licence before public release',
+    curriculum: {
+      skills: ['snd.vowel.recognise', 'wrd.name.object'],
+      level: 'L1',
+      theme: 'T3',
+      domains: ['D1'],
+      minutes: 11,
+      // 11 minutes of a 12-minute session cap (Architecture §16) on one item.
+      // This is the single biggest wellbeing risk in the catalogue.
+      note: 'Nearly a whole session. Split or shorten before it becomes the default watch.',
+    },
   },
 ];
 
