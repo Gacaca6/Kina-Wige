@@ -18,9 +18,17 @@ import { motion, AnimatePresence } from 'motion/react';
 import Kina from '../components/characters/Kina';
 import { LESSONS, LESSON_U1_L1 } from '../data/lessons';
 import type { LessonItem } from '../data/lessons';
-import { ListenPick, CountActivity, MatchActivity, TraceActivity } from '../components/lesson/Activities';
+import {
+  ListenPick,
+  CountActivity,
+  MatchActivity,
+  TraceActivity,
+  SequenceActivity,
+} from '../components/lesson/Activities';
 import { useStars } from '../hooks/useStars';
 import { useSound } from '../hooks/useSound';
+import { useSkillEvidence } from '../hooks/useSkillEvidence';
+import { useI18n } from '../i18n/context';
 
 type Phase = 'ask' | 'correct' | 'retry' | 'done';
 
@@ -73,6 +81,9 @@ export default function LessonScreen() {
 
   const { addStar } = useStars();
   const { play } = useSound();
+  const { language } = useI18n();
+  const { record, recordOffline } = useSkillEvidence();
+  const [challengeDone, setChallengeDone] = useState(false);
 
   const [index, setIndex] = useState(0);
   const [phase, setPhase] = useState<Phase>('ask');
@@ -111,6 +122,9 @@ export default function LessonScreen() {
 
   function check() {
     if (answer === null) return;
+    // Every answered item is evidence, right or wrong. Stored on-device only —
+    // see useSkillEvidence for why that constraint shapes the whole design.
+    record(item.skill, answer, `lesson:${lesson.id}`);
     if (answer) {
       play('success');
       addStar(1);
@@ -150,47 +164,146 @@ export default function LessonScreen() {
         return <MatchActivity key={item.id} item={item} {...common} />;
       case 'trace':
         return <TraceActivity key={item.id} item={item} {...common} />;
+      case 'sequence':
+        return <SequenceActivity key={item.id} item={item} {...common} />;
     }
   }
 
-  /* ── Lesson complete ── */
+  /* ── Lesson complete — and then OFF the screen ──────────────────────────
+   *
+   * Steps 6 and 7 of the lesson loop live here (Architecture §11). The app is
+   * not trying to keep the child; it is trying to hand them back to the room
+   * they are sitting in, with something to do and someone to do it with.
+   *
+   * The green card is for the child. The blue card is for the grown-up — blue
+   * always means "an adult should hold this", the same rule as the header lock.
+   */
   if (phase === 'done') {
+    const challenge = lesson.curriculum.offline;
+    const parentActivity = lesson.curriculum.parent;
+
+    // height, NOT minHeight: a flex child can only scroll inside a parent whose
+    // height is actually bounded. With minHeight the column grows to fit its
+    // content, the inner overflow-y-auto never scrolls, and the Komeza button
+    // drops below the fold.
     return (
-      <div className="bg-forest flex flex-col items-center justify-center px-6 text-center" style={{ minHeight: '100dvh' }}>
-        <motion.div
-          initial={{ scale: 0.4, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 400, damping: 14, mass: 0.9 }}
-        >
-          <Kina mood="cheer" style={{ width: 150, height: 136 }} />
-        </motion.div>
-        <div className="font-display font-extrabold text-white mt-6" style={{ fontSize: 44, lineHeight: 1.05 }}>
-          Wabikoze!
-        </div>
-        <div className="font-body font-extrabold text-mint mt-2 text-base">
-          Lesson complete · {lesson.titleEn}
+      <div className="bg-forest flex flex-col" style={{ height: '100dvh' }}>
+        <div className="flex-1 min-h-0 overflow-y-auto px-6 pt-safe pb-6 flex flex-col items-center text-center">
+          <motion.div
+            className="mt-6"
+            initial={{ scale: 0.4, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 14, mass: 0.9 }}
+          >
+            <Kina mood="cheer" style={{ width: 132, height: 120 }} />
+          </motion.div>
+          <div className="font-display font-extrabold text-white mt-5" style={{ fontSize: 40, lineHeight: 1.05 }}>
+            Wabikoze!
+          </div>
+          <div className="font-body font-extrabold text-mint mt-1.5 text-base">
+            Lesson complete · {lesson.titleEn}
+          </div>
+
+          <div className="mt-5 flex items-center gap-3 bg-forest-deep rounded-[20px] px-6" style={{ minHeight: 68 }}>
+            <svg viewBox="0 0 48 48" style={{ width: 30, height: 30 }} aria-hidden>
+              <path
+                d="M24 6l5.5 11.6 12.5 1.6-9.2 8.7 2.4 12.5L24 34.2 12.8 40.4l2.4-12.5L6 19.2l12.5-1.6z"
+                fill="#FFC02E"
+                stroke="#10241B"
+                strokeWidth={3.5}
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span className="font-body font-black text-white text-3xl tabular-nums">+{earned}</span>
+          </div>
+
+          {/* ── 🌱 Kina Challenge — the way off the screen ── */}
+          {challenge && (
+            <motion.div
+              initial={{ y: 24, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ type: 'spring', stiffness: 260, damping: 24, delay: 0.25 }}
+              className="w-full max-w-sm mt-7 rounded-[26px] bg-white text-left p-5"
+              style={{ boxShadow: '0 8px 0 #1E8C4C' }}
+            >
+              <div className="flex items-center gap-2">
+                <span style={{ fontSize: 26, lineHeight: 1 }} aria-hidden>🌱</span>
+                <span className="font-body font-black text-[13px] tracking-[.12em] text-forest">
+                  KINA CHALLENGE
+                </span>
+              </div>
+              <p className="font-body font-extrabold text-ink text-[17px] leading-snug mt-2.5">
+                {challenge.text[language]}
+              </p>
+
+              <div className="mt-4">
+                {challengeDone ? (
+                  <div
+                    className="w-full rounded-[20px] bg-mint grid place-items-center font-body font-black text-forest text-[18px]"
+                    style={{ minHeight: 68 }}
+                    role="status"
+                  >
+                    ✓ Twabikoze!
+                  </div>
+                ) : (
+                  <Chunky
+                    bg="#2FBF6B"
+                    shadow="#1E8C4C"
+                    color="#fff"
+                    onClick={() => {
+                      // A grown-up's tap IS the measurement for anything that
+                      // happens at a real basin (§13, off-screen evidence).
+                      recordOffline(challenge.skills, lesson.id);
+                      setChallengeDone(true);
+                      play('success');
+                    }}
+                  >
+                    <span className="text-xl">Twabikoze!</span>
+                  </Chunky>
+                )}
+                <p className="font-body font-bold text-[12px] text-ink-soft mt-2 text-center">
+                  A grown-up taps this after you do it together
+                </p>
+              </div>
+            </motion.div>
+          )}
+
+          {/* ── Parent activity — serve and return ── */}
+          {parentActivity && (
+            <motion.div
+              initial={{ y: 24, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ type: 'spring', stiffness: 260, damping: 24, delay: 0.4 }}
+              className="w-full max-w-sm mt-4 rounded-[26px] text-left p-5"
+              style={{ background: '#E3F2FD', boxShadow: '0 8px 0 #9CC9E8' }}
+            >
+              <div className="flex items-center gap-2">
+                <span style={{ fontSize: 24, lineHeight: 1 }} aria-hidden>👋</span>
+                <span className="font-body font-black text-[13px] tracking-[.12em] text-[#1A5C86]">
+                  KU BABYEYI · FOR THE GROWN-UP
+                </span>
+              </div>
+              <p className="font-body font-extrabold text-[#123B57] text-[16px] leading-snug mt-2.5">
+                {parentActivity.text[language]}
+              </p>
+              <p className="font-body font-bold text-[12px] text-[#3E6D8A] mt-2">
+                Two minutes. The pause after you ask is the important part.
+              </p>
+            </motion.div>
+          )}
+
+          {/* §16: we end by sending them away, never by offering more. */}
+          <div className="font-body font-black text-mint text-[15px] mt-7">
+            Noneho genda ukine! · Now go and play!
+          </div>
         </div>
 
-        <div
-          className="mt-8 flex items-center gap-3 bg-forest-deep rounded-[20px] px-6"
-          style={{ minHeight: 76 }}
-        >
-          <svg viewBox="0 0 48 48" style={{ width: 34, height: 34 }} aria-hidden>
-            <path
-              d="M24 6l5.5 11.6 12.5 1.6-9.2 8.7 2.4 12.5L24 34.2 12.8 40.4l2.4-12.5L6 19.2l12.5-1.6z"
-              fill="#FFC02E"
-              stroke="#10241B"
-              strokeWidth={3.5}
-              strokeLinejoin="round"
-            />
-          </svg>
-          <span className="font-body font-black text-white text-3xl tabular-nums">+{earned}</span>
-        </div>
-
-        <div className="w-full max-w-sm mt-10">
-          <Chunky bg="#2FBF6B" shadow="#1E8C4C" color="#fff" onClick={() => navigate('/home-path')}>
-            <span className="text-2xl">Komeza</span>
-          </Chunky>
+        <div className="px-6 pb-safe pt-2 flex-none">
+          <div className="w-full max-w-sm mx-auto">
+            <Chunky bg="#FFC02E" shadow="#D89A00" color="#10241B" onClick={() => navigate('/home-path')}>
+              <span className="text-2xl">Komeza</span>
+            </Chunky>
+          </div>
         </div>
       </div>
     );

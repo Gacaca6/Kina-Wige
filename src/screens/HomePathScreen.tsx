@@ -19,6 +19,7 @@ import { motion } from 'motion/react';
 import Kina from '../components/characters/Kina';
 import BottomNav from '../components/ui/BottomNav';
 import LanguageToggle from '../components/ui/LanguageToggle';
+import { LESSONS } from '../data/lessons';
 
 interface PathNode {
   id: string;
@@ -33,13 +34,22 @@ const NODES: PathNode[] = [
   // episodes from data/episodes.ts.
   { id: 'n1', x: 62, y: 0, state: 'done', to: '/lesson/u1l1' },
   { id: 'n2', x: 178, y: 96, state: 'done', to: '/episode/alphabet' },
-  { id: 'n3', x: 108, y: 188, state: 'current', to: '/lesson/u2l1' },
-  { id: 'n4', x: 194, y: 300, state: 'locked' },
+  { id: 'n3', x: 108, y: 188, state: 'done', to: '/lesson/u2l1' },
+  // The handwashing lesson — the vertical slice (Architecture §21). It is the
+  // current node on purpose: it is the one lesson that ends off the screen.
+  { id: 'n4', x: 194, y: 292, state: 'current', to: '/lesson/u3l1' },
 ];
 
 const TRAIL =
   'M120 20 C 250 60, 60 120, 190 170 C 320 220, 100 250, 200 320 C 260 360, 200 380, 160 396';
-const TRAIL_DONE = 'M120 20 C 250 60, 60 120, 190 170';
+const TRAIL_DONE = 'M120 20 C 250 60, 60 120, 190 170 C 320 220, 100 250, 200 320';
+
+/** The banner follows the current node rather than being hardcoded to unit 1. */
+function currentLesson() {
+  const current = NODES.find((n) => n.state === 'current');
+  const id = current?.to?.startsWith('/lesson/') ? current.to.slice('/lesson/'.length) : undefined;
+  return id ? LESSONS[id] : undefined;
+}
 
 /* ── Pictorial nav icons. A 4-year-old reads the picture, not the label. ── */
 
@@ -48,6 +58,7 @@ const TRAIL_DONE = 'M120 20 C 250 60, 60 120, 190 170';
 export default function HomePathScreen() {
   const navigate = useNavigate();
   const [look, setLook] = useState<{ x: number; y: number } | null>(null);
+  const unit = currentLesson();
 
   function track(e: ReactPointerEvent<HTMLDivElement>) {
     const r = e.currentTarget.getBoundingClientRect();
@@ -94,14 +105,16 @@ export default function HomePathScreen() {
           style={{ boxShadow: '0 7px 0 #D89A00', padding: '18px 20px' }}
         >
           <div className="w-14 h-14 rounded-[16px] bg-ink grid place-items-center flex-none">
-            <span className="font-display font-extrabold text-[26px] leading-none text-sun">1</span>
+            <span className="font-display font-extrabold text-[26px] leading-none text-sun">
+              {unit?.unit ?? 1}
+            </span>
           </div>
           <div>
             <div className="font-body font-extrabold text-[12px] tracking-[.14em] text-[#8A6A00]">
-              IGICE 1 · UNIT 1
+              IGICE {unit?.unit ?? 1} · UNIT {unit?.unit ?? 1}
             </div>
             <div className="font-body font-black text-[22px] text-ink leading-tight">
-              Amagambo yambere
+              {unit?.titleKn ?? 'Amagambo yambere'}
             </div>
           </div>
         </div>

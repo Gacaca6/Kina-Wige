@@ -225,14 +225,23 @@ All verified working in production build.
     ("Bika"), `voice.retry` ("Ongera"), `voice.skip` ("Simbuka"),
     celebration with name ("Wabikoze, {name}!").
   - curriculum lesson text (2026-08-08, `src/data/lessons.ts`) — **NOW IN CODE
-    and child-facing**, review first: the two Kina Challenge texts ("Shakisha
-    ikintu mu rugo gitangira na «a»…" and "Shakisha amabuye atanu hanze.
-    Muyabare muri kumwe. Hanyuma umubaze uti: ni angahe?") and the two parent
-    activities ("Saba umwana wawe kuvuga inyajwi eshanu…" and "Nyuma yo kubara,
-    buri gihe umubaze uti «ni angahe?» — icyo kibazo ni cyo gitandukanya
-    indirimbo no kubara nyakuri."). The second parent line carries our headline
-    pedagogical claim to the parent — its tone matters more than most strings
-    in the app.
+    and child-facing**, review first: the three Kina Challenge texts ("Shakisha
+    ikintu mu rugo gitangira na «a»…", "Shakisha amabuye atanu hanze. Muyabare
+    muri kumwe. Hanyuma umubaze uti: ni angahe?" and the handwashing one, "Uyu
+    munsi, karaba amaboko n'umuntu mukuru mbere yo kurya. Vuga buri ntambwe mu
+    ijwi riranguruye: amazi, isabune, gukanda, koza, kumutsa.") and the three
+    parent activities ("Saba umwana wawe kuvuga inyajwi eshanu…", "Nyuma yo
+    kubara, buri gihe umubaze uti «ni angahe?» — icyo kibazo ni cyo
+    gitandukanya indirimbo no kubara nyakuri." and "Saba umwana wawe kukubwira
+    intambwe zo gukaraba amaboko mu magambo ye bwite. Mureke arangize interuro
+    yose mbere yo kumufasha."). Two of these carry our headline pedagogical
+    claims to the parent — their tone matters more than most strings in the app.
+  - **HIGH PRIORITY**: the five handwashing step words in lesson `u3l1`
+    (`src/data/lessons.ts`) — **amazi · isabune · gukanda · koza · kumutsa**.
+    These are machine-chosen verbs for wet/soap/scrub/rinse/dry and a child
+    reads them on screen and says them at a basin. If a Rwandan parent would
+    say these steps differently, the lesson is teaching the wrong words for a
+    health routine. Confirm before the handwashing slice is tested with children.
   - curriculum architecture (2026-08-02, `docs/CURRICULUM-ARCHITECTURE.md` +
     `docs/CURRICULUM-SKILLS.md`) — machine-written KN, now also in
     `src/data/curriculum.ts` but NOT yet rendered to any screen, review

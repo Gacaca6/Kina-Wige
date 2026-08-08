@@ -50,7 +50,11 @@ videos + brain-training games + offline Q&A buddy. Owner: GACACA Godwin.
   never cached by design.
 - `src/i18n/` — context persists language to localStorage key `kina-wige-language`.
 - Hooks: `useStars` (global star count), `useParentData` (weekly tracker),
-  `useSound` (WebAudio synth — no audio files), `useHaptic`.
+  `useSound` (WebAudio synth — no audio files), `useHaptic`,
+  `useSkillEvidence` (per-skill assessment evidence — **on-device only, never
+  transmitted**; `bandFor` computes the four bands and mastery needs 4 of 5
+  across TWO sessions, so changing it without reading §13–§14 will quietly tell
+  parents untrue things. `npm run assessment:check` guards it).
 - `App.tsx` — routes are keyed by pathname inside `AnimatePresence` (do not
   remove the `React.Fragment key=` wrapper or exit animations die).
 - Service worker is registered automatically by vite-plugin-pwa — never add
@@ -61,7 +65,8 @@ videos + brain-training games + offline Q&A buddy. Owner: GACACA Godwin.
 ```bash
 npm run lint              # tsc --noEmit — must pass
 npm run curriculum:check  # content contract + coverage report — must pass
-npm run build             # runs the check first; verify no secrets: grep dist for "AIzaSy" = empty
+npm run assessment:check  # the four assessment bands still obey §13–§14 — must pass
+npm run build             # runs both checks first; verify no secrets: grep dist for "AIzaSy" = empty
 npm run preview           # serve dist; test in browser
 ```
 

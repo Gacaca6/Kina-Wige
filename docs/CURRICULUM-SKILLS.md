@@ -246,14 +246,15 @@ Discovery is described there as "the cheapest domain to teach well".
 
 The handwashing slice must demonstrably teach:
 
-| Section | Planned skills | Status today |
+| Section | Planned skills | Status (Phase 3 complete, 2026-08-08) |
 | --- | --- | --- |
-| Iga lesson | `phy.hand.sequence` · `phy.hand.when` | ❌ **does not exist** — the slice's real gap |
+| Iga lesson | `phy.hand.sequence` · `phy.hand.when` | ✅ `u3l1` — 4 items, incl. a new **sequence** activity |
 | Amasomo episode | `phy.hand.why` · `self.feel.other` | ⚠️ ep 1+2 carry `sequence`/`when`; neither reaches `why` |
 | Imikino game | `phy.hand.sequence` · `num.count5` | ⚠️ `sequence` only — **the game does not count anything** |
 | Ibitabo book | `wrd.story.recall` · `phy.hand.when` | ✅ `clean-hands`, and it also carries `phy.hand.why` |
-| Kina Challenge | `phy.hand.sequence` (real basin, parent-marked) | ❌ not authored |
-| Parent activity | `wrd.sentence.speak` (serve-and-return) | ❌ not authored |
+| Kina Challenge | `phy.hand.sequence` (real basin, parent-marked) | ✅ authored, trilingual, parent-tap records evidence |
+| Parent activity | `wrd.sentence.speak` (serve-and-return) | ✅ authored, trilingual |
+| Assessment | four bands from on-device evidence | ✅ `useSkillEvidence`, tested in `scripts/check-assessment.mjs` |
 
 That is **8 distinct skills across 4 domains from one theme** — the proof that
 the integrated thematic approach works in our structure.
@@ -270,9 +271,26 @@ code, rather than against the titles, moved two rows:
    Only the `clean-hands` book actually does that — in a single panel. **That
    one panel is the sole carrier of `phy.hand.why` in the entire app.**
 
-The slice is therefore **3 of 6 rows short**, and all three missing rows are the
-Iga lesson and its Connect step — exactly the parts Architecture §11 warns are
-"the two most commonly skipped under deadline pressure".
+Those two rows are still open — they are content questions, not system ones.
+
+### What Phase 3 built
+
+The three missing rows were the Iga lesson and its Connect step — exactly the
+parts Architecture §11 warns are "the two most commonly skipped under deadline
+pressure". All three now exist, and building them forced two changes worth
+recording:
+
+1. **The app gained a fifth activity type.** `phy.hand.sequence` reads "orders
+   wet→soap→scrub→rinse→dry", and none of the four existing activities
+   (listen-pick, count, match, trace) could evidence ordering. Rather than
+   soften the skill to fit the app, we built `sequence`. **The curriculum
+   changed the product, which is the direction that arrow is supposed to point.**
+2. **Assessment had to become real to close the loop.** A Kina Challenge that
+   nobody can mark is decoration. `useSkillEvidence` records every answered item
+   and every parent tap on-device, and `bandFor` turns that into the four bands
+   under the actual §14 rule — including the part that matters most: **a perfect
+   run in a single sitting is not mastery.** That rule is now covered by a test,
+   because when it drifts nothing crashes; a parent is just told something untrue.
 
 ---
 

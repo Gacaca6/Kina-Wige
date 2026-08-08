@@ -543,9 +543,29 @@ Every new piece of content passes this gate before it ships:
 | --- | --- | --- | --- |
 | **1** | This document | No | ✅ 2026-08-02 |
 | **2** | `curriculum.ts` — machine-readable taxonomy + content contract + build check | Yes | ✅ 2026-08-08 |
-| **3** | **One complete vertical slice** | Yes | next |
-| **4** | On-device assessment + parent connection | Yes | — |
+| **3** | **One complete vertical slice** | Yes | ✅ 2026-08-08 |
+| **4** | On-device assessment + parent connection | Yes | evidence layer done; parent-facing view next |
 | **5** | Scale themes, one at a time, each fully realised | Yes | — |
+
+### What Phase 3 delivered
+
+The handwashing theme now runs end to end: `u3l1` in Iga → episodes 1 and 2 →
+the karaba game → the `clean-hands` book → a Kina Challenge at a real basin → a
+parent activity → evidence against the four bands.
+
+Two things came out of it that were not in the plan:
+
+- **A fifth activity type.** `phy.hand.sequence` requires *ordering*, and no
+  existing activity could evidence that. We built `sequence` rather than soften
+  the skill to fit the screens we already had. The curriculum changed the
+  product — that is the direction the arrow is meant to point (§17).
+- **Assessment had to become real early.** A challenge nobody can mark is
+  decoration, so the evidence layer (§13) landed here rather than in Phase 4.
+  What remains for Phase 4 is the *parent-facing* half: showing a grown-up what
+  their child can do, in the descriptive language of §13.3.
+
+**Phase 5 does not start until a child has completed this loop in front of us**
+(§21). The system is ready to be tested; it has not yet been tested.
 
 ### What Phase 2 measured
 

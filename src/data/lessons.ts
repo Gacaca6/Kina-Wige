@@ -18,7 +18,7 @@ import type { ContentMeta, SkillId } from './curriculum';
 
 export type { SkillId };
 
-export type ItemKind = 'listen-pick' | 'count' | 'match' | 'trace';
+export type ItemKind = 'listen-pick' | 'count' | 'match' | 'trace' | 'sequence';
 
 interface ItemBase {
   id: string;
@@ -61,7 +61,22 @@ export interface TraceItem extends ItemBase {
   waypoints: { x: number; y: number }[];
 }
 
-export type LessonItem = ListenPickItem | CountItem | MatchItem | TraceItem;
+/**
+ * Put steps in the right order.
+ *
+ * Added for the handwashing slice, because none of the four original activities
+ * could honestly evidence an ordering skill. `phy.hand.sequence` reads "orders
+ * wet→soap→scrub→rinse→dry, 5 of 5" — matching and picking cannot show that.
+ * The contract asked for an activity the app did not have, which is exactly
+ * what a curriculum is supposed to do to a product.
+ */
+export interface SequenceItem extends ItemBase {
+  kind: 'sequence';
+  /** Listed in the CORRECT order. The activity shuffles them for display. */
+  steps: { id: string; glyph: string; labelKn: string; labelEn: string }[];
+}
+
+export type LessonItem = ListenPickItem | CountItem | MatchItem | TraceItem | SequenceItem;
 
 export interface Lesson {
   id: string;
@@ -259,7 +274,110 @@ export const LESSON_U2_L1: Lesson = {
   ],
 };
 
+/**
+ * Unit 3 · Karaba amaboko — the handwashing lesson.
+ *
+ * The Iga half of the vertical slice (Architecture §21). It completes a theme
+ * that already had an episode, a game and a book but no structured pathway and,
+ * more importantly, no way off the screen.
+ *
+ * This is also the first lesson to carry its Connect step, so it is the first
+ * time the app asks a child to do something in the real world and a parent to
+ * say something back.
+ */
+export const LESSON_U3_L1: Lesson = {
+  id: 'u3l1',
+  unit: 3,
+  titleKn: 'Karaba amaboko',
+  titleEn: 'Washing hands',
+  curriculum: {
+    skills: ['phy.hand.sequence', 'phy.hand.when'],
+    level: 'L2',
+    theme: 'T6',
+    domains: ['D4'],
+    minutes: 5,
+    offline: {
+      // The Kina Challenge for a health skill has to happen at a real basin.
+      // Nothing on a screen can evidence "washes hands in the right order" —
+      // only a grown-up standing next to a child can (Architecture §15.1).
+      text: {
+        KN: "Uyu munsi, karaba amaboko n'umuntu mukuru mbere yo kurya. Vuga buri ntambwe mu ijwi riranguruye: amazi, isabune, gukanda, koza, kumutsa.",
+        EN: 'Wash your hands with a grown-up before you eat today. Say each step out loud: water, soap, scrub, rinse, dry.',
+        FR: "Lave-toi les mains avec un adulte avant de manger aujourd'hui. Dis chaque étape à voix haute: eau, savon, frotter, rincer, sécher.",
+      },
+      skills: ['phy.hand.sequence'],
+    },
+    parent: {
+      // Serve-and-return: the parent's job is to ASK, then wait. "Let them
+      // finish" is the whole instruction — the pause is the intervention
+      // (Architecture §15.2).
+      text: {
+        KN: "Saba umwana wawe kukubwira intambwe zo gukaraba amaboko mu magambo ye bwite. Mureke arangize interuro yose mbere yo kumufasha.",
+        EN: 'Ask your child to tell you the handwashing steps in their own words. Let them finish the whole sentence before you help.',
+        FR: "Demandez à votre enfant de vous raconter les étapes du lavage des mains avec ses propres mots. Laissez-le terminer toute la phrase avant de l'aider.",
+      },
+      skills: ['wrd.sentence.speak'],
+    },
+    note: 'The slice lesson. Its Connect step is the only place the app reaches a real basin.',
+  },
+  items: [
+    {
+      kind: 'sequence',
+      id: 'h1',
+      skill: 'phy.hand.sequence',
+      promptKn: 'Shyira mu murongo: gukaraba amaboko',
+      promptEn: 'Put the handwashing steps in order',
+      steps: [
+        { id: 'water', glyph: '💧', labelKn: 'Amazi', labelEn: 'Water' },
+        { id: 'soap', glyph: '🧼', labelKn: 'Isabune', labelEn: 'Soap' },
+        { id: 'scrub', glyph: '🫧', labelKn: 'Gukanda', labelEn: 'Scrub' },
+        { id: 'rinse', glyph: '🚿', labelKn: 'Koza', labelEn: 'Rinse' },
+        { id: 'dry', glyph: '🤲', labelKn: 'Kumutsa', labelEn: 'Dry' },
+      ],
+    },
+    {
+      kind: 'listen-pick',
+      id: 'h2',
+      skill: 'phy.hand.when',
+      promptKn: 'Ni ryari dukaraba amaboko?',
+      promptEn: 'When do we wash our hands?',
+      token: '🍽️',
+      choices: [
+        { id: 'eat', glyph: '🍽️', correct: true },
+        { id: 'play', glyph: '⚽' },
+        { id: 'sleep', glyph: '😴' },
+      ],
+    },
+    {
+      kind: 'listen-pick',
+      id: 'h3',
+      skill: 'phy.hand.when',
+      promptKn: 'Na nyuma yo gukoresha ubwiherero?',
+      promptEn: 'And after using the toilet?',
+      token: '🚽',
+      choices: [
+        { id: 'book', glyph: '📖' },
+        { id: 'toilet', glyph: '🚽', correct: true },
+        { id: 'sing', glyph: '🎵' },
+      ],
+    },
+    {
+      kind: 'match',
+      id: 'h4',
+      skill: 'phy.hand.sequence',
+      promptKn: "Huza intambwe n'ishusho",
+      promptEn: 'Match each step to its picture',
+      pairs: [
+        { id: 'water', left: 'Amazi', right: '💧' },
+        { id: 'soap', left: 'Isabune', right: '🧼' },
+        { id: 'dry', left: 'Kumutsa', right: '🤲' },
+      ],
+    },
+  ],
+};
+
 export const LESSONS: Record<string, Lesson> = {
   [LESSON_U1_L1.id]: LESSON_U1_L1,
   [LESSON_U2_L1.id]: LESSON_U2_L1,
+  [LESSON_U3_L1.id]: LESSON_U3_L1,
 };

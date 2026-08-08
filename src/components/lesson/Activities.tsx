@@ -11,7 +11,7 @@
 import { useCallback, useRef, useState } from 'react';
 import type { PointerEvent as ReactPointerEvent } from 'react';
 import { motion } from 'motion/react';
-import type { CountItem, ListenPickItem, MatchItem, TraceItem } from '../../data/lessons';
+import type { CountItem, ListenPickItem, MatchItem, SequenceItem, TraceItem } from '../../data/lessons';
 
 const SPRING = { type: 'spring' as const, stiffness: 700, damping: 30, mass: 0.6 };
 
@@ -201,6 +201,115 @@ export function MatchActivity({ item, onSelect }: ActivityProps & { item: MatchI
               }}
             >
               <span style={{ fontSize: 32, lineHeight: 1 }}>{p.right}</span>
+            </motion.button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ── 16 · Sequence ──────────────────────────────────────────────────── */
+/**
+ * Tap the steps in order. Built for the handwashing lesson, because ordering is
+ * the only way to evidence `phy.hand.sequence`.
+ *
+ * Tapping, not dragging. Drag-and-drop asks a 3-year-old to hold a target while
+ * their finger covers it; tapping asks them only to choose. The ordering skill
+ * is the point, so the interaction must not be the hard part.
+ *
+ * The "max 3 choices" rule (§6) governs distractors, not steps. Five steps are
+ * inherent to the skill — the child is never choosing between five *answers*,
+ * they are placing five things they already know.
+ *
+ * A wrong tap wobbles and costs nothing: it does not report failure upward, so
+ * the try-again sheet never interrupts a half-built sequence.
+ */
+export function SequenceActivity({ item, onSelect }: ActivityProps & { item: SequenceItem }) {
+  const [placed, setPlaced] = useState<string[]>([]);
+  const [wrong, setWrong] = useState<string | null>(null);
+
+  // Shuffled once, deterministically per item id — a re-render must not move
+  // the cards under a child's finger.
+  const shuffled = useRef(
+    [...item.steps].sort((a, b) => (a.id + item.id).localeCompare(b.id + item.id))
+  ).current;
+
+  function tap(stepId: string) {
+    if (placed.includes(stepId)) return;
+    const expected = item.steps[placed.length].id;
+    if (stepId === expected) {
+      const next = [...placed, stepId];
+      setPlaced(next);
+      if (next.length === item.steps.length) onSelect(true);
+    } else {
+      setWrong(stepId);
+      window.setTimeout(() => setWrong(null), 600);
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-5">
+      {/* The order so far. Empty slots are numbered so the direction is
+          obvious without reading anything. */}
+      <div
+        className="rounded-[26px] bg-white flex items-center justify-center gap-1.5 px-3 py-4"
+        style={{ minHeight: 104, boxShadow: '0 8px 0 #D9D2C4, inset 0 0 0 3px #E4DDCE' }}
+      >
+        {/* Slots stay on ONE row at any width — a sequence that wraps stops
+            reading as a sequence, which is the entire skill being assessed. */}
+        {item.steps.map((_, i) => {
+          const stepId = placed[i];
+          const step = stepId ? item.steps.find((s) => s.id === stepId) : undefined;
+          return (
+            <motion.div
+              key={i}
+              className="rounded-[16px] grid place-items-center flex-1 min-w-0"
+              animate={{ scale: step ? 1 : 0.92 }}
+              transition={SPRING}
+              style={{
+                maxWidth: 58,
+                height: 62,
+                background: step ? '#E7F7EE' : '#F3F1EA',
+                boxShadow: step ? 'inset 0 0 0 3px #2FBF6B' : 'inset 0 0 0 3px #E4DDCE',
+              }}
+            >
+              {step ? (
+                <span style={{ fontSize: 30, lineHeight: 1 }}>{step.glyph}</span>
+              ) : (
+                <span className="font-display font-extrabold text-[20px] text-[#C0BBAE]">{i + 1}</span>
+              )}
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* The steps to choose from. */}
+      <div className="grid grid-cols-3 gap-3">
+        {shuffled.map((s) => {
+          const done = placed.includes(s.id);
+          const isWrong = wrong === s.id;
+          return (
+            <motion.button
+              key={s.id}
+              onClick={() => tap(s.id)}
+              disabled={done}
+              aria-label={`${s.labelEn} — ${s.labelKn}`}
+              whileTap={done ? undefined : { y: 5 }}
+              animate={{ opacity: done ? 0.35 : 1, x: isWrong ? [0, -6, 6, 0] : 0 }}
+              transition={isWrong ? { duration: 0.4 } : SPRING}
+              className="rounded-[22px] bg-white flex flex-col items-center justify-center gap-1"
+              style={{
+                minHeight: 104,
+                boxShadow: isWrong
+                  ? '0 8px 0 #D89A00, inset 0 0 0 4px #FFC02E'
+                  : done
+                    ? '0 8px 0 #1E8C4C, inset 0 0 0 4px #2FBF6B'
+                    : '0 8px 0 #D9D2C4, inset 0 0 0 3px #E4DDCE',
+              }}
+            >
+              <span style={{ fontSize: 36, lineHeight: 1 }}>{s.glyph}</span>
+              <span className="font-body font-black text-[12px] text-ink leading-none">{s.labelKn}</span>
             </motion.button>
           );
         })}
