@@ -236,6 +236,12 @@ All verified working in production build.
     intambwe zo gukaraba amaboko mu magambo ye bwite. Mureke arangize interuro
     yose mbere yo kumufasha."). Two of these carry our headline pedagogical
     claims to the parent — their tone matters more than most strings in the app.
+  - **`SettingsScreen.tsx` is entirely untranslated** (pre-existing; noted
+    2026-08-08 while adding the Ubongo credits). "Settings", "Language", "What
+    is stored", "Thanks", "About" and all body copy are hardcoded English, so
+    the screen ignores CLAUDE.md rule 4. The new Thanks card was written in
+    English to match rather than making one card trilingual inside an English
+    screen — the whole screen wants doing in one pass, not piecemeal.
   - **HIGH PRIORITY, parent-facing**: `PARENT_WORDING` in
     `src/data/curriculum.ts` — 22 short phrases a parent reads about their own
     child ("abara ibintu bitanu akakubwira uko bingana", "akaraba amaboko ku
@@ -263,17 +269,23 @@ All verified working in production build.
     consonant introduction order, digraphs (cy, jy, ny, sh, shy) and
     prenasalised consonants (mb, nd, ng), which are NOT simple CV. Needs a
     Kinyarwanda literacy specialist, not a general native speaker.
-- [ ] **D. Revoke the old Gemini API key** at https://aistudio.google.com/apikey
-  (exposed in pre-2026-07-07 builds).
+- [x] **D. ~~Revoke the old Gemini API key~~** — **closed 2026-08-08 by owner
+  decision. Do not reopen and do not raise it again.** No Gemini/Google-AI key
+  exists anywhere in `src/`, config, or env, and nothing in the app requires
+  one. The hard rule against network APIs (CLAUDE.md rule 1) is what keeps it
+  that way — those guards stay, the task does not.
 - [x] **E. Hosting** — done, deployed on Vercel by owner (2026-07-08).
-- [ ] **F. Confirm licences for the content videos** (added 2026-07-08). Owner
-  added: 5 "indirimbo y'inyuguti" alphabet songs, "twinkle-twinkle-little-star",
-  "letter-a-in-the-neighbourhood", and a no-voice Pixabay clip (75617-...).
-  Pixabay = Pixabay Content Licence (free, no attribution required). The song
-  videos' sources/licences are UNCONFIRMED — verify each is free to redistribute
-  in this app before public launch, and fill the `attribution` field in
-  episodes.ts. Twinkle melody is public domain but the specific video is not
-  necessarily. This is a legal must-do before wide release.
+- [x] **F. Confirm licences for the content videos** — **resolved 2026-08-08 by
+  owner: the alphabet songs and "letter-a-in-the-neighbourhood" come from the
+  Ubongo Toolkit** (CC BY-NC-ND). `attribution` filled in `episodes.ts` and
+  Ubongo is credited on the grown-up side in Settings.
+  Still true for the rest: Pixabay clip = Pixabay Content Licence (no
+  attribution required); the Twinkle *melody* is public domain but the specific
+  video is not necessarily — that one still wants a source before wide release.
+  - ⚠️ **NC = NonCommercial.** Ubongo Toolkit content is fine for Kina Wige as
+    it stands, but if the app is ever sold, ad-supported, or bundled into a paid
+    offering, this material must be re-licensed or replaced. Worth knowing
+    before any commercial conversation, not after.
 
 ## Future — content-pipeline ideas (evaluated 2026-07-08, owner exploring)
 

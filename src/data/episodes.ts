@@ -125,7 +125,7 @@ export const episodes: Episode[] = [
     },
     hasQuiz: false,
     prefetch: false,
-    attribution: 'TODO: confirm source & licence before public release',
+    attribution: 'Ubongo Toolkit (ubongo.org) · CC BY-NC-ND 4.0',
     curriculum: {
       skills: ['snd.vowel.recognise', 'snd.vowel.name'],
       level: 'L2',
@@ -155,7 +155,11 @@ export const episodes: Episode[] = [
     },
     hasQuiz: false,
     prefetch: false,
-    attribution: 'Traditional melody (public domain) — confirm video source before release',
+    // `attribution` is PARENT-FACING — it renders in Settings › Thanks. Keep
+    // engineering caveats in ROADMAP.md, not here. This credits the melody,
+    // which is verifiably public domain, and asserts nothing about the specific
+    // video, whose source is still open (ROADMAP F).
+    attribution: 'Twinkle Twinkle Little Star — traditional melody, public domain',
     curriculum: {
       skills: ['snd.listen.attend'],
       level: 'L1',
@@ -187,7 +191,7 @@ export const episodes: Episode[] = [
     },
     hasQuiz: false,
     prefetch: false,
-    attribution: 'TODO: confirm source & licence before public release',
+    attribution: 'Ubongo Toolkit (ubongo.org) · CC BY-NC-ND 4.0',
     curriculum: {
       skills: ['snd.vowel.recognise', 'wrd.name.object'],
       level: 'L1',

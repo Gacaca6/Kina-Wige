@@ -66,7 +66,7 @@ videos + brain-training games + offline Q&A buddy. Owner: GACACA Godwin.
 npm run lint              # tsc --noEmit — must pass
 npm run curriculum:check  # content contract + coverage report — must pass
 npm run assessment:check  # the four assessment bands still obey §13–§14 — must pass
-npm run build             # runs both checks first; verify no secrets: grep dist for "AIzaSy" = empty
+npm run build             # runs both checks first; dist must contain no API keys or tokens
 npm run preview           # serve dist; test in browser
 ```
 

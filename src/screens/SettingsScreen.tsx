@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import { ParentShell, Card } from '../components/ui/Shell';
 import { useI18n } from '../i18n/context';
 import type { Language } from '../i18n/translations';
+import { episodes } from '../data/episodes';
+import { comics } from '../data/comics';
 
 const APP_VERSION = '0.1.0';
 const CONTACT_EMAIL = 'mikelgodwin1234@gmail.com';
@@ -19,11 +21,38 @@ const LANGUAGES: { code: Language; label: string }[] = [
 ];
 
 // Everything this app stores. Listed openly, and wiped by the button below.
+//
+// KEEP THIS IN SYNC. A key missing here is a promise broken: a parent taps
+// "Delete all progress" and something about their child quietly survives.
 const PROGRESS_KEYS = [
   'kina-wige-stars',
   'kina-wige-progress',
   'kina-wige-activities',
   'kina-wige-weekly',
+  // The per-skill assessment record (useSkillEvidence). This is the most
+  // personal thing the app holds — it must be the first thing a delete removes.
+  'kina-wige-evidence',
+];
+
+/**
+ * Credits, derived from the content registries rather than typed out here.
+ *
+ * A hand-maintained credits list goes stale the first time someone adds an
+ * episode in a hurry — and a stale credits list is a licence problem, not a
+ * cosmetic one. Add content with an `attribution` and it appears here by itself.
+ */
+const CONTENT_CREDITS: string[] = [
+  ...new Set(
+    [...episodes.map((e) => e.attribution), ...comics.map((c) => c.attribution)].filter(
+      (a): a is string => Boolean(a),
+    ),
+  ),
+];
+
+/** Things not held in a content registry. */
+const OTHER_CREDITS = [
+  'Typefaces: Fredoka, Baloo 2, Nunito · SIL Open Font License',
+  'One background clip: Pixabay Content Licence',
 ];
 
 function Label({ children }: { children: React.ReactNode }) {
@@ -87,6 +116,7 @@ export default function SettingsScreen() {
             {[
               'Stars and lesson progress',
               'Which episodes and stories were opened',
+              'What your child can do (the progress report)',
               'Chosen language',
             ].map((t) => (
               <li key={t} className="flex items-start gap-2 font-body font-bold text-[14px]" style={{ color: '#213B4A' }}>
@@ -106,6 +136,36 @@ export default function SettingsScreen() {
           >
             {cleared ? 'Progress cleared' : 'Delete all progress'}
           </button>
+        </Card>
+
+        {/* Thanks. Placed before About on purpose — the people who made the
+            work we build on come before the version number. */}
+        <Card tone="parent">
+          <Label>Thanks</Label>
+          <p className="font-body font-bold text-[14px] leading-relaxed" style={{ color: '#213B4A' }}>
+            Kina Wige stands on work generously shared by others. Our thanks to{' '}
+            <span className="font-black">Ubongo</span> — whose Toolkit provides the
+            alphabet songs and the Letter A episode — and to{' '}
+            <span className="font-black">Book Dash</span>, whose freely licensed
+            illustrations became one of our storybooks.
+          </p>
+          <p className="font-body font-bold text-[13px] mt-3 leading-relaxed" style={{ color: '#5B7A94' }}>
+            Ubongo makes African educational media for African children, reaching
+            families across the continent. Kina Wige exists in the same spirit.
+          </p>
+
+          <ul className="flex flex-col gap-1.5 mt-4">
+            {[...CONTENT_CREDITS, ...OTHER_CREDITS].map((credit) => (
+              <li
+                key={credit}
+                className="flex items-start gap-2 font-body font-bold text-[12px] leading-snug"
+                style={{ color: '#5B7A94' }}
+              >
+                <span className="mt-1.5 rounded-full flex-none" style={{ width: 5, height: 5, background: '#90CAF9' }} />
+                {credit}
+              </li>
+            ))}
+          </ul>
         </Card>
 
         <Card tone="parent">
