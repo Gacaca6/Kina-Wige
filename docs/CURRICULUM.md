@@ -1,8 +1,27 @@
-# Kina Wige — Curriculum
+# Kina Wige — Curriculum (superseded)
 
 **Version:** 1.0 · 2026-08-01
-**Scope:** ages 3–6 · Kinyarwanda-first, mirrored in English and French
-**Status:** Canonical. Every lesson, game and story maps to a skill in §4.
+**Status:** ⚠️ **SUPERSEDED — do not author content from this file.**
+
+| Looking for | Go to |
+| --- | --- |
+| What we teach and why (the spine) | **`CURRICULUM-ARCHITECTURE.md`** |
+| The authoritative skill list and ids | **`CURRICULUM-SKILLS.md`** |
+| The evidence base and rationale below | this file, kept for reference |
+
+This document was the first pass. Its **evidence base** (§1), its
+**Kinyarwanda syllabic argument** (§2) and its **lesson-shape rules** (§6)
+were carried forward intact and are now expressed in the two files above.
+Its skill list (§4) and unit table (§5) are **replaced** by
+`CURRICULUM-SKILLS.md`, which is larger, has evidence statements, and is the
+one the build will enforce.
+
+Kept — not deleted — because the reasoning here is why the architecture looks
+the way it does.
+
+---
+
+**Original scope:** ages 3–6 · Kinyarwanda-first, mirrored in English and French
 
 > **The rule:** nothing ships unless it teaches a named skill from this document,
 > at a stated level, in a stated sequence. "Fun and educational" is not a

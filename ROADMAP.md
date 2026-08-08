@@ -224,6 +224,18 @@ All verified working in production build.
     `voice.record_prompt` ("Fata ijwi ry'izina ry'umwana"), `voice.keep`
     ("Bika"), `voice.retry` ("Ongera"), `voice.skip` ("Simbuka"),
     celebration with name ("Wabikoze, {name}!").
+  - curriculum architecture (2026-08-02, `docs/CURRICULUM-ARCHITECTURE.md` +
+    `docs/CURRICULUM-SKILLS.md`) — machine-written KN not yet in code, review
+    before it ships: domain names (Ururimi n'ubumenyi bwo gusoma, Imibare,
+    Gushakashaka isi, Ubuzima n'umubiri, Imyifatire n'amarangamutima, Ubuhanzi
+    n'umuco), assessment bands (Aratangira, Aragenda, Arabishoboye,
+    Arabikoresha), level names (Menya, Shakashaka, Rema), theme names (Njye,
+    Urugo rwanjye, Umudugudu, Ibiryo n'ubuhinzi, Ibidukikije, Umubiri
+    n'ubuzima, Amabara n'ibishushanyo, Inkuru n'ubwenge, U Rwanda, Isi yanjye).
+  - HIGH PRIORITY, blocks content: the Kinyarwanda literacy sequence itself —
+    consonant introduction order, digraphs (cy, jy, ny, sh, shy) and
+    prenasalised consonants (mb, nd, ng), which are NOT simple CV. Needs a
+    Kinyarwanda literacy specialist, not a general native speaker.
 - [ ] **D. Revoke the old Gemini API key** at https://aistudio.google.com/apikey
   (exposed in pre-2026-07-07 builds).
 - [x] **E. Hosting** — done, deployed on Vercel by owner (2026-07-08).
