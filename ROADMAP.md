@@ -112,6 +112,16 @@ All verified working in production build.
 
 ## P2 — Learning depth
 
+- [ ] **7b. Kinyarwanda audio for the `isuku` episode** (added 2026-08-11).
+  The new 80-second hygiene episode replaced the two original hygiene episodes
+  and is our best-looking content, but its narration and recap song are in
+  ENGLISH. Under the language policy (Architecture §6.2) English is exposure-only
+  at L1 and receptive at L2 — this episode is the app's most prominent piece of
+  English instruction. Options: (a) re-voice in Kinyarwanda over the same
+  animation, (b) add KN subtitles/captions, (c) keep as English exposure and say
+  so. Owner + Kinyarwanda voice needed. This is a pedagogy decision, not a code
+  one, and it should be made before the pilot.
+
 - [ ] **8. Pattern game: generated rounds + difficulty ramp**
   Replace the 5 static rounds with a generator: pool of 6 emojis; round 1–2
   ABAB, 3 AABB, 4 ABC, 5 ABB/AAB (random template + random symbols, options =
@@ -247,6 +257,11 @@ All verified working in production build.
     roughly 75 new KN strings, all machine-written. The lesson loop ones are the
     most child-facing: "Yego! Ni yo!", "Ongera ugerageze", "Kina aracyari kumwe
     nawe", "Noneho genda ukine!", "Wabikoze!".
+  - **NEW (2026-08-11) hygiene episode text** in `src/data/episodes.ts` — the
+    `isuku` title "Isuku n'Ubuzima" and its KN story blurb ("Umukobwa n'inshuti
+    ye Isabune baguha amasomo umunani ku isuku…"), plus the new skill phrasing
+    `phy.teeth` = "yoza amenyo ye neza". The episode's narration itself is in
+    ENGLISH — see the dubbing note in P1 below.
   - **HIGH PRIORITY, parent-facing**: `PARENT_WORDING` in
     `src/data/curriculum.ts` — 22 short phrases a parent reads about their own
     child ("abara ibintu bitanu akakubwira uko bingana", "akaraba amaboko ku

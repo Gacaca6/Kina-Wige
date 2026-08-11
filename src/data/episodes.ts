@@ -48,58 +48,45 @@ export interface UpcomingEpisode {
 
 export const episodes: Episode[] = [
   {
-    id: '1',
+    id: 'isuku',
     title: {
-      KN: 'Karaba Amaboko!',
-      EN: 'Wash Your Hands!',
-      FR: 'Lave-toi les Mains!',
+      KN: "Isuku n'Ubuzima",
+      EN: 'Clean and Healthy',
+      FR: 'Propre et en Bonne Santé',
     },
     category: { KN: '🫧 Isuku', EN: '🫧 Hygiene', FR: '🫧 Hygiène' },
-    clips: ['/videos/clip1.mp4'],
-    thumb: images.episode1Thumb,
-    poster: images.episode1VideoPoster,
+    clips: ['/videos/isuku.mp4'],
+    thumb: images.isukuThumb,
+    poster: images.isukuPoster,
     story: {
-      KN: "Hirwa yari asohotse mu gikari, ariko yibagiwe gukaraba amaboko mbere yo kurya! Keza na Mama baramufasha kwibuka intambwe zo gukaraba neza hakoreshejwe amazi meza n'isabune.",
-      EN: 'Hirwa was playing outside, but he forgot to wash his hands before eating! Keza and Mama help him remember the steps of proper handwashing with clean water and soap.',
-      FR: "Hirwa jouait dehors, mais il a oublié de se laver les mains avant de manger! Keza et Maman l'aident à se rappeler les étapes du lavage des mains avec de l'eau propre et du savon.",
+      KN: "Umukobwa n'inshuti ye Isabune baguha amasomo umunani ku isuku: icyo isuku ari cyo, gukaraba amaboko, udupfunyi tutaboneka n'amaso, koza amenyo, kwisukura umubiri, no kwita ku mudugudu wacu — hanyuma indirimbo yo kubyibuka byose.",
+      EN: 'A girl and her friend Soap take you through eight lessons about staying clean: what hygiene means, washing hands, the germs we cannot see, brushing teeth, keeping our bodies clean, caring for our village — and a song to remember it all.',
+      FR: "Une fille et son ami Savon t'emmènent à travers huit leçons sur la propreté: ce qu'est l'hygiène, se laver les mains, les microbes invisibles, se brosser les dents, garder son corps propre, prendre soin de son village — et une chanson pour tout retenir.",
     },
     hasQuiz: true,
+    // 9.5 MB. Lazy-cached on first open like the other long videos, so a first
+    // launch on mobile data stays light (see prefetchVideos.ts).
+    prefetch: false,
     gameId: 'karaba',
+    // Credit lines stay short and name-like: they sit in a trilingual screen,
+    // so prose here would read as untranslated English. Ours, no licence owed.
+    attribution: 'Kina Wige original animation · 2026',
     curriculum: {
-      skills: ['phy.hand.sequence', 'phy.hand.when'],
-      level: 'L2',
+      skills: ['phy.hand.sequence', 'phy.hand.why', 'phy.teeth'],
+      level: 'L3',
       theme: 'T6',
       domains: ['D4'],
-      minutes: 3,
-    },
-  },
-  {
-    id: '2',
-    title: {
-      KN: 'Gukaraba no Kurya',
-      EN: 'Washing and Eating',
-      FR: 'Se Laver et Manger',
-    },
-    category: { KN: '🥗 Imirire & 🫧 Isuku', EN: '🥗 Nutrition & 🫧 Hygiene', FR: '🥗 Nutrition & 🫧 Hygiène' },
-    clips: ['/videos/clip2.mp4', '/videos/clip3.mp4'],
-    thumb: images.episode2Thumb,
-    story: {
-      KN: "Keza na Hirwa biga impamvu tugomba gukaraba amaboko mbere yo kurya. Kurya n'amaboko meza bituma tugira ubuzima bwiza!",
-      EN: 'Keza and Hirwa learn why we must wash our hands before eating. Eating with clean hands keeps us healthy!',
-      FR: 'Keza et Hirwa apprennent pourquoi il faut se laver les mains avant de manger. Manger avec des mains propres nous garde en bonne santé!',
-    },
-    hasQuiz: true,
-    gameId: 'karaba',
-    curriculum: {
-      skills: ['phy.hand.when', 'wrd.story.recall'],
-      level: 'L2',
-      theme: 'T6',
-      domains: ['D1', 'D4'],
-      minutes: 4,
-      // Deliberately NOT phy.hand.why. That skill's evidence is "refers to germs
-      // we cannot see"; this episode says "clean hands keep us healthy", which is
-      // not the same claim. The germ explanation lives in the 'clean-hands' book.
-      note: 'Stops short of the germ explanation — see comic clean-hands for phy.hand.why.',
+      minutes: 2,
+      // Replaces the two original hygiene episodes, which between them taught
+      // sequence and when-to-wash across 3 short clips. This one adds the germ
+      // explanation (previously carried ONLY by one panel of the clean-hands
+      // book) and teeth, in one continuous 80-second piece.
+      //
+      // It also teaches bathing and keeping the village clean — neither of
+      // which the taxonomy names. Same finding as the Memory game: content is
+      // ahead of the skill list. Candidate skills for review: a `phy.bath.*`
+      // under D4, and an environment/community-care skill under D3.
+      note: 'Teaches bathing and environmental care too — no skills exist for those yet.',
     },
   },
   {

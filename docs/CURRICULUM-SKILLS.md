@@ -346,5 +346,11 @@ recording:
 - **`twinkle` is culturally imported** and teaches one listening skill. It cannot
   claim `art.sing.rwanda` — it is not a Rwandan song. Replacing it with one would
   serve D6, our most under-served domain, and satisfy §18 at the same time.
-- **Three episodes still say `attribution: TODO`.** Not a curriculum matter, but
+- **The new hygiene episode teaches two things the taxonomy does not name**
+  (2026-08-11). `isuku` covers bathing and keeping the village clean, on top of
+  handwashing, germs and teeth. Neither has a skill, so neither is declared.
+  Candidates for review: a `phy.bath.*` under D4, and a community/environment
+  care skill under D3 — which would also start to fill the D3 hole. Same class
+  of finding as the Memory game: content arrived ahead of the skill list.
+- ~~**Three episodes still say `attribution: TODO`.**~~ Not a curriculum matter, but
   it is a shipping blocker and the contract work surfaced it.

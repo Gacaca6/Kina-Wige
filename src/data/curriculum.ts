@@ -781,6 +781,9 @@ export const PARENT_WORDING: Partial<Record<SkillId, Record<Language, string>>> 
   'phy.hand.why': {
     KN: 'asobanura impamvu dukaraba amaboko', EN: 'explains why we wash hands', FR: 'explique pourquoi on se lave les mains',
   },
+  'phy.teeth': {
+    KN: 'yoza amenyo ye neza', EN: 'brushes their teeth properly', FR: 'se brosse bien les dents',
+  },
   'phy.food.healthy': {
     KN: 'ahitamo ibiryo byiza', EN: 'picks out healthy food', FR: 'choisit les aliments sains',
   },
