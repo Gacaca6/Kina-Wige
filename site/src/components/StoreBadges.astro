@@ -1,0 +1,54 @@
+---
+import { STORE_LINKS } from '../config';
+
+interface Props { soonLabel: string; tone?: 'light' | 'dark' }
+const { soonLabel, tone = 'dark' } = Astro.props;
+
+/**
+ * Apple's marketing guidelines put the App Store badge FIRST in any lineup of
+ * store badges. Google's require the Play badge to be the same size or larger
+ * than any other. Both are satisfied here: Apple first, identical dimensions.
+ *
+ * Neither listing exists yet, so these render as <span>, not <a>. A badge that
+ * looks clickable and goes nowhere is worse than one that admits it is coming.
+ * Fill in STORE_LINKS in config.ts and they become real links automatically.
+ */
+const items = [
+  { key: 'apple', href: STORE_LINKS.apple, small: 'Download on the', big: 'App Store' },
+  { key: 'google', href: STORE_LINKS.google, small: 'Get it on', big: 'Google Play' },
+] as const;
+---
+
+<div class:list={['badges', tone]}>
+  {items.map((s) => {
+    const Tag = s.href ? 'a' : 'span';
+    return (
+      <Tag class:list={['badge', !s.href && 'is-soon']} href={s.href ?? undefined} aria-disabled={s.href ? undefined : 'true'}>
+        {s.key === 'apple' ? (
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M16.4 12.8c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9s-1.8-.9-3-.8c-1.5 0-2.9.9-3.7 2.3-1.6 2.7-.4 6.8 1.1 9 .8 1.1 1.7 2.3 2.9 2.2 1.2 0 1.6-.7 3-.7s1.8.7 3 .7c1.3 0 2.1-1.1 2.8-2.2.9-1.2 1.3-2.5 1.3-2.5s-2.5-1-2.5-3.6zM14.2 5.7c.6-.8 1-1.9.9-3-.9 0-2.1.6-2.7 1.4-.6.7-1.1 1.8-1 2.9 1 .1 2.1-.5 2.8-1.3z" />
+          </svg>
+        ) : (
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#34A853" d="M3.6 2.3 14 12.6l-2.7 2.7L3.3 3.1a1 1 0 0 1 .3-.8z" />
+            <path fill="#FBBC04" d="M17.6 9.2 14 12.6 3.6 2.3l.2-.1a1 1 0 0 1 1 0z" />
+            <path fill="#EA4335" d="M14 12.6 17.6 16l-9.2 5.3a1 1 0 0 1-1 0z" />
+            <path fill="#4285F4" d="m17.6 9.2 2.9 1.7a1.1 1.1 0 0 1 0 1.9l-2.9 1.7-3.6-3.4z" />
+          </svg>
+        )}
+        <span>
+          <small>{s.small}</small>
+          <strong>{s.big}</strong>
+        </span>
+      </Tag>
+    );
+  })}
+  <span class="badge-soon">{soonLabel}</span>
+</div>
+
+<style>
+  .badges.light .badge { background: var(--paper); color: var(--ink); border-color: var(--edge-deep); }
+  .badges.light .badge-soon { color: var(--sun-deep); background: color-mix(in oklab, var(--sun) 22%, transparent); }
+  a.badge { opacity: 1; text-decoration: none; transition: transform 0.14s var(--ease-out-quart); }
+  a.badge:hover { transform: translateY(-2px); }
+</style>

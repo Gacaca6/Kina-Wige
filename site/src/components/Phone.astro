@@ -1,0 +1,129 @@
+---
+/**
+ * The app's learning path, drawn in CSS.
+ *
+ * Not a screenshot: a real screenshot would be a 200 KB image download on a page
+ * that argues the app is light on data, and it would go stale the moment a
+ * colour token changes. This is built from the same tokens as the app, so it
+ * stays honest and costs nothing.
+ *
+ * It mirrors the real screen: unit banner, a trail of earned ticks, the current
+ * node wearing Kina's face, locked nodes ahead, and the one bottom nav.
+ */
+interface Props { unit: string; unitLabel: string; nav: string[] }
+const { unit, unitLabel, nav } = Astro.props;
+---
+
+<div class="phone" aria-hidden="true">
+  <div class="screen">
+    <div class="top"><span class="chip">RW</span></div>
+
+    <div class="banner">
+      <span class="n">3</span>
+      <span>
+        <span class="k">{unitLabel} 3</span>
+        <span class="b">{unit}</span>
+      </span>
+    </div>
+
+    <div class="path">
+      <svg class="trail" viewBox="0 0 260 220" aria-hidden="true">
+        <path d="M60 18 C 170 42, 40 82, 130 112 C 210 138, 70 168, 150 196"
+              fill="none" stroke="var(--edge)" stroke-width="11" stroke-linecap="round" stroke-dasharray="1 19" />
+        <path d="M60 18 C 170 42, 40 82, 130 112" class="trail-done"
+              fill="none" stroke="var(--grass)" stroke-width="11" stroke-linecap="round" stroke-dasharray="1 19" />
+      </svg>
+      <i class="node done" style="left:32px;  top:0"></i>
+      <i class="node done" style="left:104px; top:56px"></i>
+      <i class="node now"  style="left:60px;  top:112px"><span>🦉</span></i>
+      <i class="node lock" style="left:132px; top:170px"></i>
+    </div>
+
+    <div class="nav">
+      {nav.map((n, i) => (
+        <span class:list={[i === 0 && 'on']}>
+          <em>{['▤', '▶', '◉', '❑'][i]}</em>{n}
+        </span>
+      ))}
+    </div>
+  </div>
+</div>
+
+<style>
+  .phone {
+    width: min(300px, 82vw);
+    background: var(--sand);
+    border: 5px solid var(--ink);
+    border-radius: 38px;
+    padding: 11px;
+    box-shadow: 0 16px 0 rgba(9, 32, 24, 0.32);
+  }
+  .screen { background: var(--paper); border-radius: 27px; overflow: hidden; }
+
+  .top { background: var(--forest); padding: 13px 13px 11px; display: flex; justify-content: flex-end; }
+  .chip {
+    background: var(--forest-deep); color: var(--mint);
+    font-family: Fredoka, sans-serif; font-size: 0.66rem; font-weight: 600;
+    padding: 0.32rem 0.6rem; border-radius: 8px;
+  }
+
+  .banner {
+    margin: 13px; padding: 11px 13px;
+    background: var(--sun); border-radius: 16px;
+    box-shadow: 0 5px 0 var(--sun-deep);
+    display: flex; gap: 11px; align-items: center;
+  }
+  .banner .n {
+    width: 36px; height: 36px; flex: none; border-radius: 11px;
+    background: var(--ink); color: var(--sun);
+    display: grid; place-items: center;
+    font-family: Fredoka, sans-serif; font-weight: 700; font-size: 1.02rem;
+  }
+  .banner .k { display: block; font-size: 0.58rem; font-weight: 800; letter-spacing: 0.13em; color: #8a6a00; text-transform: uppercase; }
+  .banner .b { display: block; font-family: Fredoka, sans-serif; font-weight: 600; font-size: 0.98rem; color: var(--ink); line-height: 1.15; }
+
+  .path { position: relative; height: 218px; margin: 2px 6px 0; }
+  .trail { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .node { position: absolute; border-radius: 999px; display: grid; place-items: center; font-style: normal; }
+  .node.done { width: 46px; height: 46px; background: var(--grass); box-shadow: 0 5px 0 var(--grass-deep); }
+  .node.done::after {
+    content: ''; width: 17px; height: 9px;
+    border-left: 4px solid var(--paper); border-bottom: 4px solid var(--paper);
+    transform: rotate(-45deg) translateY(-2px);
+  }
+  .node.now { width: 58px; height: 58px; background: var(--sun); box-shadow: 0 6px 0 var(--sun-deep); font-size: 1.6rem; }
+  .node.lock { width: 44px; height: 44px; background: var(--edge); box-shadow: 0 5px 0 var(--edge-deep); }
+  /* A real padlock: body plus shackle. The square that was here read as a
+     rendering bug rather than a lock. */
+  .node.lock::after {
+    content: ''; width: 14px; height: 11px; border-radius: 3px;
+    background: #a8a090; position: relative; top: 3px;
+  }
+  .node.lock::before {
+    content: ''; position: absolute; width: 10px; height: 8px;
+    border: 3px solid #a8a090; border-bottom: 0;
+    border-radius: 6px 6px 0 0; transform: translateY(-9px);
+  }
+
+  /* One pulse, on the current node only. Restrained on purpose: a page full of
+     movement reads as a demo reel, not a product. */
+  @media (prefers-reduced-motion: no-preference) {
+    .node.now::before {
+      content: ''; position: absolute; inset: -6px; border-radius: 999px;
+      border: 5px solid var(--sun); animation: ping 2.6s var(--ease-out-expo) infinite;
+    }
+    @keyframes ping {
+      0% { transform: scale(0.82); opacity: 0.8; }
+      70%, 100% { transform: scale(1.7); opacity: 0; }
+    }
+  }
+
+  .nav { display: flex; background: var(--paper); border-top: 3px solid var(--edge); }
+  .nav span {
+    flex: 1; text-align: center; padding: 9px 2px 11px;
+    font-size: 0.5rem; font-weight: 800; letter-spacing: 0.05em;
+    color: #8a9a90; text-transform: uppercase;
+  }
+  .nav span.on { color: var(--forest); }
+  .nav em { display: block; font-size: 1.05rem; margin-bottom: 2px; font-style: normal; }
+</style>

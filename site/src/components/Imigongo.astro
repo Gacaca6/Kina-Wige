@@ -1,0 +1,52 @@
+---
+/**
+ * The site's signature motif.
+ *
+ * Imigongo is a Rwandan art form — geometric relief painting, traditionally in
+ * bold zigzags and spirals with hard edges and no shading. It is used here as
+ * the connective tissue between sections, drawn in the app's own palette.
+ *
+ * This is the answer to CLAUDE.md §18, which forbids "generic Africa": a motif
+ * that could only be from one country, rather than mud-cloth-flavoured wallpaper
+ * that could be from any of fifty-four. It also happens to share a grammar with
+ * the app's flat, hard-edged, zero-blur design system.
+ *
+ * Pure inline SVG: no image request, crisp at any density, and it costs nothing
+ * on a metered connection.
+ */
+interface Props {
+  tone?: 'sun' | 'forest' | 'grass' | 'sand';
+  height?: number;
+  flip?: boolean;
+  class?: string;
+}
+const { tone = 'sun', height = 26, flip = false, class: cls = '' } = Astro.props;
+
+const PALETTE: Record<string, { a: string; b: string; ground: string }> = {
+  sun:    { a: '#FFC02E', b: '#17543C', ground: 'transparent' },
+  forest: { a: '#17543C', b: '#2FBF6B', ground: 'transparent' },
+  grass:  { a: '#2FBF6B', b: '#0E3626', ground: 'transparent' },
+  sand:   { a: '#E4DDCE', b: '#17543C', ground: 'transparent' },
+};
+const p = PALETTE[tone] ?? PALETTE.sun;
+const id = `imi-${tone}-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<svg
+  class={`imigongo-rule ${cls}`}
+  style={`height:${height}px${flip ? ';transform:scaleY(-1)' : ''}`}
+  viewBox="0 0 120 26"
+  preserveAspectRatio="none"
+  aria-hidden="true"
+  focusable="false"
+>
+  <defs>
+    <pattern id={id} width="40" height="26" patternUnits="userSpaceOnUse">
+      <rect width="40" height="26" fill={p.ground} />
+      <!-- nested chevrons: the core imigongo gesture -->
+      <path d="M0 26 L20 0 L40 26 Z" fill={p.a} />
+      <path d="M10 26 L20 13 L30 26 Z" fill={p.b} />
+    </pattern>
+  </defs>
+  <rect width="120" height="26" fill={`url(#${id})`} />
+</svg>
