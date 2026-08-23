@@ -110,6 +110,62 @@ All verified working in production build.
   Kinyarwanda" all point here. Do not add an AI fallback; keep growing this file.
   When new Ubongo topics land, add matching Q&A so Keza can talk about them.
 
+- [ ] **7a. "Bayi Bayi Ingona" — our own Rwandan song episode** (added
+  2026-08-22, owner request). Opens the two domains that currently have ZERO
+  content and replaces the app's weakest-justified item.
+
+  WHY THIS ONE. `npm run build` reports D6 Creative Arts & Culture at 0/10 and
+  D3 Discovery of the World at 0/11 — 25% of the curriculum weight with nothing
+  behind it. `art.sing.rwanda` ("Sings a Rwandan song / Joins a known song") is
+  L1, needs no prerequisites, and is the cheapest honest way in. The note on the
+  `twinkle` episode in `src/data/episodes.ts` already asks for exactly this:
+  an English nursery rhyme cannot claim `art.sing.rwanda`, and a Rwandan song
+  can. "Bayi Bayi Ingona" is a traditional Kinyarwanda children's rhyme — no
+  identifiable author, sung in Rwanda for generations, and it appears on many
+  unrelated channels each with its own arrangement, which is what folk material
+  looks like.
+
+  RIGHTS — the part that must not be got wrong. Two separate things:
+    - The SONG (melody + words) is traditional and unowned. We are free to use
+      it. Owner confirms it from his own childhood; that is good evidence.
+    - Any RECORDING of it is a separate work owned by whoever made it. A
+      public-domain song does not make someone else's performance of it free,
+      and YouTube's terms forbid downloading regardless. So we take NOTHING
+      from the reference video — not the audio, not the animation.
+  Therefore: we record our own vocals and animate our own scenes. That also
+  gives us a clean `attribution` line ("Traditional Rwandan children's song ·
+  Kina Wige recording and animation, 2026") and keeps the licence audit
+  (Human-required #F) from growing another open question.
+
+  LYRICS. Do not take them from a web transcription or let a model write them.
+  Queen (content) transcribes the version she knows, Eric (curriculum) checks it
+  against what children actually sing, and it goes through Human-required #C
+  like all our Kinyarwanda. Regional variants exist — pick one and say which.
+
+  WHAT IT SHOULD CLAIM.
+    - `art.sing.rwanda` (D6, L1) — earned honestly: the child joins a known
+      Rwandan song. This is the point of the episode.
+    - `art.rhythm.make` (D6, L2) — ONLY if we build a clap-along beat the child
+      has to keep, not if they just watch. No claim without an interaction.
+    - `wld.animals.local` (D3, L1) — NOT claimable from this alone. Its evidence
+      line is "names cow, goat, chicken, dog + 4 more"; one crocodile is not
+      eight animals. It can be the first item in a D3 set, not the whole of it.
+
+  PRODUCTION. 60–90s, our own characters (Kina's world — NOT the human children
+  from the videos; see the Brand Identity separation rule). Rwandan setting: a
+  river or wetland a child here would recognise, not a generic jungle. Encode to
+  match the rest: 854×480, H.264 Constrained Baseline level 3.0, CRF 26, AAC
+  128k, `+faststart`, `prefetch: false`.
+
+  THEN RETIRE TWINKLE. Once this ships, drop the `twinkle` episode: it is
+  18.4 MB — the largest video in the app — it teaches one listening skill, and
+  it is culturally imported. Removing it roughly pays for this episode twice
+  over in bytes.
+
+  Accept: `node scripts/check-curriculum.mjs` shows D6 no longer at 0; the
+  episode declares `art.sing.rwanda`; attribution names the song as traditional
+  and the recording as ours; no frame or sample originates from a third party.
+
 ## P2 — Learning depth
 
 - [ ] **7b. Kinyarwanda audio for the `isuku` episode** (added 2026-08-11).
