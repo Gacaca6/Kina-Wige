@@ -18,11 +18,25 @@ const VIDEO_CACHE = 'kina-wige-videos';
 // entirely when offline — where the cached copy is the right answer anyway.
 // Cache API only stores GET, so the HEAD passes through the CacheFirst route
 // to the network rather than being answered from the cache it is checking.
+// cache.add() fetches through the browser's HTTP cache. Videos were served
+// with `max-age=31536000, immutable` on a URL that never changes, so Safari —
+// which honours `immutable` strictly, where Chrome will still revalidate —
+// answered that fetch from its own year-long disk cache and handed us the SAME
+// stale bytes we were trying to replace. The header is fixed in vercel.json,
+// but a device that already stored the old response under the old header would
+// stay stuck for a year. `cache: 'reload'` bypasses the HTTP cache outright,
+// so the repair works regardless of what a device stored previously.
+async function putFromNetwork(cache: Cache, url: string) {
+  const res = await fetch(url, { cache: 'reload' });
+  if (!res.ok) throw new Error(`${url}: ${res.status}`);
+  await cache.put(url, res);
+}
+
 async function cacheFresh(cache: Cache, url: string) {
   const cached = await cache.match(url);
 
   if (!cached) {
-    await cache.add(url);
+    await putFromNetwork(cache, url);
     return;
   }
 
@@ -48,7 +62,23 @@ async function cacheFresh(cache: Cache, url: string) {
   if (!remote || !local || remote === local) return;
 
   await cache.delete(url);
-  await cache.add(url);
+  await putFromNetwork(cache, url);
+}
+
+// Entries stored while /videos/ was served as `immutable` are unreliable: the
+// device was told never to revalidate them, and on Safari that is taken
+// literally. Drop exactly those, once, so the next open re-fetches them. We do
+// NOT rename the cache to force this — that would throw away every video on
+// every device, and a child on a hillside with no signal would lose content
+// that was perfectly fine. This targets only what the bad header touched, and
+// needs no network to decide.
+async function dropImmutableEntries(cache: Cache) {
+  for (const request of await cache.keys()) {
+    const res = await cache.match(request);
+    if (res?.headers.get('cache-control')?.includes('immutable')) {
+      await cache.delete(request);
+    }
+  }
 }
 
 export function prefetchVideos() {
@@ -57,6 +87,7 @@ export function prefetchVideos() {
   const run = async () => {
     try {
       const cache = await caches.open(VIDEO_CACHE);
+      await dropImmutableEntries(cache);
       for (const url of PREFETCH_VIDEO_CLIPS) {
         await cacheFresh(cache, url);
       }
