@@ -792,6 +792,11 @@ export const PARENT_WORDING: Partial<Record<SkillId, Record<Language, string>>> 
   'self.confidence': {
     KN: 'agerageza ikintu gishya ku bwe', EN: 'tries something new on their own', FR: 'essaie quelque chose de nouveau tout seul',
   },
+
+  // D6 · Creative Arts & Culture
+  'art.sing.rwanda': {
+    KN: 'aririmba indirimbo y’Ikinyarwanda', EN: 'sings along to a Rwandan song', FR: 'chante une chanson rwandaise',
+  },
 };
 
 // ─── The content contract ───────────────────────────────────────────────────

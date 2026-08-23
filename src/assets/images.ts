@@ -5,6 +5,8 @@ import kezaFull from './characters/keza-full.webp';
 import hirwaFull from './characters/hirwa-full.webp';
 import isukuThumb from './episodes/isuku-thumb.webp';
 import isukuPoster from './episodes/isuku-poster.webp';
+import bayiThumb from './episodes/bayi-bayi-ingona-thumb.webp';
+import bayiPoster from './episodes/bayi-bayi-ingona-poster.webp';
 import hands from './episodes/hands.webp';
 import mama from './episodes/mama.webp';
 import parentChild from './episodes/parent-child.webp';
@@ -19,6 +21,8 @@ export const images = {
   hirwaFull,
   isukuThumb,
   isukuPoster,
+  bayiThumb,
+  bayiPoster,
   hands,
   mama,
   parentChild,

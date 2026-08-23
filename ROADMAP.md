@@ -110,9 +110,14 @@ All verified working in production build.
   Kinyarwanda" all point here. Do not add an AI fallback; keep growing this file.
   When new Ubongo topics land, add matching Q&A so Keza can talk about them.
 
-- [ ] **7a. "Bayi Bayi Ingona" — our own Rwandan song episode** (added
-  2026-08-22, owner request). Opens the two domains that currently have ZERO
-  content and replaces the app's weakest-justified item.
+- [x] **7a. "Bayi Bayi Ingona" — our own Rwandan song episode** *(done
+  2026-08-23. Team produced it; 1080p master 113.7 MB encoded to 11.06 MB at
+  854×480 H.264 **Main** profile, `-tune animation`, CRF 26, AAC 128k. Main
+  rather than Constrained Baseline after measuring: VMAF 75.38 at 11.06 MB
+  versus 72.89 at 15.25 MB for the house recipe — smaller AND better, because
+  Main enables CABAC and B-frames which baseline disables. Main is supported on
+  Android 3.0+ and all iOS. The house recipe in this file is unchanged for
+  other videos. D6 went 0/10 → 1/10; coverage 27% → 28%.)*
 
   WHY THIS ONE. `npm run build` reports D6 Creative Arts & Culture at 0/10 and
   D3 Discovery of the World at 0/11 — 25% of the curriculum weight with nothing
@@ -154,17 +159,19 @@ All verified working in production build.
   PRODUCTION. 60–90s, our own characters (Kina's world — NOT the human children
   from the videos; see the Brand Identity separation rule). Rwandan setting: a
   river or wetland a child here would recognise, not a generic jungle. Encode to
-  match the rest: 854×480, H.264 Constrained Baseline level 3.0, CRF 26, AAC
-  128k, `+faststart`, `prefetch: false`.
+  match the rest: 854×480, CRF 26, AAC 128k, `+faststart`, `prefetch: false`.
 
-  THEN RETIRE TWINKLE. Once this ships, drop the `twinkle` episode: it is
-  18.4 MB — the largest video in the app — it teaches one listening skill, and
-  it is culturally imported. Removing it roughly pays for this episode twice
-  over in bytes.
+  TWINKLE STAYS. An earlier version of this task proposed retiring the
+  `twinkle` episode once this shipped, calling it culturally imported. The
+  owner corrected that on 2026-08-23: Twinkle Twinkle IS taught in Rwandan
+  nurseries, so for a child here it is not an import — it is a song from their
+  own classroom. It keeps `snd.listen.attend` and stays. Do not propose
+  retiring it again.
 
-  Accept: `node scripts/check-curriculum.mjs` shows D6 no longer at 0; the
-  episode declares `art.sing.rwanda`; attribution names the song as traditional
-  and the recording as ours; no frame or sample originates from a third party.
+  STILL OPEN: the LYRICS are not in the app. They must come from Queen's own
+  transcription, checked by Eric, then through native-speaker review (#C) —
+  not a web transcription, not model-written. Regional variants exist; record
+  which one we settled on. Until then the episode teaches by ear only.
 
 ## P2 — Learning depth
 

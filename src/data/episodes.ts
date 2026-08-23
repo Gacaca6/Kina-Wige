@@ -48,6 +48,51 @@ export interface UpcomingEpisode {
 
 export const episodes: Episode[] = [
   {
+    id: 'bayi-bayi-ingona',
+    title: {
+      KN: 'Bayi Bayi Ingona',
+      EN: 'Bayi Bayi Ingona',
+      FR: 'Bayi Bayi Ingona',
+    },
+    category: { KN: '🎵 Indirimbo', EN: '🎵 Songs', FR: '🎵 Chansons' },
+    clips: ['/videos/bayi-bayi-ingona.mp4'],
+    thumb: images.bayiThumb,
+    poster: images.bayiPoster,
+    story: {
+      KN: 'Indirimbo y’umuco nyarwanda abana baririmba kuva kera! Ririmba kuri ingona iri ku nkombe y’umugezi, hamwe n’inyoni n’ibyana byayo.',
+      EN: 'A traditional Rwandan children’s song, sung here for generations! Sing along about the crocodile by the riverbank, with the bird and her chicks.',
+      FR: 'Une chanson traditionnelle rwandaise, chantée ici depuis des générations! Chante le crocodile au bord de la rivière, avec l’oiseau et ses petits.',
+    },
+    hasQuiz: false,
+    // 11 MB. Lazy-cached on first open like the other long videos.
+    prefetch: false,
+    // The song is traditional and unowned; the recording and the animation are
+    // ours. Both halves stated, because a public-domain melody does not make
+    // someone else's performance free — see ROADMAP 7a.
+    attribution: 'Traditional Rwandan children’s song · Kina Wige recording and animation, 2026',
+    curriculum: {
+      skills: ['art.sing.rwanda'],
+      level: 'L1',
+      theme: 'T9',
+      domains: ['D6'],
+      minutes: 2,
+      // First content in D6 — the domain sat at 0/10 until this shipped.
+      //
+      // Claims art.sing.rwanda and nothing else, deliberately:
+      //  - art.rhythm.make would need a clap-along the child has to KEEP.
+      //    Watching is not making a rhythm. Add the claim with the interaction.
+      //  - wld.animals.local wants "cow, goat, chicken, dog + 4 more". One
+      //    crocodile and one bird is not eight animals. It can be the first
+      //    item in a D3 set later, not the whole of it.
+      //
+      // LYRICS are not in the app yet. They must come from Queen's own
+      // transcription, checked by Eric, then through native-speaker review
+      // (ROADMAP C) — not from a web transcription and not model-written.
+      // Regional variants exist; whichever we settle on gets recorded here.
+      note: 'Opens D6. Lyrics still pending native-speaker review (ROADMAP C).',
+    },
+  },
+  {
     id: 'isuku',
     title: {
       KN: "Isuku n'Ubuzima",
@@ -153,12 +198,16 @@ export const episodes: Episode[] = [
       theme: 'T8',
       domains: ['D1'],
       minutes: 3,
-      // The weakest-justified item in the app. It teaches one listening skill
-      // and it is culturally imported — an English nursery rhyme, not a Rwandan
-      // song, so it cannot claim art.sing.rwanda. Architecture §18 wants a
-      // child's own world on screen. Candidate for replacement by a Rwandan
-      // song, which would earn art.sing.rwanda honestly.
-      note: 'Culturally imported; single skill. Replace with a Rwandan song (Architecture §18).',
+      // Teaches one listening skill, and it is in English, so it cannot claim
+      // art.sing.rwanda — Bayi Bayi Ingona now carries that.
+      //
+      // It was previously marked for replacement on the grounds of being
+      // culturally imported. That was wrong, and the owner corrected it:
+      // Rwandan nurseries teach this song, so a child meeting it here is
+      // meeting something from their own classroom, not an import. Architecture
+      // §18 asks for a child's own world — for this song, that includes it.
+      // KEEP. Do not propose retiring it again.
+      note: 'English, so no art.sing.rwanda — but taught in Rwandan nurseries. Keep.',
     },
   },
   {
