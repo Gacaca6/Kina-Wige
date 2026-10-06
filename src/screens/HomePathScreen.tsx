@@ -97,7 +97,7 @@ export default function HomePathScreen() {
 
   return (
     <div
-      className="bg-cream flex flex-col" style={{ minHeight: '100dvh' }}
+      className="bg-cream flex flex-col" style={{ minHeight: 'var(--app-height)' }}
       onPointerMove={track}
       onPointerLeave={() => setLook(null)}
     >

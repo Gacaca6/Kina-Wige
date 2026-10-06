@@ -205,7 +205,7 @@ export default function LessonScreen() {
     // content, the inner overflow-y-auto never scrolls, and the Komeza button
     // drops below the fold.
     return (
-      <div className="bg-forest flex flex-col" style={{ height: '100dvh' }}>
+      <div className="bg-forest flex flex-col" style={{ height: 'var(--app-height)' }}>
         <div className="flex-1 min-h-0 overflow-y-auto px-6 pt-safe pb-6 flex flex-col items-center text-center">
           <motion.div
             className="mt-6"
@@ -331,7 +331,7 @@ export default function LessonScreen() {
   const showCorrect = phase === 'correct';
 
   return (
-    <div className="bg-cream flex flex-col" style={{ minHeight: '100dvh' }}>
+    <div className="bg-cream flex flex-col" style={{ minHeight: 'var(--app-height)' }}>
       {/* ── Progress. Segments, not a timer — nothing counts down. ── */}
       <div className="px-6 pt-safe flex items-center gap-3">
         <button

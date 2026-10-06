@@ -27,6 +27,9 @@ import time
 import xml.etree.ElementTree as ET
 
 PKG = "rw.kinawige.app"
+# The child's home. Its greeting doubles as the hidden grown-up door, so
+# Android's accessibility tree announces it by the door's label, "Grown-ups".
+HOME = "Grown-ups"
 ACTIVITY = f"{PKG}/.MainActivity"
 APK = sys.argv[1]
 OUT = sys.argv[2] if len(sys.argv) > 2 else "smoke"
@@ -51,11 +54,28 @@ def shot(name: str) -> None:
         f.write(png)
 
 
+def dump_xml() -> str:
+    """The screen's accessibility tree. Android 12's uiautomator crashes (an NPE
+    inside the dump tool itself, not in the app) when a node disappears
+    mid-dump, which happens during animations. So: delete the previous dump
+    first — a failed dump must never leave a stale screen to be read — then
+    retry, alternating the compressed mode, which walks fewer nodes."""
+    for attempt in range(6):
+        adb("shell", "rm", "-f", "/sdcard/ui.xml", check=False)
+        args = ["shell", "uiautomator", "dump"] + (["--compressed"] if attempt % 2 else []) + ["/sdcard/ui.xml"]
+        out = adb(*args, check=False)
+        if "dumped to" in out:
+            raw = adb("exec-out", "cat", "/sdcard/ui.xml", check=False)
+            if raw.strip().startswith("<?xml"):
+                return raw
+        time.sleep(0.8)
+    return ""
+
+
 def nodes() -> list[tuple[str, tuple[int, int, int, int]]]:
     """Every on-screen node with a label, from the accessibility tree (the
     WebView exposes its DOM text there), with its bounds."""
-    adb("shell", "uiautomator", "dump", "/sdcard/ui.xml", check=False)
-    raw = adb("exec-out", "cat", "/sdcard/ui.xml", check=False)
+    raw = dump_xml()
     try:
         root = ET.fromstring(raw)
     except ET.ParseError:
@@ -149,8 +169,8 @@ def step(name: str, fn) -> None:
 sdk = adb("shell", "getprop", "ro.build.version.sdk").strip()
 release = adb("shell", "getprop", "ro.build.version.release").strip()
 wv = adb("shell", "dumpsys", "webviewupdate", check=False)
-m = re.search(r"Current WebView package.*?\(([^)]*)\)", wv)
-webview = m.group(1) if m else "unknown"
+m = re.search(r"Current WebView package \(name, version\): \(([^,]+), ([^)]+)\)", wv)
+webview = m.group(2).strip() if m else "unknown"
 print(f"Android {release} (API {sdk}) · WebView {webview}", flush=True)
 
 adb("install", "-r", "-g", APK, timeout=300)
@@ -169,6 +189,14 @@ def setup_and_back():
     tap("English")
     check("language step leads to the grown-up welcome", wait_for("Welcome, grown-up"))
     shot("setup-welcome")
+    # When the stylesheet fails to apply, everything still works but looks
+    # broken: "Next" shrinks to a small default button. Styled, it spans the
+    # screen. This is the check that catches an unstyled app.
+    nxt = wait_for("Next", exact=True)
+    width = int(re.search(r"(\d+)x\d+", adb("shell", "wm", "size")).group(1))
+    check("page is styled (Next button spans the screen)",
+          nxt and (nxt[2] - nxt[0]) > width * 0.7,
+          f"button {nxt[2] - nxt[0] if nxt else 0}px of {width}px")
     tap("Next")
     check("next step: your child", wait_for("Your child", exact=True))
     back()
@@ -182,7 +210,7 @@ def setup_and_back():
     check("last step: child sees only their screens", wait_for("Your child sees only their screens"))
     shot("setup-lock")
     tap("Let's play!")
-    check("setup finishes on the child's home", wait_for("Hello!"))
+    check("setup finishes on the child's home", wait_for(HOME))
     shot("child-home")
 
 
@@ -192,22 +220,22 @@ def back_on_home():
     check("back on home keeps the app alive", running())
     check("back on home moves the app to the background", not in_front())
     launch()
-    check("reopening returns to the child's home, not setup", wait_for("Hello!") and not find("Ikinyarwanda", exact=True))
+    check("reopening returns to the child's home, not setup", wait_for(HOME) and not find("Ikinyarwanda", exact=True))
 
 
 def survives_close():
     adb("shell", "am", "force-stop", PKG)
     time.sleep(1)
     launch()
-    check("after closing the app, setup is remembered", wait_for("Hello!", timeout=60))
+    check("after closing the app, setup is remembered", wait_for(HOME, timeout=60))
 
 
 def grown_up_door():
-    hold("Hello!")
+    hold(HOME)
     check("press-and-hold opens the parent gate", wait_for("Grown-ups only"))
     shot("parent-gate")
     back()
-    check("back from the gate returns to the child's home", wait_for("Hello!"))
+    check("back from the gate returns to the child's home", wait_for(HOME))
 
 
 def video():
@@ -245,12 +273,19 @@ for name, fn in [
 log = adb("logcat", "-d", timeout=120)
 with open(os.path.join(OUT, "logcat.txt"), "w", encoding="utf-8") as f:
     f.write(log)
-crash = [l for l in log.splitlines() if "FATAL EXCEPTION" in l or (PKG in l and "has died" in l)]
+# Only Kina Wige's own process. (Android 12's uiautomator crashes on its own;
+# that is the test tool, and its crash report names no app process.)
+crash = [l for l in log.splitlines() if f"Process: {PKG}" in l or (PKG in l and "has died" in l)]
 check("no native crash", not crash, crash[0] if crash else "")
 js_errors = [
     l for l in log.splitlines()
     if ("Capacitor/Console" in l or "chromium" in l)
     and re.search(r"Uncaught|TypeError|ReferenceError|SyntaxError", l)
+    # Capacitor's SystemBars writes the safe-area variables when Android first
+    # reports the bar sizes, which can be before the page exists; it re-requests
+    # the sizes when the page commits and the second write succeeds (the
+    # screenshots show headers clear of the status bar). Known and harmless.
+    and "Error injecting safe area CSS" not in l
 ]
 check("no uncaught JavaScript error", not js_errors, js_errors[0][:200] if js_errors else "")
 

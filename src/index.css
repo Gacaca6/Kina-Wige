@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+/* Full screen height for inline styles. 100dvh tracks the browser bars on
+   modern engines; WebViews older than 108 do not know dvh and get 100vh.
+   (Stylesheet rules get the same fallback from css-compat.ts.) */
+:root { --app-height: 100vh; }
+@supports (height: 100dvh) {
+  :root { --app-height: 100dvh; }
+}
+
 /* ===================================================================
    KINA WIGE — design tokens
    Source of truth: the "Kina Wige Redesign" design system.
@@ -138,5 +146,5 @@ body {
   /* Capacitor's measured inset first, env() second — see src/native/safeArea.ts. */
   .pt-safe { padding-top: calc(var(--safe-area-inset-top, env(safe-area-inset-top, 0px)) + 18px); }
   .pb-safe { padding-bottom: calc(var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px)) + 12px); }
-  .min-h-screen-safe { min-height: 100dvh; }
+  .min-h-screen-safe { min-height: var(--app-height); }
 }

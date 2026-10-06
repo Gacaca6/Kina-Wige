@@ -12,75 +12,84 @@ possible.
 
 ## 1. The sequence
 
+**Decided 2026-10-06 with the owner:** no sign-in, and a native Android app
+(Capacitor — the same code packed inside the app) rather than a wrapper around
+the live website. The website and PWA carry on unchanged for iPhone and web.
+
 | # | Step | Who | Blocks |
 |---|------|-----|--------|
-| 1 | Push `main` so Vercel deploys the onboarding / gate / play-time build | Owner approves | Everything — the Android app wraps the live site |
-| 2 | Package with PWABuilder (section 2) | Owner | Upload |
-| 3 | Create the app in Play Console, complete "Set up your app" (section 4) | Owner | Any release, including closed testing |
-| 4 | Upload the `.aab` to **Closed testing**, add testers, roll out | Owner | The 14-day clock |
-| 5 | Add both fingerprints to `public/.well-known/assetlinks.json`, deploy (section 3) | Assistant, once owner pastes the SHA-256s | Removing the browser URL bar |
+| 1 | Create the upload key, keep two copies (section 2) | **Owner only** | Every signed build |
+| 2 | Add the four signing secrets to GitHub (section 2) | **Owner only** | The signed bundle |
+| 3 | Run the "Android app" workflow; download `kina-wige-release-aab` | Owner or assistant | Upload |
+| 4 | Create the app in Play Console, complete "Set up your app" (section 4) | Owner | Any release, including closed testing |
+| 5 | Upload the `.aab` to **Closed testing**, add testers, roll out | Owner | The 14-day clock |
 | 6 | Run the 14 days (section 5), keep the evidence log | Whole team | Production access |
 | 7 | Apply for production access (section 6) | Owner | Public launch |
 
-Recruit testers **now**, in parallel with steps 1–4. A list of Gmail addresses
-ready on the day the build is uploaded saves days.
+Recruit testers **now**, in parallel. A list of Gmail addresses ready on the
+day the build is uploaded saves days.
 
-## 2. Packaging — PWABuilder
+No Digital Asset Links file and no PWABuilder are needed any more: those were
+for the website wrapper, which this replaces.
 
-1. Open https://www.pwabuilder.com and enter the live URL
-   (`https://kina-wige.vercel.app` today — see the domain note below).
-2. **Package for stores → Android → Google Play**, then **Options**:
+## 2. Building and signing
 
-| Field | Value |
-|---|---|
-| Package ID | `rw.kinawige.app` — **permanent once uploaded** |
-| App name / Launcher name | `Kina Wige` |
-| Version / version code | `1.0.0` / `1` |
-| Host / Start URL | the live host / `/` |
-| Theme, background, status bar, nav bar colour | `#17543C` |
-| Display mode | Standalone |
-| Notification delegation | **Off** — the app sends none |
-| Location delegation | **Off** |
-| Google Play Billing | **Off** — no payment route exists |
-| Signing key | **Create new** |
+Every push to `main` that touches the app runs `.github/workflows/android.yml`
+on GitHub's machines:
 
-3. Download the zip. It contains:
-   - `*.aab` — the file you upload to Play
-   - `signing.keystore` and `signing-key-info.txt` — **the key and its
-     passwords. Keep two copies somewhere safe and private. Lose them and the
-     app can never be updated.** Never paste them into a chat with anyone,
-     including an AI assistant.
-   - `assetlinks.json` — hand this to the assistant (it contains no secret).
+1. the same i18n, curriculum and assessment checks as the website;
+2. the native web build (no service worker) copied into `android/`;
+3. a debug APK — install it on any Android phone to try the app;
+4. the app driven in emulators on Android 12 and Android 15 by
+   `scripts/android-smoke.py`: setup, the back button, closing and reopening,
+   the grown-up door, a video — with screenshots of every step;
+5. **if the signing secrets exist**, the signed `app-release.aab` for Play.
 
-**Domain note.** The Android app is tied to the host it was packaged with. If
-`kinawige.rw` is registered later, moving the app to it is an app update
-(re-package with the new host + `assetlinks.json` on the new domain), not a
-new app. Packaging on `kina-wige.vercel.app` now is fine.
+Find the outputs under GitHub → Actions → "Android app" → the run → Artifacts.
 
-## 3. Digital Asset Links
+### The upload key — owner only
 
-Without this file the app opens with a browser address bar across the top and
-looks like a web page in a frame.
+The key that signs every upload. **Lose it and the app can never be updated.
+Never paste it, or its passwords, into a chat with anyone, including an AI
+assistant.** Create it once, in PowerShell, in a folder that is NOT inside the
+`Kina-Wige` project:
 
-After the first upload, Play re-signs the app with its own key, so the file
-needs **two** fingerprints: the upload key (from PWABuilder's
-`assetlinks.json`) and the app-signing key (Play Console → Test and release →
-Setup → **App signing** → *App signing key certificate* → SHA-256).
-
-```json
-[{
-  "relation": ["delegate_permission/common.handle_all_urls"],
-  "target": {
-    "namespace": "android_app",
-    "package_name": "rw.kinawige.app",
-    "sha256_cert_fingerprints": ["<UPLOAD KEY SHA-256>", "<APP SIGNING KEY SHA-256>"]
-  }
-}]
+```
+keytool -genkeypair -v -keystore kina-wige-upload.jks -alias kina-wige-upload -keyalg RSA -keysize 2048 -validity 10000
 ```
 
-Goes in `public/.well-known/assetlinks.json`. Check after deploy:
-`https://<host>/.well-known/assetlinks.json` must return this JSON with
-`Content-Type: application/json`.
+It asks for a password and your name and organisation (Kina Wige LTD, Kigali,
+RW). Keep the `.jks` file and the password in **two** safe places — for
+example a USB stick in the office and a password manager.
+
+### The four GitHub secrets — owner only
+
+GitHub → the Kina-Wige repository → Settings → Secrets and variables →
+Actions → **New repository secret**, four times:
+
+| Name | Value |
+|---|---|
+| `KINA_KEYSTORE_BASE64` | the key file as text — in PowerShell: `[Convert]::ToBase64String([IO.File]::ReadAllBytes("kina-wige-upload.jks")) \| Set-Clipboard`, then paste |
+| `KINA_KEYSTORE_PASSWORD` | the keystore password |
+| `KINA_KEY_ALIAS` | `kina-wige-upload` |
+| `KINA_KEY_PASSWORD` | the key password (same as above unless you chose a different one) |
+
+GitHub encrypts these and never shows them again, including in build logs.
+The next run produces `kina-wige-release-aab` and prints the key's public
+SHA-256 fingerprint, which is safe to share.
+
+### Versions
+
+Every upload to Play needs a higher `versionCode` in
+`android/app/build.gradle`. Raise it by one, and set `versionName` to what
+parents should see (1.0.0, 1.0.1 …). Play rejects a repeated code.
+
+### Size
+
+The Android app carries every video inside it, so the Play download is
+roughly **85 MB** — about 4 MB of app and 77 MB of video — and nothing more
+is downloaded afterwards. That is the price of working with no internet from
+the very first open. For comparison, Apples & Bananas is about 497 MB.
 
 ## 4. Play Console — "Set up your app"
 
@@ -109,7 +118,7 @@ Goes in `public/.well-known/assetlinks.json`. Check after deploy:
 
 > Kina Wige is a learning app for Rwandan children aged 3 to 6, built in Kinyarwanda first.
 >
-> **It works with no internet.** After the first install, every video, game and story is on the phone. No data bundle, no buffering.
+> **It works with no internet.** Every video, game and story is inside the app from the moment it is installed. No data bundle, no buffering.
 >
 > **Nothing leaves the phone.** No account, no adverts, no tracking. Your child's progress is stored on your own device and is never sent anywhere.
 >
@@ -217,6 +226,5 @@ parent area with a daily co-play idea (L5), printed material alongside the app
 (the books). Not adopted: accounts, analytics, trial-then-paywall.
 
 Where Kina Wige is different and should say so: Kinyarwanda first; the whole
-app works offline, not selected games; about 4.4 MB to install and about 80 MB
-once every video has been watched (each video downloads on first play),
+app works offline, not selected games; about 85 MB with every video inside,
 against roughly 497 MB; nothing collected; a session that ends; 2,000 RWF rather than ten dollars.

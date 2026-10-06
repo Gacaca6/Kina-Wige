@@ -20,23 +20,33 @@ export default function HoldToOpen({ children, label }: { children: ReactNode; l
   const [progress, setProgress] = useState(0);
   const start = useRef<number | null>(null);
   const raf = useRef<number | null>(null);
+  const timer = useRef<number | null>(null);
 
   function stop() {
     start.current = null;
     if (raf.current) cancelAnimationFrame(raf.current);
+    if (timer.current) window.clearTimeout(timer.current);
     raf.current = null;
+    timer.current = null;
     setProgress(0);
   }
 
-  function frame(ts: number) {
-    if (start.current === null) start.current = ts;
-    const p = Math.min(1, (ts - start.current) / HOLD_MS);
-    setProgress(p);
-    if (p >= 1) {
+  // The ring is drawn on animation frames, but the door opens on a plain
+  // timer: a phone that pauses or throttles frames (battery saver, a WebView
+  // that is not painting) must never stop a grown-up from getting in.
+  function frame() {
+    if (start.current === null) return;
+    setProgress(Math.min(1, (performance.now() - start.current) / HOLD_MS));
+    raf.current = requestAnimationFrame(frame);
+  }
+
+  function begin() {
+    stop();
+    start.current = performance.now();
+    timer.current = window.setTimeout(() => {
       stop();
       navigate('/parents');
-      return;
-    }
+    }, HOLD_MS);
     raf.current = requestAnimationFrame(frame);
   }
 
@@ -55,10 +65,7 @@ export default function HoldToOpen({ children, label }: { children: ReactNode; l
       tabIndex={-1}
       className="relative select-none"
       style={{ WebkitTouchCallout: 'none', touchAction: 'manipulation' }}
-      onPointerDown={() => {
-        stop();
-        raf.current = requestAnimationFrame(frame);
-      }}
+      onPointerDown={begin}
       onPointerUp={stop}
       onPointerLeave={stop}
       onPointerCancel={stop}

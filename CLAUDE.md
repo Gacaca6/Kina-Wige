@@ -59,6 +59,27 @@ videos + brain-training games + offline Q&A buddy. Owner: GACACA Godwin.
   remove the `React.Fragment key=` wrapper or exit animations die).
 - Service worker is registered automatically by vite-plugin-pwa — never add
   a manual `navigator.serviceWorker.register` call.
+- **Two builds, one codebase.** `npm run build` = the website/PWA (service
+  worker on). `npm run build:native` = the copy packed inside the Android app
+  (Capacitor, `android/`, package `rw.kinawige.app`) — NO service worker, by
+  design. Native-only behaviour branches on `isNative` from
+  `src/native/platform.ts` (back button, system-bar colours, no video
+  prefetch); search for it before adding another. Never write
+  `env(safe-area-inset-*)` directly — use `SAFE_TOP`/`SAFE_BOTTOM` from
+  `src/native/safeArea.ts` or `.pt-safe`/`.pb-safe`, which work on Android
+  WebViews older than 140. Android builds and emulator tests run on CI
+  (`.github/workflows/android.yml`, `scripts/android-smoke.py`); the dev
+  machine has no Android toolchain or disk for it. Signing secrets belong to
+  the owner — never ask for them. See docs/PLAY-LAUNCH.md.
+- **Old WebViews.** Tailwind 4 targets Chrome 111+, but real phones run older
+  WebViews (CI's Android 12 image has WebView 91, where the app rendered with no
+  styling at all). `css-compat.ts` post-processes the stylesheet: @layer
+  flattened, oklch/color-mix and dvh fallbacks, transform fallbacks. Never
+  remove it. In inline styles use `var(--app-height)`, never `100dvh`.
+- Grown-up area: no visible door in the child's lane. Enter by holding the
+  child's greeting 3 s (`HoldToOpen`) → `ParentGate` (number in words). Lanes
+  are defined once in `src/components/ui/lanes.ts`; leaving the grown-up lane
+  relocks it. Play time is enforced by `SessionGuard`.
 
 ## Commands & verification (mandatory before any commit)
 

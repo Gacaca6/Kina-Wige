@@ -82,7 +82,7 @@ export default function ComicReader() {
 
   return (
     <KidShell title={comic.title[language]} onBack={() => navigate('/comics')} nav={false} lang={false}>
-      <div className="flex flex-col px-4 pt-4" style={{ minHeight: 'calc(100dvh - 120px)' }}>
+      <div className="flex flex-col px-4 pt-4" style={{ minHeight: 'calc(var(--app-height) - 120px)' }}>
         {/* Progress — a page count a pre-reader can see at a glance. */}
         <div className="flex justify-center gap-1.5 pb-4 flex-none" role="progressbar">
           {comic.panels.map((_, i) => (

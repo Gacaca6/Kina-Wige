@@ -85,7 +85,7 @@ export function KidShell({
   children,
 }: KidShellProps) {
   return (
-    <div className="flex flex-col bg-sand" style={{ minHeight: '100dvh' }}>
+    <div className="flex flex-col bg-sand" style={{ minHeight: 'var(--app-height)' }}>
       {(title || onBack) && (
         <header className="bg-forest px-4 pt-safe pb-5 flex items-center gap-3 flex-none">
           {onBack && <BackButton onClick={onBack} tone="child" />}
@@ -125,7 +125,7 @@ export function ParentShell({ title, hint, onBack, children }: ParentShellProps)
   const { t } = useI18n();
   const navigate = useNavigate();
   return (
-    <div className="flex flex-col" style={{ minHeight: '100dvh', background: '#F5FAFE' }}>
+    <div className="flex flex-col" style={{ minHeight: 'var(--app-height)', background: '#F5FAFE' }}>
       <header
         className="px-4 pt-safe pb-4 flex items-center gap-3 flex-none"
         style={{ background: '#E3F2FD', borderBottom: '2px solid #CFE3F5' }}

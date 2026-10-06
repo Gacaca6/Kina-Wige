@@ -277,12 +277,18 @@ access, and Google now checks that testers actually used the app.
   "Today's off-screen idea" on the parent dashboard, rotating daily through the
   lessons' Kina Challenges. Deliberately no streaks, no loss mechanics, no
   notifications — see CLAUDE.md rules and the Resolution safeguarding plan.)*
-- [ ] **L6. Package as a Trusted Web Activity** — PWABuilder (pwabuilder.com)
-  on the live URL → Android package. Owner keeps the signing key (see
-  Human-required G). Package id `rw.kinawige.app` (permanent once uploaded).
-- [ ] **L7. Digital Asset Links** — put the SHA-256 from Play Console → App
-  integrity → App signing into `public/.well-known/assetlinks.json`, deploy,
-  confirm it serves as JSON. Without it the app opens with a browser URL bar.
+- [x] **L6. Native Android app (Capacitor)** *(2026-10-06, decided with the
+  owner: native shell, not a website wrapper; no sign-in. Same code packed
+  inside the app — no service worker (`vite build --mode native`), videos
+  inside, hardware back never kills the app, safe areas read Capacitor's
+  measured insets for WebViews < 140, cloud backup off, portrait, Kina Wige
+  icon + forest splash. Package `rw.kinawige.app`. CI:
+  `.github/workflows/android.yml` builds, runs `scripts/android-smoke.py` in
+  emulators on API 31 and 35, and signs when the owner's secrets exist.)*
+- [ ] **L7. Signed bundle** — owner creates the upload key and adds the four
+  `KINA_*` GitHub secrets (docs/PLAY-LAUNCH.md §2). Then every run produces
+  `kina-wige-release-aab`. *(Digital Asset Links no longer needed — that was
+  for the website wrapper.)*
 - [ ] **L8. Store listing + declarations** — short/long description, 512×512
   icon WITH alpha (current icons are RGB), 1024×500 feature graphic, phone and
   tablet screenshots, privacy policy URL, Data safety ("no data collected"),
@@ -412,8 +418,9 @@ access, and Google now checks that testers actually used the app.
     rimwe … karindwi, joined with "na" (e.g. 47 = "mirongo ine na karindwi").
     A wrong form here means a Kinyarwanda-reading parent cannot get in.
 
-- [ ] **G. Keep the Android signing key safe** — the upload key / keystore
-  PWABuilder generates, and its passwords, belong to the owner. Store them in
+- [ ] **G. Keep the Android signing key safe** — the upload key
+  (`kina-wige-upload.jks`, created with keytool, docs/PLAY-LAUNCH.md §2) and
+  its passwords belong to the owner. Store them in
   two places. Losing them means never updating the app again. The assistant
   must never hold these.
 - [ ] **H. Recruit and keep 12 testers for 14 days** — real people on real

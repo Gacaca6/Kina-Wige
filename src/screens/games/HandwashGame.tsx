@@ -92,7 +92,7 @@ export default function HandwashGame() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="flex flex-col items-center justify-center p-6 text-center"
-        style={{ minHeight: '100dvh', background: '#17543C' }}
+        style={{ minHeight: 'var(--app-height)', background: '#17543C' }}
       >
         <div className="relative w-64 h-64 mb-8">
           <img src={images.hirwaFull} alt="Hirwa" className="w-full h-full object-contain relative z-10" />
@@ -126,7 +126,7 @@ export default function HandwashGame() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="flex flex-col items-center justify-center p-6 text-center"
-        style={{ minHeight: '100dvh', background: '#17543C' }}
+        style={{ minHeight: 'var(--app-height)', background: '#17543C' }}
       >
         <motion.div
           initial={{ scale: 0.3, opacity: 0 }}

@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
 import { defineConfig } from 'vite';
+import { cssCompatPlugins } from './css-compat';
 
 // Two builds from one codebase:
 //   vite build                 the website / PWA — service worker, manifest, offline cache
@@ -77,6 +78,10 @@ export default defineConfig(({ mode }) => ({
       },
     }),
   ],
+  // Older Android WebViews: see css-compat.ts.
+  css: {
+    postcss: { plugins: cssCompatPlugins() },
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, '.'),
