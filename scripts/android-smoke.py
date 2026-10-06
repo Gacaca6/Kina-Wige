@@ -289,6 +289,10 @@ def setup():
 
 
 def safe_area():
+    """The header must clear the status bar. Capacitor has two modes:
+    WebView 140+ draws edge to edge and the page pads by the inset; older
+    WebViews are placed BETWEEN the bars (the page sees zero inset, and the
+    window colour fills the strips). Either is fine; text under the bar is not."""
     m = page.js("""(() => {
       const probe = document.createElement('div');
       probe.style.cssText = 'position:fixed;top:0;padding-top:env(safe-area-inset-top,0px)';
@@ -297,11 +301,15 @@ def safe_area():
       probe.remove();
       const injected = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--safe-area-inset-top')) || 0;
       const g = document.querySelector('header p');
-      return { injected, env, greetingTop: g ? Math.round(g.getBoundingClientRect().top) : -1 };
+      return { injected, env, greetingTop: g ? Math.round(g.getBoundingClientRect().top) : -1,
+               pageHeightPx: Math.round(innerHeight * devicePixelRatio) };
     })()""")
+    screen_h = int(re.search(r"\d+x(\d+)", adb("shell", "wm", "size")).group(1))
+    edge_to_edge = m["pageHeightPx"] >= screen_h - 4
     inset = max(m["injected"], m["env"])
-    check("status bar height is known to the page", inset >= 20, json.dumps(m))
-    check("header text sits below the status bar", m["greetingTop"] >= inset, json.dumps(m))
+    m.update(screenHeightPx=screen_h, mode="edge-to-edge" if edge_to_edge else "between the bars")
+    ok = (inset >= 20 and m["greetingTop"] >= inset) if edge_to_edge else m["greetingTop"] >= 0
+    check("header clears the status bar", ok, json.dumps(m))
 
 
 def back_on_home():
