@@ -23,6 +23,8 @@ import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../../i18n/context';
 import type { Language } from '../../i18n/translations';
 import { numberInWords, randomGateNumber } from '../../i18n/numberWords';
+import { useSystemBars } from '../../native/systemBars';
+import { SAFE_TOP } from '../../native/safeArea';
 
 const UNLOCK_KEY = 'kina-wige-parent-unlocked';
 const LOCKOUT_KEY = 'kina-wige-gate-lockout';
@@ -82,6 +84,8 @@ export default function ParentGate({ children, onCancel }: ParentGateProps) {
     return () => window.clearInterval(id);
   }, [waiting]);
 
+  useSystemBars(unlocked ? null : 'dark');
+
   if (unlocked) return <>{children}</>;
 
   function press(d: string) {
@@ -139,7 +143,7 @@ export default function ParentGate({ children, onCancel }: ParentGateProps) {
         onClick={back}
         aria-label={t('common.back')}
         className="absolute top-4 left-4 w-11 h-11 flex items-center justify-center rounded-full bg-white/15 text-white active:scale-95 transition-transform"
-        style={{ marginTop: 'env(safe-area-inset-top)' }}
+        style={{ marginTop: SAFE_TOP }}
       >
         <ArrowLeft className="w-5 h-5" />
       </button>

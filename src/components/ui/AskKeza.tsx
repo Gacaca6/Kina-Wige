@@ -10,6 +10,7 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useI18n } from '../../i18n/context';
 import { motion } from 'motion/react';
+import { SAFE_BOTTOM } from '../../native/safeArea';
 
 /** Screens that own the whole viewport, or belong to grown-ups. */
 const HIDDEN_ON = [
@@ -45,7 +46,7 @@ export default function AskKeza() {
       style={{
         right: 16,
         // Clear of the bottom nav (84px) and the home indicator.
-        bottom: 'calc(104px + env(safe-area-inset-bottom))',
+        bottom: `calc(104px + ${SAFE_BOTTOM})`,
         width: 72,
         height: 72,
         background: '#FFC02E',

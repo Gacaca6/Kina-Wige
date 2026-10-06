@@ -26,6 +26,8 @@ import ParentGate, { relockParentArea } from './ParentGate';
 import { useI18n } from '../../i18n/context';
 import { useFamily } from '../../hooks/useFamily';
 import { isGrownUpPath } from './lanes';
+import { useSystemBars } from '../../native/systemBars';
+import { SAFE_BOTTOM } from '../../native/safeArea';
 
 export const SESSION_KEY = 'kina-wige-session';
 
@@ -136,6 +138,7 @@ export default function SessionGuard() {
 function RestScreen({ onAllow, name }: { onAllow: () => void; name: string }) {
   const { t } = useI18n();
   const [gate, setGate] = useState(false);
+  useSystemBars(gate ? null : 'dark');
 
   if (gate) {
     return (
@@ -185,7 +188,7 @@ function RestScreen({ onAllow, name }: { onAllow: () => void; name: string }) {
       <button
         onClick={() => setGate(true)}
         className="absolute bottom-0 mb-8 rounded-[14px] font-body font-black text-[14px] px-5"
-        style={{ minHeight: 48, background: '#0E3626', color: '#90CAF9', marginBottom: 'calc(2rem + env(safe-area-inset-bottom))' }}
+        style={{ minHeight: 48, background: '#0E3626', color: '#90CAF9', marginBottom: `calc(2rem + ${SAFE_BOTTOM})` }}
       >
         {t('rest.grownup')}
       </button>

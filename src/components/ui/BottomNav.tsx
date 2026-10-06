@@ -10,6 +10,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useI18n } from '../../i18n/context';
 import type { TranslationKey } from '../../i18n/translations';
 import type { ReactNode } from 'react';
+import { SAFE_BOTTOM } from '../../native/safeArea';
 
 function IconLearn({ on }: { on: boolean }) {
   return (
@@ -94,7 +95,7 @@ export default function BottomNav() {
       className="flex items-stretch justify-around bg-white px-1 pt-1 flex-none"
       style={{
         borderTop: '3px solid #E4DDCE',
-        paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 10px)',
+        paddingBottom: `calc(${SAFE_BOTTOM} + 10px)`,
       }}
     >
       {TABS.map((tab) => {

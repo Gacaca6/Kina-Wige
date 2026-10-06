@@ -158,10 +158,10 @@ export default function SettingsScreen() {
             })}
           </div>
           <button
-            onClick={() => {
-              saveFamily({ onboarded: false });
-              navigate('/welcome');
-            }}
+            // The family stays set up until setup is finished again, so a
+            // grown-up who walks away halfway leaves the old settings in place
+            // rather than an open setup screen for the child.
+            onClick={() => navigate('/welcome')}
             className="w-full rounded-[14px] font-body font-black text-[15px] mt-4"
             style={{ minHeight: 48, background: '#E3F2FD', color: '#1565C0' }}
           >

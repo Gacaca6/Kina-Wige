@@ -34,6 +34,52 @@
   </head>
   <body>
     <div id="root"></div>
+
+    <!-- If this phone's browser engine is too old to run Kina Wige, tell the
+         parent what to update instead of leaving a blank screen.
+         Plain ES5 on purpose: it has to run exactly where the app cannot.
+         It only ever speaks up on evidence — the engine cannot parse the
+         syntax the app is built with, or the app's own code failed before it
+         started — plus, inside the Android app only (where nothing downloads
+         at launch), a 20-second limit. main.tsx sets window.__kinaBooted. -->
+    <div id="kina-unsupported" role="alert" style="display:none;position:fixed;top:0;right:0;bottom:0;left:0;z-index:9999;background:#17543C;color:#fff;font-family:sans-serif;padding:32px 24px;overflow:auto;flex-direction:column;justify-content:center"></div>
+    <script>
+      (function () {
+        var shown = false;
+        function isNative() {
+          try { return !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()); }
+          catch (e) { return false; }
+        }
+        function show() {
+          if (shown || window.__kinaBooted) return;
+          shown = true;
+          var native = isNative();
+          var lines = native
+            ? ['Mu Play Store, vugurura « Android System WebView » na « Chrome », hanyuma wongere ufungure Kina Wige.',
+               'In the Play Store, update “Android System WebView” and “Chrome”, then open Kina Wige again.',
+               'Dans le Play Store, mettez à jour « Android System WebView » et « Chrome », puis rouvrez Kina Wige.']
+            : ['Vugurura mushakisha (browser) yawe, hanyuma wongere ufungure iyi paji.',
+               'Please update your web browser, then open this page again.',
+               'Veuillez mettre à jour votre navigateur, puis rouvrez cette page.'];
+          var html = '<p style="font-size:34px;font-weight:800;margin:0 0 20px">Kina Wige</p>';
+          for (var i = 0; i < lines.length; i++) {
+            html += '<p style="font-size:17px;line-height:1.5;margin:0 0 16px;color:' + (i === 0 ? '#fff' : '#CFEBDC') + '">' + lines[i] + '</p>';
+          }
+          var el = document.getElementById('kina-unsupported');
+          el.innerHTML = html;
+          el.style.display = 'flex';
+        }
+        // 1. Syntax the built app relies on (ES2020: ?. and ??).
+        try { new Function('var a = {}; return a?.b ?? 1;'); } catch (e) { show(); return; }
+        // 2. The app's own code failing before it has started.
+        window.addEventListener('error', function (e) {
+          var f = (e && e.filename) || '';
+          if (!window.__kinaBooted && f.indexOf('/assets/') !== -1) show();
+        }, true);
+        // 3. Android app only: everything is on the phone, so 20 s means stuck.
+        if (isNative()) setTimeout(show, 20000);
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -1,0 +1,87 @@
+apply plugin: 'com.android.application'
+
+// ── Release signing ─────────────────────────────────────────────────────────
+// The upload key belongs to the owner and is NEVER committed. It is read from
+// either environment variables (GitHub Actions secrets, see
+// .github/workflows/android.yml) or a local, git-ignored keystore.properties:
+//     storeFile=C:/path/to/kina-wige-upload.jks
+//     storePassword=...
+//     keyAlias=kina-wige-upload
+//     keyPassword=...
+// With neither present, release builds are produced unsigned and debug builds
+// use Android's debug key — enough to test, never enough to publish.
+def keystoreProps = new Properties()
+def keystorePropsFile = rootProject.file('keystore.properties')
+if (keystorePropsFile.exists()) {
+    keystorePropsFile.withInputStream { keystoreProps.load(it) }
+}
+def signingValue = { String env, String prop -> System.getenv(env) ?: keystoreProps.getProperty(prop) }
+def releaseStoreFile = signingValue('KINA_KEYSTORE_FILE', 'storeFile')
+
+android {
+    namespace = "rw.kinawige.app"
+    compileSdk = rootProject.ext.compileSdkVersion
+    defaultConfig {
+        applicationId "rw.kinawige.app"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        // Raise versionCode by one for EVERY upload to Google Play, and set
+        // versionName to what parents should see. Play rejects a repeated code.
+        versionCode 1
+        versionName "1.0.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        aaptOptions {
+             // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
+             // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
+            ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+        }
+    }
+    signingConfigs {
+        release {
+            if (releaseStoreFile) {
+                storeFile file(releaseStoreFile)
+                storePassword signingValue('KINA_KEYSTORE_PASSWORD', 'storePassword')
+                keyAlias signingValue('KINA_KEY_ALIAS', 'keyAlias')
+                keyPassword signingValue('KINA_KEY_PASSWORD', 'keyPassword')
+            }
+        }
+    }
+    buildTypes {
+        release {
+            if (releaseStoreFile) {
+                signingConfig signingConfigs.release
+            }
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+repositories {
+    flatDir{
+        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
+    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
+    implementation project(':capacitor-android')
+    testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
+    implementation project(':capacitor-cordova-android-plugins')
+}
+
+apply from: 'capacitor.build.gradle'
+
+try {
+    def servicesJSON = file('google-services.json')
+    if (servicesJSON.text) {
+        apply plugin: 'com.google.gms.google-services'
+    }
+} catch(Exception e) {
+    logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+}

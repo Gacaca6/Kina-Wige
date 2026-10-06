@@ -6,6 +6,8 @@ import AskKeza from './components/ui/AskKeza';
 import SessionGuard from './components/ui/SessionGuard';
 import { isGrownUpPath } from './components/ui/lanes';
 import { useFamily } from './hooks/useFamily';
+import NativeBackButton from './native/BackButton';
+import { applyDefaultSystemBars } from './native/systemBars';
 
 const OnboardingScreen = lazy(() => import('./screens/OnboardingScreen'));
 const EpisodeScreen = lazy(() => import('./screens/EpisodeScreen'));
@@ -39,6 +41,7 @@ function Root() {
 // Routes must be keyed by location for AnimatePresence exit animations to run.
 function AnimatedRoutes() {
   const location = useLocation();
+  const { onboarded } = useFamily();
 
   // Leaving the grown-up area locks it again. A parent who unlocks it and
   // hands the phone back has not handed over the key.
@@ -51,7 +54,13 @@ function AnimatedRoutes() {
       <React.Fragment key={location.pathname}>
         <Routes location={location}>
           <Route path="/" element={<Root />} />
-          <Route path="/welcome" element={<OnboardingScreen />} />
+          {/* Setup is open to anyone only until it has been done once. After
+              that it changes the play time and the child's details, so it is a
+              grown-up screen like any other. */}
+          <Route
+            path="/welcome"
+            element={onboarded ? <ParentGate><OnboardingScreen /></ParentGate> : <OnboardingScreen />}
+          />
           {/* Legacy home is gone — the path IS the home. */}
           <Route path="/home" element={<Navigate to="/home-path" replace />} />
           <Route path="/episode/:id" element={<EpisodeScreen />} />
@@ -78,6 +87,8 @@ function AnimatedRoutes() {
   );
 }
 
+applyDefaultSystemBars();
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -88,6 +99,8 @@ export default function App() {
           <AskKeza />
           {/* Ends a session when the grown-up's chosen play time is used. */}
           <SessionGuard />
+          {/* Android app only: hardware back never kills the app. */}
+          <NativeBackButton />
         </Suspense>
       </div>
     </BrowserRouter>

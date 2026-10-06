@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Kina Wige forest, the first colour a family sees. -->
+    <color name="kina_forest">#17543C</color>
+</resources>

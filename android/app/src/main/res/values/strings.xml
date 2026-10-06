@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Kina Wige</string>
+    <string name="title_activity_main">Kina Wige</string>
+    <string name="package_name">rw.kinawige.app</string>
+    <string name="custom_url_scheme">rw.kinawige.app</string>
+</resources>

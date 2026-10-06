@@ -1,0 +1,156 @@
+name: Android app
+
+# Builds the Kina Wige Android app (Capacitor) from the same code as the
+# website, tests it in real Android emulators, and — once the owner has added
+# the signing key as repository secrets — produces the signed bundle for
+# Google Play.
+#
+# Runs on GitHub's machines because the dev laptop has neither the disk space
+# nor the Java 21 toolchain an Android build needs.
+#
+# Artifacts on every run:
+#   kina-wige-debug-apk      install on any Android phone to try the app
+#   smoke-test-api31/35      screenshots of every step, the log, a summary
+#   kina-wige-release-aab    the file to upload to Google Play (signed builds only)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "public/**"
+      - "index.html"
+      - "vite.config.ts"
+      - "capacitor.config.ts"
+      - "package.json"
+      - "package-lock.json"
+      - "android/**"
+      - "scripts/**"
+      - ".github/workflows/android.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      HAS_SIGNING_KEY: ${{ secrets.KINA_KEYSTORE_BASE64 != '' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The same i18n, curriculum and assessment checks the website build runs.
+      # A content or translation error stops the Android build too.
+      - name: Checks, native build, copy into the Android project
+        run: npm run android:sync
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build debug APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: kina-wige-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 14
+
+      # Signed bundle for Google Play. Skipped until the owner adds the four
+      # KINA_* secrets (see docs/PLAY-LAUNCH.md). The key exists on this
+      # runner only for the length of this step.
+      - name: Build signed release bundle
+        if: env.HAS_SIGNING_KEY == 'true'
+        working-directory: android
+        env:
+          KINA_KEYSTORE_BASE64: ${{ secrets.KINA_KEYSTORE_BASE64 }}
+          KINA_KEYSTORE_FILE: ${{ runner.temp }}/kina-wige-upload.jks
+          KINA_KEYSTORE_PASSWORD: ${{ secrets.KINA_KEYSTORE_PASSWORD }}
+          KINA_KEY_ALIAS: ${{ secrets.KINA_KEY_ALIAS }}
+          KINA_KEY_PASSWORD: ${{ secrets.KINA_KEY_PASSWORD }}
+        run: |
+          echo "$KINA_KEYSTORE_BASE64" | base64 -d > "$KINA_KEYSTORE_FILE"
+          ./gradlew bundleRelease --no-daemon --stacktrace
+          rm -f "$KINA_KEYSTORE_FILE"
+          echo "Upload certificate of the signed bundle (public, safe to share):"
+          keytool -printcert -jarfile app/build/outputs/bundle/release/app-release.aab | grep -E "SHA256|Owner"
+
+      - name: Upload release bundle
+        if: env.HAS_SIGNING_KEY == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: kina-wige-release-aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
+          retention-days: 30
+
+  # The app driven like a family would use it, on a recent Android and on
+  # Android 12 (an older WebView, where the safe-area fallback is exercised).
+  emulator-test:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        api-level: [31, 35]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download debug APK
+        uses: actions/download-artifact@v4
+        with:
+          name: kina-wige-debug-apk
+          path: apk
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Smoke test on Android API ${{ matrix.api-level }}
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          script: python3 scripts/android-smoke.py apk/app-debug.apk smoke-api${{ matrix.api-level }}
+
+      - name: Upload screenshots and log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-test-api${{ matrix.api-level }}
+          path: smoke-api${{ matrix.api-level }}
+          retention-days: 14
+
+      - name: Summary
+        if: always()
+        run: cat smoke-api${{ matrix.api-level }}/summary.md >> "$GITHUB_STEP_SUMMARY" || true

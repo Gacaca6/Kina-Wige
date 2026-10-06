@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../../i18n/context';
 import BottomNav from './BottomNav';
 import LanguageToggle from './LanguageToggle';
+import { useSystemBars } from '../../native/systemBars';
 
 /* ── Back button, sized for a small hand ── */
 function BackButton({ onClick, tone }: { onClick: () => void; tone: 'child' | 'parent' }) {
@@ -120,6 +121,7 @@ export interface ParentShellProps {
 }
 
 export function ParentShell({ title, hint, onBack, children }: ParentShellProps) {
+  useSystemBars('light');
   const { t } = useI18n();
   const navigate = useNavigate();
   return (

@@ -17,13 +17,15 @@
 
 import { useState } from 'react';
 import type { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSystemBars } from '../native/systemBars';
 import { motion, AnimatePresence } from 'motion/react';
 import Kina from '../components/characters/Kina';
 import { useI18n } from '../i18n/context';
 import type { Language, TranslationKey } from '../i18n/translations';
 import { AGES, NAME_MAX, SESSION_CHOICES, loadFamily, saveFamily } from '../hooks/useFamily';
 import type { Age } from '../hooks/useFamily';
+import { SAFE_BOTTOM, SAFE_TOP } from '../native/safeArea';
 
 const LANGS: { code: Language; label: string }[] = [
   { code: 'KN', label: 'Ikinyarwanda' },
@@ -40,7 +42,20 @@ export default function OnboardingScreen() {
   const { t, setLanguage, language } = useI18n();
   const navigate = useNavigate();
   const initial = loadFamily();
-  const [step, setStep] = useState(0);
+  // The step lives in the URL (?step=2), so the Android back button and the
+  // browser's back button both step backwards through setup instead of
+  // leaving it.
+  const [params, setParams] = useSearchParams();
+  const step = Math.min(STEPS - 1, Math.max(0, Math.floor(Number(params.get('step'))) || 0));
+  const go = (n: number) => setParams(n > 0 ? { step: String(n) } : {});
+  const back = () => {
+    // Back through history when there is some, so the header arrow and the
+    // hardware button agree; otherwise just show the previous step.
+    const idx = (window.history.state as { idx?: number } | null)?.idx ?? 0;
+    if (idx > 0) navigate(-1);
+    else go(step - 1);
+  };
+  useSystemBars(step === 0 ? 'dark' : 'light');
   const [name, setName] = useState(initial.childName);
   const [age, setAge] = useState<Age | null>(initial.age);
   const [minutes, setMinutes] = useState(initial.sessionMinutes);
@@ -66,13 +81,13 @@ export default function OnboardingScreen() {
             {t('welcome.chooseLanguage')}
           </p>
         </div>
-        <div className="px-5 pb-safe flex flex-col gap-3 flex-none" style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}>
+        <div className="px-5 flex flex-col gap-3 flex-none" style={{ paddingBottom: `max(1.5rem, ${SAFE_BOTTOM})` }}>
           {LANGS.map((l) => (
             <button
               key={l.code}
               onClick={() => {
                 setLanguage(l.code);
-                setStep(1);
+                go(1);
               }}
               className="w-full rounded-[20px] font-display font-extrabold text-[22px] active:translate-y-1 transition-transform"
               style={{
@@ -92,9 +107,9 @@ export default function OnboardingScreen() {
 
   return (
     <div className="min-h-[100dvh] flex flex-col" style={{ background: '#F5FAFE' }}>
-      <header className="px-5 pt-safe pb-3 flex items-center gap-3" style={{ paddingTop: 'max(1rem, env(safe-area-inset-top))' }}>
+      <header className="px-5 pb-3 flex items-center gap-3" style={{ paddingTop: `max(1rem, ${SAFE_TOP})` }}>
         <button
-          onClick={() => setStep((s) => s - 1)}
+          onClick={back}
           aria-label={t('common.back')}
           className="w-11 h-11 rounded-[14px] grid place-items-center flex-none bg-white"
           style={{ boxShadow: '0 3px 0 #CFE3F5', color: BLUE }}
@@ -201,10 +216,10 @@ export default function OnboardingScreen() {
         </motion.main>
       </AnimatePresence>
 
-      <div className="px-6 flex-none" style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}>
+      <div className="px-6 flex-none" style={{ paddingBottom: `max(1.5rem, ${SAFE_BOTTOM})` }}>
         {step < STEPS - 1 ? (
           <button
-            onClick={() => setStep((s) => s + 1)}
+            onClick={() => go(step + 1)}
             className="w-full rounded-[16px] font-body font-black text-[17px]"
             style={{ minHeight: 58, background: BLUE, color: '#fff' }}
           >

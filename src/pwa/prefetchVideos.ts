@@ -3,6 +3,11 @@
 // them even with no network. Failures are silent — we retry on next launch.
 
 import { PREFETCH_VIDEO_CLIPS } from '../data/episodes';
+import { isNative } from '../native/platform';
+
+// In the Android app every video is already inside the app, served from the
+// phone itself. There is nothing to download and no service worker to serve a
+// cache, so both entry points below do nothing there.
 
 const VIDEO_CACHE = 'kina-wige-videos';
 
@@ -82,7 +87,7 @@ async function dropImmutableEntries(cache: Cache) {
 }
 
 export function prefetchVideos() {
-  if (typeof caches === 'undefined') return;
+  if (isNative || typeof caches === 'undefined') return;
 
   const run = async () => {
     try {
@@ -111,7 +116,7 @@ export function prefetchVideos() {
 // Range (206) requests, which the service worker cache rejects on purpose —
 // so relying on playback alone would never persist these videos offline.
 export async function cacheEpisodeClips(clips: string[]) {
-  if (typeof caches === 'undefined') return;
+  if (isNative || typeof caches === 'undefined') return;
   try {
     const cache = await caches.open(VIDEO_CACHE);
     for (const url of clips) {

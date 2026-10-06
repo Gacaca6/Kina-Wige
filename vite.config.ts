@@ -4,11 +4,20 @@ import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
 import { defineConfig } from 'vite';
 
-export default defineConfig({
+// Two builds from one codebase:
+//   vite build                 the website / PWA — service worker, manifest, offline cache
+//   vite build --mode native   the copy packed inside the Android app (Capacitor)
+//
+// The native build has NO service worker. Every file is already on the phone,
+// served by the app itself, so a worker could add nothing — and a worker that
+// cached files the app ships could hand a child yesterday's version after an
+// update. Leaving it out removes that whole class of bug instead of managing it.
+export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     tailwindcss(),
     VitePWA({
+      disable: mode === 'native',
       registerType: 'autoUpdate',
       includeAssets: ['favicon-32x32.png', 'favicon-16x16.png', 'apple-touch-icon.png', 'splash-logo.jpeg'],
       manifest: {
@@ -76,4 +85,4 @@ export default defineConfig({
   server: {
     hmr: process.env.DISABLE_HMR !== 'true',
   },
-});
+}));

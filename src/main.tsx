@@ -28,6 +28,9 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>,
 );
 
+// Tells the old-engine fallback in index.html that the app is running.
+(window as Window & { __kinaBooted?: boolean }).__kinaBooted = true;
+
 // The service worker itself is registered automatically by vite-plugin-pwa.
 // Here we only warm the video cache so episodes play offline.
 if (document.readyState === 'complete') {

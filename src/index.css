@@ -135,7 +135,8 @@ body {
    indicator, so the screen's own colour reaches every edge. These keep the
    CONTENT clear of the notch without breaking that full-bleed fill. */
 @layer utilities {
-  .pt-safe { padding-top: calc(env(safe-area-inset-top, 0px) + 18px); }
-  .pb-safe { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); }
+  /* Capacitor's measured inset first, env() second — see src/native/safeArea.ts. */
+  .pt-safe { padding-top: calc(var(--safe-area-inset-top, env(safe-area-inset-top, 0px)) + 18px); }
+  .pb-safe { padding-bottom: calc(var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px)) + 12px); }
   .min-h-screen-safe { min-height: 100dvh; }
 }
