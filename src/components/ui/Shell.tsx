@@ -1,6 +1,12 @@
 // The two lane shells. Every screen is built from one of these — that is what
 // makes the app feel like one product instead of a pile of screens.
 //
+// LAYOUT RULE. A shell is EXACTLY the screen's height, never taller. The header
+// and the bottom nav stay put; only <main> scrolls. (With a minimum height the
+// whole frame grew with its content and the header and nav scrolled away with
+// it — a child lost the way back and the tabs.) overscroll-contain keeps a
+// fling inside <main> from dragging the page or triggering pull-to-refresh.
+//
 //   KidShell    cream canvas, chunky forest header, the ONE bottom nav
 //   ParentShell blue canvas, plain header, no nav, no mascot
 //
@@ -85,7 +91,7 @@ export function KidShell({
   children,
 }: KidShellProps) {
   return (
-    <div className="flex flex-col bg-sand" style={{ minHeight: 'var(--app-height)' }}>
+    <div className="flex flex-col bg-sand overflow-hidden" style={{ height: 'var(--app-height)' }}>
       {(title || onBack) && (
         <header className="bg-forest px-4 pt-safe pb-5 flex items-center gap-3 flex-none">
           {onBack && <BackButton onClick={onBack} tone="child" />}
@@ -106,7 +112,7 @@ export function KidShell({
         </header>
       )}
 
-      <main className="flex-1 overflow-y-auto">{children}</main>
+      <main className="flex-1 min-h-0 overflow-y-auto overscroll-contain">{children}</main>
 
       {nav && <BottomNav />}
     </div>
@@ -125,7 +131,7 @@ export function ParentShell({ title, hint, onBack, children }: ParentShellProps)
   const { t } = useI18n();
   const navigate = useNavigate();
   return (
-    <div className="flex flex-col" style={{ minHeight: 'var(--app-height)', background: '#F5FAFE' }}>
+    <div className="flex flex-col overflow-hidden" style={{ height: 'var(--app-height)', background: '#F5FAFE' }}>
       <header
         className="px-4 pt-safe pb-4 flex items-center gap-3 flex-none"
         style={{ background: '#E3F2FD', borderBottom: '2px solid #CFE3F5' }}
@@ -146,7 +152,7 @@ export function ParentShell({ title, hint, onBack, children }: ParentShellProps)
       </header>
 
       {/* No bottom nav in the grown-up lane — the back arrow is the way out. */}
-      <main className="flex-1 overflow-y-auto px-4 py-5">{children}</main>
+      <main className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 py-5">{children}</main>
     </div>
   );
 }

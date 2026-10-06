@@ -227,7 +227,7 @@ export default function BazaKezaScreen() {
     >
       <div
         className="flex flex-col"
-        style={{ minHeight: 'calc(var(--app-height) - 120px)' }}
+        style={{ minHeight: '100%' }}
         onPointerMove={(e) => {
           const r = e.currentTarget.getBoundingClientRect();
           setLook({ x: ((e.clientX - r.left) / r.width) * 2 - 1, y: ((e.clientY - r.top) / r.height) * 2 - 1 });

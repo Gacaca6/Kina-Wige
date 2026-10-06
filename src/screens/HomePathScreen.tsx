@@ -97,7 +97,7 @@ export default function HomePathScreen() {
 
   return (
     <div
-      className="bg-cream flex flex-col" style={{ minHeight: 'var(--app-height)' }}
+      className="bg-cream flex flex-col overflow-hidden" style={{ height: 'var(--app-height)' }}
       onPointerMove={track}
       onPointerLeave={() => setLook(null)}
     >
@@ -120,6 +120,9 @@ export default function HomePathScreen() {
           <LanguageToggle />
         </div>
       </header>
+
+      {/* The only part that scrolls — header and nav stay put. */}
+      <main className="flex-1 min-h-0 overflow-y-auto overscroll-contain flex flex-col">
 
       {/* ── Unit banner ── */}
       <div className="px-5 pt-5">
@@ -213,6 +216,8 @@ export default function HomePathScreen() {
       </div>
 
       {/* The ONE bottom nav, shared by every child screen. */}
+      </main>
+
       <BottomNav />
     </div>
   );

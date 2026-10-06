@@ -341,6 +341,23 @@ def video():
     page.click("Episodes")
     check("episodes list", page.wait_text("Bayi Bayi Ingona"))
     shot("episodes")
+    # Only the content scrolls: the header (the way back) and the tab bar must
+    # not move, and the page itself must never scroll.
+    fixed = page.js("""(async () => {
+      const main = document.querySelector('main'), header = document.querySelector('header'), nav = document.querySelector('nav');
+      const at = el => Math.round(el.getBoundingClientRect().top);
+      const before = [at(header), at(nav)];
+      main.scrollTop = 99999; window.scrollTo(0, 99999);
+      await new Promise(r => setTimeout(r, 400));
+      const after = [at(header), at(nav)];
+      return { pageScrolls: document.scrollingElement.scrollHeight > innerHeight + 1, windowY: scrollY,
+               headerAndNavStill: before.join() === after.join(),
+               navAtBottom: Math.round(nav.getBoundingClientRect().bottom) === innerHeight };
+    })()""")
+    check("header and tab bar stay fixed; only the content scrolls",
+          fixed and not fixed["pageScrolls"] and fixed["windowY"] == 0 and fixed["headerAndNavStill"] and fixed["navAtBottom"],
+          json.dumps(fixed))
+    page.js("document.querySelector('main').scrollTop = 0")
     page.click("Bayi Bayi Ingona", exact=False)
     check("episode opens", page.wait_path("/episode/"))
     page.click("Tap to play!")

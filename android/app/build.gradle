@@ -37,6 +37,16 @@ android {
         }
     }
     signingConfigs {
+        // Test builds share ONE public debug key (password "android", as every
+        // Android debug key has), so a new test APK installs over the last one
+        // instead of being refused for a changed signature. It cannot publish
+        // to Google Play. The real upload key is the release config below.
+        debug {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
         release {
             if (releaseStoreFile) {
                 storeFile file(releaseStoreFile)
@@ -47,6 +57,9 @@ android {
         }
     }
     buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
         release {
             if (releaseStoreFile) {
                 signingConfig signingConfigs.release

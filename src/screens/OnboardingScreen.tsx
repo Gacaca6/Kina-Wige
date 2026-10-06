@@ -106,8 +106,8 @@ export default function OnboardingScreen() {
   }
 
   return (
-    <div className="min-h-[100dvh] flex flex-col" style={{ background: '#F5FAFE' }}>
-      <header className="px-5 pb-3 flex items-center gap-3" style={{ paddingTop: `max(1rem, ${SAFE_TOP})` }}>
+    <div className="flex flex-col overflow-hidden" style={{ height: 'var(--app-height)', background: '#F5FAFE' }}>
+      <header className="px-5 pb-3 flex items-center gap-3 flex-none" style={{ paddingTop: `max(1rem, ${SAFE_TOP})` }}>
         <button
           onClick={back}
           aria-label={t('common.back')}
@@ -133,7 +133,7 @@ export default function OnboardingScreen() {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -24 }}
           transition={{ duration: 0.22 }}
-          className="flex-1 px-6 pb-4 overflow-y-auto"
+          className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-6 pb-4"
         >
           {step === 1 && (
             <Section title={t('welcome.grownupTitle')} body={t('welcome.grownupBody')}>

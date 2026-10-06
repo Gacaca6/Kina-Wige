@@ -331,9 +331,9 @@ export default function LessonScreen() {
   const showCorrect = phase === 'correct';
 
   return (
-    <div className="bg-cream flex flex-col" style={{ minHeight: 'var(--app-height)' }}>
+    <div className="bg-cream flex flex-col overflow-hidden" style={{ height: 'var(--app-height)' }}>
       {/* ── Progress. Segments, not a timer — nothing counts down. ── */}
-      <div className="px-6 pt-safe flex items-center gap-3">
+      <div className="px-6 pt-safe flex items-center gap-3 flex-none">
         <button
           onClick={() => navigate('/home-path')}
           aria-label={t('lesson.leave')}
@@ -359,53 +359,55 @@ export default function LessonScreen() {
         </div>
       </div>
 
-      {/* ── Kina asks ── */}
-      <div className="px-6 pt-6 flex items-end gap-3">
-        <div className="flex-none">
-          <Kina mood={showCorrect ? 'cheer' : showRetry ? 'oops' : 'idle'} style={{ width: 74, height: 68 }} />
-        </div>
-        <div
-          className="flex-1 bg-mint px-5 py-4"
-          style={{ borderRadius: '22px 22px 22px 6px', boxShadow: '0 5px 0 #C6EDD7' }}
-        >
-          <div className="font-display font-extrabold text-ink" style={{ fontSize: 22, lineHeight: 1.2 }}>
-            {item.prompt[language]}
+      {/* Only the question and the activity scroll; leave, progress and the
+          Check button stay where a small hand expects them. */}
+      <main className="flex-1 min-h-0 overflow-y-auto overscroll-contain flex flex-col">
+        {/* ── Kina asks ── */}
+        <div className="px-6 pt-6 flex items-end gap-3">
+          <div className="flex-none">
+            <Kina mood={showCorrect ? 'cheer' : showRetry ? 'oops' : 'idle'} style={{ width: 74, height: 68 }} />
           </div>
+          <div
+            className="flex-1 bg-mint px-5 py-4"
+            style={{ borderRadius: '22px 22px 22px 6px', boxShadow: '0 5px 0 #C6EDD7' }}
+          >
+            <div className="font-display font-extrabold text-ink" style={{ fontSize: 22, lineHeight: 1.2 }}>
+              {item.prompt[language]}
+            </div>
           
+          </div>
         </div>
-      </div>
 
-      {/* ── The audio button. Big, yellow, unmissable — this is the question. ── */}
-      <div className="px-6 pt-5">
-        <Chunky bg="#FFC02E" shadow="#D89A00" color="#10241B" onClick={speak} ariaLabel={t('lesson.listenAgain')}>
-          <span className="flex items-center gap-4 px-5">
-            <span className="rounded-[18px] bg-ink grid place-items-center flex-none" style={{ width: 56, height: 56 }}>
-              <span
-                className="block"
-                style={{
-                  width: 0,
-                  height: 0,
-                  borderLeft: '19px solid #FFC02E',
-                  borderTop: '12px solid transparent',
-                  borderBottom: '12px solid transparent',
-                }}
-              />
+        {/* ── The audio button. Big, yellow, unmissable — this is the question. ── */}
+        <div className="px-6 pt-5">
+          <Chunky bg="#FFC02E" shadow="#D89A00" color="#10241B" onClick={speak} ariaLabel={t('lesson.listenAgain')}>
+            <span className="flex items-center gap-4 px-5">
+              <span className="rounded-[18px] bg-ink grid place-items-center flex-none" style={{ width: 56, height: 56 }}>
+                <span
+                  className="block"
+                  style={{
+                    width: 0,
+                    height: 0,
+                    borderLeft: '19px solid #FFC02E',
+                    borderTop: '12px solid transparent',
+                    borderBottom: '12px solid transparent',
+                  }}
+                />
+              </span>
+              <span className="flex-1 text-left">
+                <span className="block font-body font-black text-[19px]">{t('lesson.listen')}</span>
+                <span className="block font-body font-extrabold text-[12px] text-sun-deep">{t('lesson.listenAgain')}</span>
+              </span>
+              {item.kind === 'listen-pick' && (
+                <span className="font-display font-extrabold text-[40px] leading-none pr-2">{item.token}</span>
+              )}
             </span>
-            <span className="flex-1 text-left">
-              <span className="block font-body font-black text-[19px]">{t('lesson.listen')}</span>
-              <span className="block font-body font-extrabold text-[12px] text-sun-deep">{t('lesson.listenAgain')}</span>
-            </span>
-            {item.kind === 'listen-pick' && (
-              <span className="font-display font-extrabold text-[40px] leading-none pr-2">{item.token}</span>
-            )}
-          </span>
-        </Chunky>
-      </div>
+          </Chunky>
+        </div>
 
-      {/* ── The activity itself ── */}
-      <div className="px-6 pt-6">{renderActivity()}</div>
-
-      <div className="flex-1" />
+        {/* ── The activity itself ── */}
+        <div className="px-6 pt-6">{renderActivity()}</div>
+      </main>
 
       {/* ── Footer: check, or the correct / try-again sheet ── */}
       <AnimatePresence mode="wait">
