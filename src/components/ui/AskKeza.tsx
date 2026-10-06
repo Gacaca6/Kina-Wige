@@ -13,7 +13,8 @@ import { motion } from 'motion/react';
 
 /** Screens that own the whole viewport, or belong to grown-ups. */
 const HIDDEN_ON = [
-  '/', // splash
+  '/', // front door, redirects
+  '/welcome', // setup — a grown-up is holding the phone
   '/baza-keza', // already here
   '/parents',
   '/plan',

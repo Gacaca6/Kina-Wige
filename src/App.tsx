@@ -1,10 +1,13 @@
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'motion/react';
-import ParentGate from './components/ui/ParentGate';
+import ParentGate, { relockParentArea } from './components/ui/ParentGate';
 import AskKeza from './components/ui/AskKeza';
+import SessionGuard from './components/ui/SessionGuard';
+import { isGrownUpPath } from './components/ui/lanes';
+import { useFamily } from './hooks/useFamily';
 
-const SplashScreen = lazy(() => import('./screens/SplashScreen'));
+const OnboardingScreen = lazy(() => import('./screens/OnboardingScreen'));
 const EpisodeScreen = lazy(() => import('./screens/EpisodeScreen'));
 const GameScreen = lazy(() => import('./screens/GameScreen'));
 const ParentScreen = lazy(() => import('./screens/ParentScreen'));
@@ -15,7 +18,6 @@ const ComicsScreen = lazy(() => import('./screens/ComicsScreen'));
 const ComicReader = lazy(() => import('./screens/ComicReader'));
 const SettingsScreen = lazy(() => import('./screens/SettingsScreen'));
 const HomePathScreen = lazy(() => import('./screens/HomePathScreen'));
-const PlanScreen = lazy(() => import('./screens/PlanScreen'));
 const LessonScreen = lazy(() => import('./screens/LessonScreen'));
 
 function LoadingFallback() {
@@ -26,14 +28,30 @@ function LoadingFallback() {
   );
 }
 
+// The front door. A family that has been set up goes straight into the
+// child's world on every launch — the child never sees a fork with a grown-up
+// door in it. Anyone else is set up first.
+function Root() {
+  const { onboarded } = useFamily();
+  return <Navigate to={onboarded ? '/home-path' : '/welcome'} replace />;
+}
+
 // Routes must be keyed by location for AnimatePresence exit animations to run.
 function AnimatedRoutes() {
   const location = useLocation();
+
+  // Leaving the grown-up area locks it again. A parent who unlocks it and
+  // hands the phone back has not handed over the key.
+  useEffect(() => {
+    if (!isGrownUpPath(location.pathname)) relockParentArea();
+  }, [location.pathname]);
+
   return (
     <AnimatePresence mode="wait">
       <React.Fragment key={location.pathname}>
         <Routes location={location}>
-          <Route path="/" element={<SplashScreen />} />
+          <Route path="/" element={<Root />} />
+          <Route path="/welcome" element={<OnboardingScreen />} />
           {/* Legacy home is gone — the path IS the home. */}
           <Route path="/home" element={<Navigate to="/home-path" replace />} />
           <Route path="/episode/:id" element={<EpisodeScreen />} />
@@ -49,8 +67,10 @@ function AnimatedRoutes() {
           <Route path="/home-path" element={<HomePathScreen />} />
           <Route path="/lesson/:id" element={<LessonScreen />} />
           <Route path="/lesson" element={<LessonScreen />} />
-          {/* Costs money -> must sit behind the parent gate. */}
-          <Route path="/plan" element={<ParentGate><PlanScreen /></ParentGate>} />
+          {/* /plan is withdrawn until a real payment route exists. It advertised
+              content and features the app does not have, and sold a
+              subscription outside Play billing — both grounds for rejection.
+              PlanScreen.tsx is kept for when Mobile Money is live. */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </React.Fragment>
@@ -66,6 +86,8 @@ export default function App() {
           <AnimatedRoutes />
           {/* Child-lane only; hides itself in the grown-up area. */}
           <AskKeza />
+          {/* Ends a session when the grown-up's chosen play time is used. */}
+          <SessionGuard />
         </Suspense>
       </div>
     </BrowserRouter>

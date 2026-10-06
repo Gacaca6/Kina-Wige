@@ -10,6 +10,10 @@ import { useI18n } from '../i18n/context';
 import type { Language, TranslationKey } from '../i18n/translations';
 import { episodes } from '../data/episodes';
 import { comics } from '../data/comics';
+import {
+  AGES, FAMILY_KEY, NAME_MAX, SESSION_CHOICES, announceFamilyChanged, saveFamily, useFamily,
+} from '../hooks/useFamily';
+import { SESSION_KEY } from '../components/ui/SessionGuard';
 
 const APP_VERSION = '0.1.0';
 const CONTACT_EMAIL = 'mikelgodwin1234@gmail.com';
@@ -32,6 +36,11 @@ const PROGRESS_KEYS = [
   // The per-skill assessment record (useSkillEvidence). This is the most
   // personal thing the app holds — it must be the first thing a delete removes.
   'kina-wige-evidence',
+  // The family profile: the child's nickname and age, and the play time.
+  // Deleting it sends the app back to setup on its next launch.
+  FAMILY_KEY,
+  // The play-time clock (SessionGuard).
+  SESSION_KEY,
 ];
 
 /**
@@ -67,6 +76,7 @@ export default function SettingsScreen() {
   const navigate = useNavigate();
   const { t, language, setLanguage } = useI18n();
   const [cleared, setCleared] = useState(false);
+  const family = useFamily();
 
   function resetProgress() {
     PROGRESS_KEYS.forEach((k) => {
@@ -76,6 +86,7 @@ export default function SettingsScreen() {
         /* storage unavailable */
       }
     });
+    announceFamilyChanged();
     setCleared(true);
   }
 
@@ -111,9 +122,58 @@ export default function SettingsScreen() {
         </Card>
 
         <Card tone="parent">
+          <Label>{t('settings.child')}</Label>
+          <input
+            value={family.childName}
+            onChange={(e) => saveFamily({ childName: e.target.value.slice(0, NAME_MAX) })}
+            maxLength={NAME_MAX}
+            placeholder={t('welcome.childName')}
+            autoComplete="off"
+            className="w-full rounded-[14px] px-4 font-body font-black text-[17px] outline-none"
+            style={{ minHeight: 48, background: '#fff', border: '2px solid #90CAF9', color: '#0F2E45' }}
+          />
+          <div className="grid grid-cols-4 gap-2 mt-3">
+            {AGES.map((a) => {
+              const on = family.age === a;
+              return (
+                <button key={a} onClick={() => saveFamily({ age: on ? null : a })} aria-pressed={on}
+                  className="rounded-[12px] font-body font-black text-[14px]"
+                  style={{ minHeight: 44, background: on ? '#1565C0' : '#fff', color: on ? '#fff' : '#1565C0', border: '2px solid #90CAF9' }}>
+                  {a} {t('welcome.years')}
+                </button>
+              );
+            })}
+          </div>
+          <p className="font-body font-black text-[13px] mt-4 mb-2" style={{ color: '#1565C0' }}>{t('welcome.timeTitle')}</p>
+          <div className="grid grid-cols-4 gap-2">
+            {SESSION_CHOICES.map((m) => {
+              const on = family.sessionMinutes === m;
+              return (
+                <button key={m} onClick={() => saveFamily({ sessionMinutes: m })} aria-pressed={on}
+                  className="rounded-[12px] font-body font-black text-[14px] tabular-nums"
+                  style={{ minHeight: 44, background: on ? '#1565C0' : '#fff', color: on ? '#fff' : '#1565C0', border: '2px solid #90CAF9' }}>
+                  {m} {t('settings.min')}
+                </button>
+              );
+            })}
+          </div>
+          <button
+            onClick={() => {
+              saveFamily({ onboarded: false });
+              navigate('/welcome');
+            }}
+            className="w-full rounded-[14px] font-body font-black text-[15px] mt-4"
+            style={{ minHeight: 48, background: '#E3F2FD', color: '#1565C0' }}
+          >
+            {t('settings.setupAgain')}
+          </button>
+        </Card>
+
+        <Card tone="parent">
           <Label>{t('settings.data')}</Label>
           <ul className="flex flex-col gap-2">
             {[
+              'settings.stored.child',
               'settings.stored.stars',
               'settings.stored.opened',
               'settings.stored.report',

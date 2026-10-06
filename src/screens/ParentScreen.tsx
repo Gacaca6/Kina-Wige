@@ -13,6 +13,25 @@ import { useSkillEvidence } from '../hooks/useSkillEvidence';
 import SkillReport from '../components/parent/SkillReport';
 import ActivityReport from '../components/parent/ActivityReport';
 import { useProgress } from '../hooks/useProgress';
+import { LESSONS } from '../data/lessons';
+import { useFamily } from '../hooks/useFamily';
+
+/**
+ * One off-screen idea per day, taken from the Kina Challenges the lessons
+ * already carry. It changes at midnight, so a grown-up who opens this screen
+ * tomorrow finds something new to do with their child — a reason to come back
+ * that asks nothing of the child and costs no screen time at all.
+ */
+const IDEAS = Object.values(LESSONS)
+  .map((l) => l.curriculum.offline?.text)
+  .filter((x): x is NonNullable<typeof x> => Boolean(x));
+
+function todaysIdea() {
+  if (IDEAS.length === 0) return undefined;
+  const d = new Date();
+  const day = Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86_400_000);
+  return IDEAS[day % IDEAS.length];
+}
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
@@ -24,11 +43,13 @@ function Label({ children }: { children: React.ReactNode }) {
 
 export default function ParentScreen() {
   const navigate = useNavigate();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const { activities, weeklyDays, toggleActivity, toggleDay, progressKey, progressPercent } = useParentData();
   const { stars } = useStars();
   const { store } = useSkillEvidence();
   const { progress } = useProgress();
+  const { childName } = useFamily();
+  const idea = todaysIdea();
   // Weekday initials are language-specific — English M T W T F S S meant nothing
   // to a parent reading the rest of the screen in Kinyarwanda.
   const DAYS = t('parents.dayLetters').split(',');
@@ -56,6 +77,19 @@ export default function ParentScreen() {
           <Label>{t('report.title')}</Label>
           <SkillReport store={store} />
         </Card>
+
+        {/* Today's off-screen idea — the daily reason to open this screen. */}
+        {idea && (
+          <div className="rounded-[20px] p-5" style={{ background: '#2FBF6B', color: '#fff' }}>
+            <p className="font-body font-black text-[13px] tracking-[.08em] uppercase opacity-90">
+              🌱 {t('parents.todayTitle')}
+            </p>
+            <p className="font-body font-bold text-[14px] mt-2 opacity-90">
+              {childName ? `${childName} · ` : ''}{t('parents.todayBody')}
+            </p>
+            <p className="font-display font-extrabold text-[19px] leading-snug mt-1">{idea[language]}</p>
+          </div>
+        )}
 
         {/* What they have been doing — the conversation starter. A parent who
             knows what their child is into has something to ask at dinner. */}
@@ -174,14 +208,8 @@ export default function ParentScreen() {
         </Card>
 
         {/* Grown-up destinations */}
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            onClick={() => navigate('/plan')}
-            className="rounded-[16px] font-body font-black text-[15px]"
-            style={{ minHeight: 56, background: '#1565C0', color: '#fff' }}
-          >
-            {t('parents.plan')}
-          </button>
+        {/* The plan button is withdrawn with /plan — see App.tsx. */}
+        <div className="grid grid-cols-1 gap-3">
           <button
             onClick={() => navigate('/settings')}
             className="rounded-[16px] font-body font-black text-[15px]"

@@ -246,6 +246,52 @@ All verified working in production build.
 - [ ] **16. `npm audit` review** — 13 vulns reported (mostly transitive dev).
   Run `npm audit`, apply safe non-major fixes, document any accepted risks here.
 
+## L — Google Play launch (started 2026-10-06)
+
+Personal Play Console account, verified. Personal accounts must run a closed
+test with **12 testers opted in for 14 continuous days** before production
+access, and Google now checks that testers actually used the app.
+
+- [x] **L1. Parent onboarding** *(2026-10-06: `/welcome`, five steps —
+  language, promises, child nickname + age, play time, how to get back in +
+  app pinning. Profile on-device only under `kina-wige-family`; listed in
+  Settings and wiped by the delete button. Browser-verified KN/EN/FR.)*
+- [x] **L2. Child sees only their screens** *(2026-10-06: a set-up family
+  launches straight into `/home-path`; the splash fork with its grown-up door
+  is gone. The grown-up door is now hidden: press and hold the child's name for
+  3 s. Parent gate rebuilt — number written in words in all three languages,
+  two-digit keypad, 3 misses = 30 s lockout that survives backing out; the
+  area relocks whenever the child's lane is shown. Browser-verified.)*
+- [x] **L3. Play-time limit** *(2026-10-06: `SessionGuard`. 10/12/15/20 min,
+  default 12; counts child-lane time on screen only; rest starts at the next
+  screen change (≤2 min grace); rest lasts 60 min and survives relaunch; only
+  a grown-up through the gate can allow more. This makes the "session cap"
+  claim in the Concept Note and the Resolution safeguarding plan TRUE — before
+  this commit it was not built.)*
+- [x] **L4. Withdraw /plan** *(2026-10-06: it advertised "12 units, 40
+  stories", weekly flashcards, 4 child profiles, a 14-day trial that did
+  nothing, and an unset schools price; and sold a subscription outside Play
+  billing. Route and button removed; PlanScreen.tsx kept for when Mobile Money
+  is real. Re-adding it needs a Play payments-policy review first.)*
+- [x] **L5. Daily reason to come back — for the GROWN-UP** *(2026-10-06:
+  "Today's off-screen idea" on the parent dashboard, rotating daily through the
+  lessons' Kina Challenges. Deliberately no streaks, no loss mechanics, no
+  notifications — see CLAUDE.md rules and the Resolution safeguarding plan.)*
+- [ ] **L6. Package as a Trusted Web Activity** — PWABuilder (pwabuilder.com)
+  on the live URL → Android package. Owner keeps the signing key (see
+  Human-required G). Package id `rw.kinawige.app` (permanent once uploaded).
+- [ ] **L7. Digital Asset Links** — put the SHA-256 from Play Console → App
+  integrity → App signing into `public/.well-known/assetlinks.json`, deploy,
+  confirm it serves as JSON. Without it the app opens with a browser URL bar.
+- [ ] **L8. Store listing + declarations** — short/long description, 512×512
+  icon WITH alpha (current icons are RGB), 1024×500 feature graphic, phone and
+  tablet screenshots, privacy policy URL, Data safety ("no data collected"),
+  content rating, target audience "5 and under", Families policy, no ads.
+- [ ] **L9. Closed test** — 12+ testers, 14 continuous days, real use. See
+  Human-required H.
+- [ ] **L10. More Kina Challenges** — only 3 lessons carry one, so the daily
+  idea repeats every 3 days. Every new lesson should ship with one.
+
 ## Human-required (Godwin — the model must ask, not fake these)
 
 - [ ] **A. Download Ubongo videos** — YOU must do this, not the assistant.
@@ -352,6 +398,28 @@ All verified working in production build.
     consonant introduction order, digraphs (cy, jy, ny, sh, shy) and
     prenasalised consonants (mb, nd, ng), which are NOT simple CV. Needs a
     Kinyarwanda literacy specialist, not a general native speaker.
+  - launch onboarding, play time, parent gate and daily idea (2026-10-06,
+    all machine-written, IN CODE): every `welcome.*`, `rest.*`, `gate.typeNumber`,
+    `gate.locked`, `gate.clear`, `home.hello`, `parents.todayTitle`,
+    `parents.todayBody`, `settings.child`, `settings.setupAgain`,
+    `settings.stored.child`, and the reworded `settings.reset`. Check
+    especially: `rest.title` ("Kina araruhuka" — is this how you would say Kina
+    is resting/asleep to a small child?), `welcome.timeBody` ("Kina araryama
+    maze yohereze umwana gukina hanze"), and `welcome.pinBody`, which keeps the
+    English menu name «App pinning» because Android shows it that way.
+  - `src/i18n/numberWords.ts` — **the parent gate depends on these being
+    correct**: tens makumyabiri / mirongo itatu / ine / itanu / itandatu, units
+    rimwe … karindwi, joined with "na" (e.g. 47 = "mirongo ine na karindwi").
+    A wrong form here means a Kinyarwanda-reading parent cannot get in.
+
+- [ ] **G. Keep the Android signing key safe** — the upload key / keystore
+  PWABuilder generates, and its passwords, belong to the owner. Store them in
+  two places. Losing them means never updating the app again. The assistant
+  must never hold these.
+- [ ] **H. Recruit and keep 12 testers for 14 days** — real people on real
+  Android phones, each with a Google account, opted in through the closed-test
+  link, who actually open the app. Recruitment kit is prepared; the asking
+  has to be done by the team.
 - [x] **D. ~~Revoke the old Gemini API key~~** — **closed 2026-08-08 by owner
   decision. Do not reopen and do not raise it again.** No Gemini/Google-AI key
   exists anywhere in `src/`, config, or env, and nothing in the app requires

@@ -19,6 +19,8 @@ import { motion } from 'motion/react';
 import Kina from '../components/characters/Kina';
 import BottomNav from '../components/ui/BottomNav';
 import LanguageToggle from '../components/ui/LanguageToggle';
+import HoldToOpen from '../components/ui/HoldToOpen';
+import { useFamily } from '../hooks/useFamily';
 import { LESSONS } from '../data/lessons';
 import { useI18n } from '../i18n/context';
 import { useProgress } from '../hooks/useProgress';
@@ -64,6 +66,7 @@ const TRAIL_DONE = [
 export default function HomePathScreen() {
   const navigate = useNavigate();
   const { t, language } = useI18n();
+  const { childName } = useFamily();
   const { isLessonDone, isEpisodeWatched } = useProgress();
   const [look, setLook] = useState<{ x: number; y: number } | null>(null);
 
@@ -100,11 +103,20 @@ export default function HomePathScreen() {
     >
       {/* ── Header. Stars only — no streak, no gems, nothing that can go down. ── */}
       <header className="bg-forest text-white px-5 pt-safe pb-5">
-        {/* No grown-up door here. A padlock is not a child's idea, and the
-            child's world should contain nothing addressed to an adult. Parents
-            reach their area from the splash screen, before the child lane
-            begins. */}
-        <div className="flex items-center justify-end gap-3">
+        {/* No VISIBLE grown-up door. A padlock is not a child's idea, and the
+            child's world contains nothing addressed to an adult. The door is
+            the greeting itself: a grown-up presses and holds the child's name
+            for three seconds (taught during setup), which leads to the parent
+            gate — the real lock. */}
+        <div className="flex items-center justify-between gap-3">
+          <HoldToOpen label={t('splash.grownups')}>
+            <p
+              className="font-display font-extrabold text-white truncate"
+              style={{ fontSize: 'clamp(22px, 6.5vw, 28px)', lineHeight: 1.1, maxWidth: '62vw' }}
+            >
+              {t('home.hello')}{childName ? `, ${childName}` : ''}!
+            </p>
+          </HoldToOpen>
           <LanguageToggle />
         </div>
       </header>
