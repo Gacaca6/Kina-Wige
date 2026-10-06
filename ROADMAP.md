@@ -284,7 +284,11 @@ access, and Google now checks that testers actually used the app.
   measured insets for WebViews < 140, cloud backup off, portrait, Kina Wige
   icon + forest splash. Package `rw.kinawige.app`. CI:
   `.github/workflows/android.yml` builds, runs `scripts/android-smoke.py` in
-  emulators on API 31 and 35, and signs when the owner's secrets exist.)*
+  emulators on API 31 and 35, and signs when the owner's secrets exist.
+  Verified 2026-10-06: 21/21 checks on Android 12 / WebView 91 and Android 15 /
+  WebView 124 — setup, back button, background/relaunch/force-stop, grown-up
+  door, safe area, real video playback, no crash, no JS error. The first run
+  caught Tailwind 4 rendering UNSTYLED on WebView 91; fixed by css-compat.ts.)*
 - [ ] **L7. Signed bundle** — owner creates the upload key and adds the four
   `KINA_*` GitHub secrets (docs/PLAY-LAUNCH.md §2). Then every run produces
   `kina-wige-release-aab`. *(Digital Asset Links no longer needed — that was
