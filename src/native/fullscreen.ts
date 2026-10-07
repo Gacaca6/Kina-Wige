@@ -6,10 +6,15 @@
 // portrait, status bar still showing — and a 16:9 cartoon set to "cover" a tall
 // screen came out zoomed about three times and cut off at both sides.
 //
-// So in the app, fullscreen is: turn the screen to landscape, hide the system
-// bars, and let the player fill the screen with the WHOLE picture showing
-// (object-fit: contain — never cropped). Leaving turns it back to portrait and
-// brings the bars back.
+// So in the app, fullscreen is: turn the screen to landscape and let the player
+// fill the screen with the WHOLE picture showing (object-fit: contain — never
+// cropped). Leaving turns it back to portrait.
+//
+// Why the system bars are NOT hidden: the first time an app hides them,
+// Android shows a one-time "Viewing full screen" notice that swallows every
+// back press until someone taps "Got it". The emulator log proved it — not one
+// back press reached the app. For young children a back button that always
+// works matters more than hiding a thin status bar.
 //
 // Note on "back to portrait": the orientation plugin's unlock() would free the
 // app to rotate everywhere, overriding the manifest's portrait lock. Locking to
@@ -17,20 +22,17 @@
 //
 // No effect on the website.
 
-import { SystemBars } from '@capacitor/core';
 import { ScreenOrientation } from '@capacitor/screen-orientation';
 import { isNative } from './platform';
 
 export async function enterAppFullscreen() {
   if (!isNative) return;
   await ScreenOrientation.lock({ orientation: 'landscape' }).catch(() => {});
-  await SystemBars.hide().catch(() => {});
 }
 
 export async function exitAppFullscreen() {
   if (!isNative) return;
   await ScreenOrientation.lock({ orientation: 'portrait' }).catch(() => {});
-  await SystemBars.show().catch(() => {});
 }
 
 // ── Website ──

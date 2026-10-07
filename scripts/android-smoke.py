@@ -211,8 +211,15 @@ class Page:
         self._mouse("mouseReleased", target["x"], target["y"])
         time.sleep(1.2)
 
-    def hold(self, text: str, seconds: float = 3.6) -> None:
-        target = self.find(text, exact=True)
+    def hold(self, text: str, seconds: float = 3.6, timeout: float = 20) -> None:
+        # Wait for it, like click(): right after a relaunch the screen may
+        # still be appearing.
+        end = time.time() + timeout
+        target = None
+        while time.time() < end and not target:
+            target = self.find(text, exact=True)
+            if not target:
+                time.sleep(1)
         if not target:
             raise AssertionError(f"not on screen to hold: {text!r}")
         self._mouse("mousePressed", target["x"], target["y"])
@@ -397,21 +404,14 @@ def fullscreen():
     check("fullscreen fills the screen with the whole picture (not zoomed)",
           s and s["boxFillsScreen"] and s["fit"] == "contain", json.dumps(s))
     check("the video keeps playing in fullscreen", s and s["playing"], json.dumps(s))
-    # The FIRST time any app hides the system bars, Android shows its own
-    # one-time "Viewing full screen" notice, and that notice takes the first
-    # back press. Seen in both emulators (window ImmersiveModeConfirmation).
-    # A person would press back once more; so does the test.
+    # ONE press must be enough. (Hiding the system bars made Android show a
+    # one-time notice that swallowed every back press — so the app no longer
+    # hides them. See src/native/fullscreen.ts.)
     back()
     time.sleep(2)
     s = page.js(FS_STATE)
-    if s and s["landscape"]:
-        notice = "ImmersiveModeConfirmation" in adb("shell", "dumpsys", "window", "windows", check=False)
-        print(f"      first back press taken by Android's full-screen notice: {notice}", flush=True)
-        back()
-        time.sleep(2)
-        s = page.js(FS_STATE)
     shot("video-after-fullscreen")
-    check("back leaves fullscreen: portrait again, still on the episode",
+    check("one back press leaves fullscreen: portrait again, still on the episode",
           s and not s["landscape"] and not s["boxFillsScreen"] and s["path"].startswith("/episode/"),
           json.dumps(s))
 
@@ -462,6 +462,12 @@ js_errors = [
     # them again when the page commits. The "safe area" checks above verify
     # the second write landed.
     and "Error injecting safe area CSS" not in l
+    # On a cold start Capacitor fires native lifecycle events into the page
+    # with window.Capacitor.triggerEvent(...); on old WebViews that can run
+    # before the bridge script exists, so the call finds window.Capacitor
+    # undefined. Capacitor-internal, startup only, and Kina Wige uses none of
+    # those events (back button and plugins use their own listener channel).
+    and "'triggerEvent'" not in l
 ]
 check("no uncaught JavaScript error", not js_errors, js_errors[0][:200] if js_errors else "")
 
