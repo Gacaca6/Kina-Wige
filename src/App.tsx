@@ -21,6 +21,7 @@ const ComicReader = lazy(() => import('./screens/ComicReader'));
 const SettingsScreen = lazy(() => import('./screens/SettingsScreen'));
 const HomePathScreen = lazy(() => import('./screens/HomePathScreen'));
 const LessonScreen = lazy(() => import('./screens/LessonScreen'));
+const StickerBookScreen = lazy(() => import('./screens/StickerBookScreen'));
 
 function LoadingFallback() {
   return (
@@ -68,6 +69,7 @@ function AnimatedRoutes() {
           <Route path="/parents" element={<ParentGate><ParentScreen /></ParentGate>} />
           <Route path="/episodes" element={<EpisodeListScreen />} />
           <Route path="/games" element={<GamesScreen />} />
+          <Route path="/stickers" element={<StickerBookScreen />} />
           <Route path="/comics" element={<ComicsScreen />} />
           <Route path="/comic/:id" element={<ComicReader />} />
           <Route path="/baza-keza" element={<BazaKezaScreen />} />

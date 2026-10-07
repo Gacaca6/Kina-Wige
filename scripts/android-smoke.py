@@ -211,6 +211,25 @@ class Page:
         self._mouse("mouseReleased", target["x"], target["y"])
         time.sleep(1.2)
 
+    def drag(self, points, step_s: float = 0.02) -> None:
+        """A one-finger drag through a list of (x, y) CSS-pixel points."""
+        (x0, y0) = points[0]
+        self._mouse("mouseMoved", x0, y0)
+        self._mouse("mousePressed", x0, y0)
+        for (x, y) in points[1:]:
+            self.send("Input.dispatchMouseEvent", type="mouseMoved", x=x, y=y, button="left", buttons=1)
+            time.sleep(step_s)
+        (x1, y1) = points[-1]
+        self._mouse("mouseReleased", x1, y1)
+
+    def stage(self, view: str):
+        """Maps stage units of the game's SVG (by viewBox) to CSS pixels."""
+        m = self.js(f"""(() => {{ const s = document.querySelector('svg[viewBox="{view}"]');
+          if (!s) return null; const m = s.getScreenCTM(); return {{ a: m.a, d: m.d, e: m.e, f: m.f }}; }})()""")
+        if not m:
+            raise AssertionError(f"no game stage {view!r} on screen")
+        return lambda x, y: (m["a"] * x + m["e"], m["d"] * y + m["f"])
+
     def hold(self, text: str, seconds: float = 3.6, timeout: float = 20) -> None:
         # Wait for it, like click(): right after a relaunch the screen may
         # still be appearing.
@@ -435,6 +454,138 @@ def fullscreen():
           json.dumps({"entered": entered, "after": s}))
 
 
+GAME_TITLES = ["Wash Your Hands!", "Trace & Write", "Shapes & Colours", "Jigsaw Puzzles",
+               "Find the Way", "Colouring", "Memory Match", "Count!"]
+
+
+def to_games():
+    """From the episode the video tests left open, to the games hub. (One back
+    only: a back press on the child's home sends the app to the background.)"""
+    if page.path().startswith("/episode/"):
+        back()
+        time.sleep(1.5)
+    page.click("Games")
+    check("games hub opens", page.wait_path("/games"))
+
+
+def games_hub():
+    to_games()
+    time.sleep(1)
+    missing = [t for t in GAME_TITLES if not page.find(t)]
+    shot("games-hub")
+    check("every game is on the games screen", not missing, ", ".join(missing))
+    check("the sticker book is on the games screen", page.find("Open the sticker book"))
+
+
+def wash_hands():
+    """The rebuilt handwashing game, played through with real touches:
+    tap the pedal, drag the soap, rub, hold the pedal, rub with the towel."""
+    page.click("Wash Your Hands!")
+    page.click("Play")
+    time.sleep(1.5)
+    at = page.stage("0 0 400 600")
+    shot("karaba-start")
+    x, y = at(225, 548)
+    page._mouse("mousePressed", x, y)
+    page._mouse("mouseReleased", x, y)
+    time.sleep(2.6)
+    sx, sy = at(334, 340)
+    hx, hy = at(215, 395)
+    page.drag([(sx, sy)] + [(sx + (hx - sx) * i / 12, sy + (hy - sy) * i / 12) for i in range(1, 13)])
+    time.sleep(1.8)
+    shot("karaba-soap")
+    rub = [at(130 + (170 if i % 2 else 0), 360 + (i % 5) * 10) for i in range(90)]
+    page.drag(rub, step_s=0.03)
+    time.sleep(1.8)
+    shot("karaba-scrubbed")
+    x, y = at(225, 548)
+    page._mouse("mousePressed", x, y)
+    time.sleep(2.6)
+    page._mouse("mouseReleased", x, y)
+    time.sleep(1.6)
+    tx, ty = at(70, 318)
+    towel = [(tx, ty)] + [(tx + (hx - tx) * i / 10, ty + (hy - ty) * i / 10) for i in range(1, 11)]
+    towel += [at(150 + (130 if i % 2 else 0), 380 + (i % 3) * 10) for i in range(50)]
+    page.drag(towel, step_s=0.03)
+    ok = page.wait_text("KINA CHALLENGE", timeout=12)
+    time.sleep(1.5)
+    shot("karaba-finished")
+    check("handwashing plays through all five steps by touch", ok)
+    check("finishing a game awards a sticker", page.has_text("New sticker!"))
+    page.click("Grown-up: we did it!")
+    page.click("Games")
+    check("back to the games hub from the win screen", page.wait_path("/games"))
+
+
+def tracing():
+    page.click("Trace & Write")
+    page.click("a e i o u")
+    time.sleep(6.5)  # Kina's pencil writes it first
+    shot("andika-trace")
+    at = page.stage("0 0 400 590")
+    pts = page.js("""(() => { const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      p.setAttribute('d', 'M69 52 A22 22 0 1 0 69 74'); const s = document.querySelector('svg[viewBox="0 0 400 590"]');
+      s.appendChild(p); const L = p.getTotalLength(); const out = [];
+      for (let i = 0; i <= 50; i++) { const q = p.getPointAtLength(L * i / 50); out.push([q.x, q.y]); }
+      p.remove(); return out; })()""")
+    page.drag([at(50 + 3 * gx, 24 + 3 * gy) for gx, gy in pts], step_s=0.03)
+    time.sleep(0.8)
+    shot("andika-inked")
+    ink = page.js("""(() => { const s = document.querySelector('svg[viewBox="0 0 400 590"]');
+      const p = [...s.querySelectorAll('path')].find(x => x.getAttribute('stroke') === '#2FBF6B');
+      return p ? parseFloat(p.style.strokeDashoffset || '999') : null; })()""")
+    check("the magic ink follows the finger along the stroke", ink is not None and ink < 5, f"dashoffset={ink}")
+    back()
+    back()
+    page.wait_path("/games")
+
+
+def other_games():
+    for title, view, shot_name in [
+        ("Shapes & Colours", "0 0 400 600", "imiterere"),
+        ("Find the Way", "0 0 400 600", "inzira"),
+    ]:
+        page.click(title)
+        time.sleep(2)
+        shot(shot_name)
+        check(f"{title} opens and draws its stage", page.stage(view) is not None)
+        back()
+        page.wait_path("/games")
+        time.sleep(1)
+
+    page.click("Jigsaw Puzzles")
+    page.click("Cows on the hill")
+    time.sleep(1.5)
+    shot("teranya")
+    pieces = page.js("document.querySelectorAll('g[clip-path^=\"url(#kw-piece-\"]').length")
+    check("the jigsaw cuts the picture into pieces", pieces and pieces >= 4, f"{pieces} pieces")
+    back()
+    back()
+    page.wait_path("/games")
+
+    page.click("Colouring")
+    page.click("Cow")
+    time.sleep(1)
+    page.click("Red")
+    at = page.stage("0 0 360 360")
+    x, y = at(170, 230)
+    page._mouse("mousePressed", x, y)
+    page._mouse("mouseReleased", x, y)
+    time.sleep(1.2)
+    shot("siga")
+    filled = page.js("""(() => [...document.querySelectorAll('svg[viewBox="0 0 360 360"] path')]
+      .some(p => p.getAttribute('fill') === '#F2453D'))()""")
+    check("colouring: tapping a part paints it", filled)
+    back()
+    back()
+    page.wait_path("/games")
+
+    page.click("Open the sticker book")
+    check("the sticker book shows the earned sticker", page.wait_text("1 of 20"))
+    shot("stickers")
+    back()
+
+
 for name, fn in [
     ("first launch", first_launch),
     ("setup", setup),
@@ -444,6 +595,10 @@ for name, fn in [
     ("grown-up door", grown_up_door),
     ("video", video),
     ("fullscreen", fullscreen),
+    ("games hub", games_hub),
+    ("handwashing", wash_hands),
+    ("tracing", tracing),
+    ("other games", other_games),
 ]:
     step(name, fn)
 

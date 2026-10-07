@@ -8,11 +8,21 @@ import MemoryGame from './games/MemoryGame';
 import CountingGame from './games/CountingGame';
 import PatternGame from './games/PatternGame';
 import SortingGame from './games/SortingGame';
+import TracingGame from './games/TracingGame';
+import ShapesGame from './games/ShapesGame';
+import JigsawGame from './games/JigsawGame';
+import MazeGame from './games/MazeGame';
+import ColouringGame from './games/ColouringGame';
 
 const GAME_COMPONENTS: Record<string, React.ComponentType> = {
   // '1' kept for old links/bookmarks that pointed at /game/1
   '1': HandwashGame,
   karaba: HandwashGame,
+  andika: TracingGame,
+  imiterere: ShapesGame,
+  teranya: JigsawGame,
+  inzira: MazeGame,
+  siga: ColouringGame,
   memory: MemoryGame,
   counting: CountingGame,
   pattern: PatternGame,

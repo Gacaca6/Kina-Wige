@@ -770,6 +770,15 @@ export const PARENT_WORDING: Partial<Record<SkillId, Record<Language, string>>> 
   'num.pattern.abc': {
     KN: "akomeza uburyo bw'ibice bitatu", EN: 'carries on a three-part pattern', FR: 'continue un motif à trois parties',
   },
+  'num.sort.two': {
+    KN: "atandukanya ibintu akurikije ibintu bibiri icyarimwe, nk'ibara n'imiterere", EN: 'sorts by two things at once, like colour and shape', FR: 'trie selon deux choses à la fois, comme la couleur et la forme',
+  },
+  'num.shape.name': {
+    KN: 'avuga uruziga, kare na mpandeshatu', EN: 'names a circle, a square and a triangle', FR: 'nomme le cercle, le carré et le triangle',
+  },
+  'num.shape.build': {
+    KN: 'akora ishusho mu bice byayo', EN: 'puts a picture together from its pieces', FR: 'assemble une image à partir de ses morceaux',
+  },
 
   // D4 · Physical & Health
   'phy.hand.sequence': {
@@ -787,6 +796,9 @@ export const PARENT_WORDING: Partial<Record<SkillId, Record<Language, string>>> 
   'phy.food.healthy': {
     KN: 'ahitamo ibiryo byiza', EN: 'picks out healthy food', FR: 'choisit les aliments sains',
   },
+  'phy.fine.control': {
+    KN: 'ayobora ikiganza cye agakurikira umurongo', EN: 'controls their hand to follow a line', FR: 'contrôle sa main pour suivre une ligne',
+  },
 
   // D5 · Social & Emotional
   'self.confidence': {
@@ -794,6 +806,9 @@ export const PARENT_WORDING: Partial<Record<SkillId, Record<Language, string>>> 
   },
 
   // D6 · Creative Arts & Culture
+  'art.colour.name': {
+    KN: 'avuga amabara: umutuku, ubururu, umuhondo n’icyatsi', EN: 'names red, blue, yellow and green', FR: 'nomme le rouge, le bleu, le jaune et le vert',
+  },
   'art.sing.rwanda': {
     KN: 'aririmba indirimbo y’Ikinyarwanda', EN: 'sings along to a Rwandan song', FR: 'chante une chanson rwandaise',
   },

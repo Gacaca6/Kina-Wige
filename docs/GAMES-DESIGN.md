@@ -156,10 +156,32 @@ dead ends, and bananas to collect and count on the way.
 3. Tracing → 4. Shapes & colours → 5. Jigsaw → 6. Mazes, each with its own
    emulator checks, each shipped to testers as an update.
 
-## 6. Open decisions
+## 6. Owner decisions (2026-10-07)
 
-1. Art: in-code SVG in the Kina style (default) or a commissioned illustrator.
-2. Voice: who records the Kinyarwanda instructions.
-3. Tracing: lowercase or capitals first; the word for each vowel.
-4. The kandagira ukarabe station as the handwashing scene.
-5. Colouring and the sticker book: yes or no.
+1. **Art:** in-code SVG in the Kina style, drawn by the assistant.
+2. **Voice:** none yet — game sounds and the ghost hand carry every
+   instruction. The voice slot stays open for recordings later.
+3. **Tracing:** both lowercase and capitals (separate sets the child picks),
+   plus numbers 1–5 and 6–10. No vowel words until a native speaker picks them.
+4. **Kandagira ukarabe:** yes, "do it professionally".
+5. **Colouring and the sticker book:** yes — "as many stuffs as we can".
+6. Other repos (Lyla Rose Games, bilnetoyun) are **visual reference only**: no
+   licence, so nothing is copied; their jigsaw picker + piece-count pattern
+   and car-wash scrubbing informed ours.
+
+## 7. As built (games milestone)
+
+| Game | id | Levels | Evidence recorded |
+|---|---|---|---|
+| Karaba Amaboko (rebuild) | `karaba` | 1 guided glow · 2 choose with strip · 3 choose from memory | `phy.hand.sequence`, first action per step, level ≥ 2; Kina Challenge (parent) |
+| Andika | `andika` | 1 watch→trace · 2 +faint trace · 3 +write from memory | `snd.write.trace` (letters), `phy.fine.control` |
+| Imiterere n'Amabara | `imiterere` | 30 levels: shapes → colours → both → leaves → more | `num.sort.one` / `num.sort.two` per drop; `num.shape.name` parent-marked |
+| Teranya Ishusho | `teranya` | 4 / 6 / 9 / 12 pieces, 6 Rwandan pictures | `num.shape.build` per puzzle |
+| Shaka Inzira | `inzira` | 1 one road · 2 maze · 3 big maze + bananas | `phy.fine.control` per maze |
+| Siga Amabara | `siga` | open-ended, 6 pictures, 11 colours, "my pictures" | none on screen; `art.colour.name` parent-marked |
+| Sticker book | `/stickers` | 20 stickers, accumulate-only | — |
+
+The kit lives in `src/components/game/kit/` (Stage, Draggable, GhostHand,
+Bursts, GameFrame, hooks) and the art in `src/components/game/art/`. The
+Android smoke test plays handwashing through by touch and opens every new game
+on Android 12 and 15.

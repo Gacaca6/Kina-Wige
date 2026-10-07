@@ -7,6 +7,8 @@ import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../../i18n/context';
 import Kina from '../characters/Kina';
+import type { StickerInfo } from '../../data/stickers';
+import { FRIEND_ART } from './art/Friends';
 
 const SPRING = { type: 'spring' as const, stiffness: 900, damping: 34, mass: 0.5 };
 
@@ -18,9 +20,43 @@ interface GameCelebrationProps {
    * something to do with a grown-up before playing again (Architecture §11).
    */
   extra?: ReactNode;
+  /** The sticker this game just earned, if it gives one. */
+  sticker?: { sticker: StickerInfo; isNew: boolean } | null;
 }
 
-export default function GameCelebration({ onPlayAgain, scoreLabel, extra }: GameCelebrationProps) {
+/** The earned sticker, flipping in. Tapping it opens the sticker book. */
+function EarnedSticker({ sticker, isNew }: { sticker: StickerInfo; isNew: boolean }) {
+  const navigate = useNavigate();
+  const { t, language } = useI18n();
+  const Art = FRIEND_ART[sticker.id];
+  return (
+    <motion.button
+      onClick={() => navigate('/stickers')}
+      aria-label={t('stickers.open')}
+      initial={{ scale: 0, rotate: -30 }}
+      animate={{ scale: 1, rotate: -4 }}
+      transition={{ type: 'spring', stiffness: 260, damping: 12, delay: 0.5 }}
+      className="mt-5 flex items-center gap-3 rounded-[22px] pl-2 pr-5 py-2"
+      style={{ background: '#FFFFFF', boxShadow: '0 6px 0 #0B2A1D' }}
+    >
+      <span className="rounded-[16px] grid place-items-center" style={{ width: 72, height: 72, background: sticker.tone }}>
+        <svg viewBox="-50 -50 100 100" style={{ width: 62, height: 62 }} aria-hidden>
+          {Art && <Art />}
+        </svg>
+      </span>
+      <span className="text-left">
+        <span className="block font-body font-black text-[12px] tracking-[.08em] uppercase" style={{ color: '#2FBF6B' }}>
+          {isNew ? t('stickers.new') : t('stickers.another')}
+        </span>
+        <span className="block font-display font-extrabold" style={{ fontSize: 22, color: '#17543C' }}>
+          {sticker.name[language]}
+        </span>
+      </span>
+    </motion.button>
+  );
+}
+
+export default function GameCelebration({ onPlayAgain, scoreLabel, extra, sticker }: GameCelebrationProps) {
   const navigate = useNavigate();
   const { t } = useI18n();
 
@@ -28,13 +64,17 @@ export default function GameCelebration({ onPlayAgain, scoreLabel, extra }: Game
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center p-6 text-center"
+      className="fixed inset-0 z-50 overflow-y-auto overscroll-contain"
       style={{ background: '#17543C' }}
     >
+      {/* min-h-full + centring: centred on a tall phone, scrollable on a short
+          one (a sticker and a Kina Challenge can make it taller than a screen). */}
+      <div className="min-h-full flex flex-col items-center justify-center p-6 pt-safe pb-safe text-center">
       <motion.div
         initial={{ scale: 0.3, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: 'spring', stiffness: 400, damping: 14, mass: 0.9 }}
+        className="mt-6"
       >
         <Kina mood="cheer" style={{ width: 150, height: 136 }} />
       </motion.div>
@@ -55,6 +95,8 @@ export default function GameCelebration({ onPlayAgain, scoreLabel, extra }: Game
           </span>
         )}
       </div>
+
+      {sticker && <EarnedSticker sticker={sticker.sticker} isNew={sticker.isNew} />}
 
       {extra}
 
@@ -81,6 +123,7 @@ export default function GameCelebration({ onPlayAgain, scoreLabel, extra }: Game
             {t('nav.games')}
           </span>
         </motion.button>
+      </div>
       </div>
     </motion.div>
   );

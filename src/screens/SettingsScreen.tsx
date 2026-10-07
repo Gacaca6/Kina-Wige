@@ -14,6 +14,9 @@ import {
   AGES, FAMILY_KEY, NAME_MAX, SESSION_CHOICES, announceFamilyChanged, saveFamily, useFamily,
 } from '../hooks/useFamily';
 import { SESSION_KEY } from '../components/ui/SessionGuard';
+import { STICKERS_KEY } from '../hooks/useStickers';
+import { LEVELS_KEY } from '../components/game/kit/hooks';
+import { PICTURES_KEY } from '../hooks/usePictures';
 
 const APP_VERSION = '0.1.0';
 const CONTACT_EMAIL = 'mikelgodwin1234@gmail.com';
@@ -41,6 +44,11 @@ const PROGRESS_KEYS = [
   FAMILY_KEY,
   // The play-time clock (SessionGuard).
   SESSION_KEY,
+  // The games: stickers earned, and the level each game has reached.
+  STICKERS_KEY,
+  LEVELS_KEY,
+  // Finished colouring pictures (Siga Amabara).
+  PICTURES_KEY,
 ];
 
 /**
@@ -177,6 +185,7 @@ export default function SettingsScreen() {
               'settings.stored.stars',
               'settings.stored.opened',
               'settings.stored.report',
+              'settings.stored.games',
               'settings.stored.language',
             ].map((key) => (
               <li key={key} className="flex items-start gap-2 font-body font-bold text-[14px]" style={{ color: '#213B4A' }}>

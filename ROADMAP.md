@@ -421,6 +421,24 @@ access, and Google now checks that testers actually used the app.
     correct**: tens makumyabiri / mirongo itatu / ine / itanu / itandatu, units
     rimwe … karindwi, joined with "na" (e.g. 47 = "mirongo ine na karindwi").
     A wrong form here means a Kinyarwanda-reading parent cannot get in.
+  - **Games milestone (2026-10-07), all machine-written, IN CODE, child-facing:**
+    game titles "Andika!", "Imiterere n'Amabara", "Teranya Ishusho", "Shaka
+    Inzira", "Siga Amabara" and their `skill.KN`; the new handwashing step
+    lines `game.water/soap/scrub/rinse/dry` ("Kanda ku kirenge, amazi aze!",
+    "Fata ikirenge, wogeze amaboko!" …) and the four moments
+    `karaba.moment.*` ("Mbere yo kurya", "Uvuye mu bwiherero", "Uvuye gukina
+    hanze", "Ukoze ku matungo"); every `karaba.*`, `imiterere.*`, `siga.*`,
+    `andika.pick`, `stickers.*`, `game.go`, `settings.stored.games`. **Colour
+    names** a child hears from a grown-up while colouring
+    (`src/components/game/art/Colouring.tsx`: Umutuku, Icunga, Umuhondo,
+    Icyatsi kibisi, Ubururu bwerurutse, Ubururu, Isine, Iroza, Ikigina,
+    Umukara, Umweru — "Icunga" for orange and "Isine" for purple are the least
+    certain). **Sticker names** (`src/data/stickers.ts`: Inka, Umuneke, Ingoma,
+    Ingagi, Agaseke, Umusambi, Ihene, Avoka, Inzovu, Inzu, Inkoko, Inanasi,
+    Intare, Ifi, Igisabo, Imparage, Umwembe, Igare, Izuba, Ururabo), puzzle
+    names (`art/Scenes.tsx`) and colouring picture names. New PARENT_WORDING
+    for `phy.fine.control`, `num.sort.two`, `num.shape.name`,
+    `num.shape.build`, `art.colour.name`.
 
 - [ ] **G. Keep the Android signing key safe** — the upload key
   (`kina-wige-upload.jks`, created with keytool, docs/PLAY-LAUNCH.md §2) and
