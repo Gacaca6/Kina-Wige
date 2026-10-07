@@ -397,13 +397,42 @@ def fullscreen():
     check("fullscreen fills the screen with the whole picture (not zoomed)",
           s and s["boxFillsScreen"] and s["fit"] == "contain", json.dumps(s))
     check("the video keeps playing in fullscreen", s and s["playing"], json.dumps(s))
+    # The FIRST time any app hides the system bars, Android shows its own
+    # one-time "Viewing full screen" notice, and that notice takes the first
+    # back press. Seen in both emulators (window ImmersiveModeConfirmation).
+    # A person would press back once more; so does the test.
     back()
     time.sleep(2)
-    shot("video-after-fullscreen")
     s = page.js(FS_STATE)
+    if s and s["landscape"]:
+        notice = "ImmersiveModeConfirmation" in adb("shell", "dumpsys", "window", "windows", check=False)
+        print(f"      first back press taken by Android's full-screen notice: {notice}", flush=True)
+        back()
+        time.sleep(2)
+        s = page.js(FS_STATE)
+    shot("video-after-fullscreen")
     check("back leaves fullscreen: portrait again, still on the episode",
           s and not s["landscape"] and not s["boxFillsScreen"] and s["path"].startswith("/episode/"),
           json.dumps(s))
+
+    # The on-screen way out must work too.
+    c = page.js("(() => { const r = document.querySelector('video').getBoundingClientRect();"
+                " return { x: r.left + r.width / 2, y: r.top + r.height * 0.15 }; })()")
+    page._mouse("mousePressed", c["x"], c["y"])
+    page._mouse("mouseReleased", c["x"], c["y"])
+    time.sleep(0.6)
+    page.click("Fullscreen")
+    time.sleep(3)
+    entered = page.js(FS_STATE)
+    page._mouse("mousePressed", entered["w"] / 2, entered["h"] * 0.15)
+    page._mouse("mouseReleased", entered["w"] / 2, entered["h"] * 0.15)
+    time.sleep(0.6)
+    page.click("Exit fullscreen")
+    time.sleep(2.5)
+    s = page.js(FS_STATE)
+    check("the on-screen exit button leaves fullscreen too",
+          entered and entered["landscape"] and s and not s["landscape"] and not s["boxFillsScreen"],
+          json.dumps({"entered": entered, "after": s}))
 
 
 for name, fn in [
