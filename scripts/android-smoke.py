@@ -370,6 +370,42 @@ def video():
           v and v["t"] > 2 and not v["paused"] and not v["error"], json.dumps(v))
 
 
+FS_STATE = """(() => {
+  const v = document.querySelector('video'); if (!v) return null;
+  const r = v.parentElement.getBoundingClientRect();
+  return { landscape: innerWidth > innerHeight, w: innerWidth, h: innerHeight,
+           boxFillsScreen: Math.round(r.width) === innerWidth && Math.round(r.height) === innerHeight,
+           fit: getComputedStyle(v).objectFit, playing: !v.paused, path: location.pathname };
+})()"""
+
+
+def fullscreen():
+    """Reported on a real phone: fullscreen zoomed the scene so far it was
+    unusable. Fullscreen must turn to landscape and show the whole picture,
+    and the back button must return to portrait on the same episode."""
+    # Controls hide 3 s after playback starts; a tap on the picture brings them back.
+    c = page.js("(() => { const r = document.querySelector('video').getBoundingClientRect();"
+                " return { x: r.left + r.width / 2, y: r.top + r.height * 0.15 }; })()")
+    page._mouse("mousePressed", c["x"], c["y"])
+    page._mouse("mouseReleased", c["x"], c["y"])
+    time.sleep(0.6)
+    page.click("Fullscreen")
+    time.sleep(3)
+    shot("video-fullscreen")
+    s = page.js(FS_STATE)
+    check("fullscreen turns the screen to landscape", s and s["landscape"], json.dumps(s))
+    check("fullscreen fills the screen with the whole picture (not zoomed)",
+          s and s["boxFillsScreen"] and s["fit"] == "contain", json.dumps(s))
+    check("the video keeps playing in fullscreen", s and s["playing"], json.dumps(s))
+    back()
+    time.sleep(2)
+    shot("video-after-fullscreen")
+    s = page.js(FS_STATE)
+    check("back leaves fullscreen: portrait again, still on the episode",
+          s and not s["landscape"] and not s["boxFillsScreen"] and s["path"].startswith("/episode/"),
+          json.dumps(s))
+
+
 for name, fn in [
     ("first launch", first_launch),
     ("setup", setup),
@@ -378,6 +414,7 @@ for name, fn in [
     ("close and reopen", survives_close),
     ("grown-up door", grown_up_door),
     ("video", video),
+    ("fullscreen", fullscreen),
 ]:
     step(name, fn)
 

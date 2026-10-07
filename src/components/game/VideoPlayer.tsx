@@ -2,6 +2,12 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useI18n } from '../../i18n/context';
 import { Play, Pause, Maximize, Minimize, Volume2, VolumeX, RotateCcw, RotateCw } from 'lucide-react';
+import { isNative } from '../../native/platform';
+import {
+  enterAppFullscreen, exitAppFullscreen, lockLandscapeOnWeb, unlockOrientationOnWeb,
+} from '../../native/fullscreen';
+import { useBackHandler } from '../../native/BackButton';
+import { REST_EVENT } from '../ui/restEvent';
 
 interface VideoPlayerProps {
   clips: string[];
@@ -62,12 +68,61 @@ export default function VideoPlayer({ clips, poster, onAllClipsEnded }: VideoPla
     setIsMuted(video.muted);
   };
 
+  // ── Fullscreen ──
+  // Android app: the app manages it (landscape, system bars hidden, whole
+  // picture shown) — see src/native/fullscreen.ts for why the web Fullscreen
+  // API cannot be used there. Website: the Fullscreen API, plus a landscape
+  // lock where the browser allows it. iPhone: Safari's own video player.
+  const leaveAppFullscreen = useCallback(() => {
+    setIsFullscreen(false);
+    void exitAppFullscreen();
+  }, []);
+
+  // In the app, back closes fullscreen rather than leaving the episode.
+  useBackHandler(isNative && isFullscreen, leaveAppFullscreen);
+
+  // Never leave the phone stuck in landscape: leaving the screen while in
+  // fullscreen (rest time, a crash of navigation, anything) turns it back.
+  const fullscreenRef = useRef(false);
+  fullscreenRef.current = isFullscreen;
+  useEffect(() => () => {
+    if (isNative && fullscreenRef.current) void exitAppFullscreen();
+  }, []);
+
+  // Play time is up: stop the video and leave fullscreen, so the rest screen
+  // is never drawn over a cartoon that is still talking.
+  useEffect(() => {
+    const onRest = () => {
+      videoRef.current?.pause();
+      setIsPlaying(false);
+      if (fullscreenRef.current) {
+        if (isNative) leaveAppFullscreen();
+        else void document.exitFullscreen?.().catch(() => {});
+      }
+    };
+    window.addEventListener(REST_EVENT, onRest);
+    return () => window.removeEventListener(REST_EVENT, onRest);
+  }, [leaveAppFullscreen]);
+
   const toggleFullscreen = async () => {
+    if (isNative) {
+      if (isFullscreen) {
+        leaveAppFullscreen();
+      } else {
+        setIsFullscreen(true);
+        await enterAppFullscreen();
+      }
+      setShowControls(true);
+      if (isPlaying) hideControlsDelayed();
+      return;
+    }
+
     const container = containerRef.current as (HTMLDivElement & { webkitRequestFullscreen?: () => void }) | null;
     const video = videoRef.current as (HTMLVideoElement & { webkitEnterFullscreen?: () => void }) | null;
     const doc = document as Document & { webkitFullscreenElement?: Element; webkitExitFullscreen?: () => void };
 
     if (doc.fullscreenElement || doc.webkitFullscreenElement) {
+      unlockOrientationOnWeb();
       if (doc.exitFullscreen) await doc.exitFullscreen().catch(() => {});
       else doc.webkitExitFullscreen?.();
       return;
@@ -76,6 +131,7 @@ export default function VideoPlayer({ clips, poster, onAllClipsEnded }: VideoPla
     // a blocked request would desync the icon)
     if (container?.requestFullscreen) {
       await container.requestFullscreen().catch(() => {});
+      await lockLandscapeOnWeb();
     } else if (container?.webkitRequestFullscreen) {
       // older Safari (iPad): prefixed element fullscreen
       container.webkitRequestFullscreen();
@@ -175,8 +231,10 @@ export default function VideoPlayer({ clips, poster, onAllClipsEnded }: VideoPla
     };
   }, [clips, getElapsedTime, getTotalDuration, onAllClipsEnded]);
 
-  // Fullscreen change listener (standard + webkit-prefixed for Safari)
+  // Fullscreen change listener (standard + webkit-prefixed for Safari).
+  // Website only: in the app, fullscreen state is the app's own.
   useEffect(() => {
+    if (isNative) return;
     const doc = document as Document & { webkitFullscreenElement?: Element };
     const handler = () => setIsFullscreen(!!(doc.fullscreenElement || doc.webkitFullscreenElement));
     document.addEventListener('fullscreenchange', handler);
@@ -237,15 +295,22 @@ export default function VideoPlayer({ clips, poster, onAllClipsEnded }: VideoPla
   return (
     <div
       ref={containerRef}
-      className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black shadow-[0_8px_32px_rgba(0,0,0,0.2)] cursor-pointer select-none"
+      className={
+        isFullscreen
+          ? // Whole screen, whole picture. z-[90] keeps it under the rest screen (z-[100]).
+            'fixed inset-0 z-[90] overflow-hidden bg-black cursor-pointer select-none'
+          : 'relative w-full aspect-video rounded-2xl overflow-hidden bg-black shadow-[0_8px_32px_rgba(0,0,0,0.2)] cursor-pointer select-none'
+      }
       onClick={handleTap}
     >
-      {/* Single video element — plays all clips sequentially, with sound */}
+      {/* Single video element — plays all clips sequentially, with sound.
+          In fullscreen the picture is CONTAINED, never cropped: "cover" on a
+          screen of a different shape zooms in and cuts the scene off. */}
       <video
         ref={videoRef}
         src={clips[0]}
         poster={poster}
-        className="absolute inset-0 w-full h-full object-cover"
+        className={`absolute inset-0 w-full h-full ${isFullscreen ? 'object-contain' : 'object-cover'}`}
         playsInline
         preload="auto"
       />
@@ -296,7 +361,7 @@ export default function VideoPlayer({ clips, poster, onAllClipsEnded }: VideoPla
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); togglePlay(); }}
-                aria-label={isPlaying ? 'Pause' : 'Play'}
+                aria-label={isPlaying ? t('a11y.pause') : t('a11y.play')}
                 className="pointer-events-auto w-16 h-16 bg-white/20 backdrop-blur-sm text-white rounded-full flex items-center justify-center hover:bg-white/30 transition-colors active:scale-90"
               >
                 {isPlaying
@@ -333,19 +398,21 @@ export default function VideoPlayer({ clips, poster, onAllClipsEnded }: VideoPla
                   {formatTime(getElapsedTime())} / {formatTime(totalDuration)}
                 </span>
                 <div className="flex items-center gap-1">
+                  {/* 48 px targets: the floor for small hands, and the way out
+                      of fullscreen must never be hard to hit. */}
                   <button
                     onClick={(e) => { e.stopPropagation(); toggleMute(); }}
-                    aria-label={isMuted ? 'Unmute' : 'Mute'}
-                    className="text-white/80 hover:text-white transition-colors p-1"
+                    aria-label={isMuted ? t('a11y.unmute') : t('a11y.mute')}
+                    className="w-12 h-12 -my-2 grid place-items-center text-white/85 hover:text-white transition-colors"
                   >
-                    {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                    {isMuted ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
                   </button>
                   <button
                     onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }}
-                    aria-label={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
-                    className="text-white/80 hover:text-white transition-colors p-1"
+                    aria-label={isFullscreen ? t('a11y.exitFullscreen') : t('a11y.fullscreen')}
+                    className="w-12 h-12 -my-2 -mr-2 grid place-items-center text-white/85 hover:text-white transition-colors"
                   >
-                    {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
+                    {isFullscreen ? <Minimize className="w-6 h-6" /> : <Maximize className="w-6 h-6" />}
                   </button>
                 </div>
               </div>

@@ -28,6 +28,7 @@ import { useFamily } from '../../hooks/useFamily';
 import { isGrownUpPath } from './lanes';
 import { useSystemBars } from '../../native/systemBars';
 import { SAFE_BOTTOM } from '../../native/safeArea';
+import { REST_EVENT } from './restEvent';
 
 export const SESSION_KEY = 'kina-wige-session';
 
@@ -76,6 +77,10 @@ export default function SessionGuard() {
   function beginRest() {
     const now = Date.now();
     save({ playedMs: 0, lastTick: now, restUntil: now + REST_MS });
+    // Silence first: the rest screen must never sit over a video that is still
+    // playing. The player also leaves fullscreen when it hears REST_EVENT.
+    document.querySelectorAll('video, audio').forEach((m) => (m as HTMLMediaElement).pause());
+    window.dispatchEvent(new Event(REST_EVENT));
     setResting(true);
   }
 
