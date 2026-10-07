@@ -7,8 +7,8 @@ import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../../i18n/context';
 import Kina from '../characters/Kina';
+import { stickerImage } from '../../data/stickers';
 import type { StickerInfo } from '../../data/stickers';
-import { FRIEND_ART } from './art/Friends';
 
 const SPRING = { type: 'spring' as const, stiffness: 900, damping: 34, mass: 0.5 };
 
@@ -28,7 +28,6 @@ interface GameCelebrationProps {
 function EarnedSticker({ sticker, isNew }: { sticker: StickerInfo; isNew: boolean }) {
   const navigate = useNavigate();
   const { t, language } = useI18n();
-  const Art = FRIEND_ART[sticker.id];
   return (
     <motion.button
       onClick={() => navigate('/stickers')}
@@ -40,9 +39,7 @@ function EarnedSticker({ sticker, isNew }: { sticker: StickerInfo; isNew: boolea
       style={{ background: '#FFFFFF', boxShadow: '0 6px 0 #0B2A1D' }}
     >
       <span className="rounded-[16px] grid place-items-center" style={{ width: 72, height: 72, background: sticker.tone }}>
-        <svg viewBox="-50 -50 100 100" style={{ width: 62, height: 62 }} aria-hidden>
-          {Art && <Art />}
-        </svg>
+        <img src={stickerImage(sticker.id)} alt="" draggable={false} style={{ width: 58, height: 58 }} />
       </span>
       <span className="text-left">
         <span className="block font-body font-black text-[12px] tracking-[.08em] uppercase" style={{ color: '#2FBF6B' }}>

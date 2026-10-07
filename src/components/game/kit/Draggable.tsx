@@ -9,7 +9,7 @@
 //     Going home is a soft spring, never a buzz — "failure teaches" (standard §3)
 //   • pointer capture, so a finger that slides off the item keeps dragging it
 
-import { animate, motion, useMotionValue } from 'motion/react';
+import { animate, useMotionValue } from 'motion/react';
 import { useEffect, useRef } from 'react';
 import type { ReactNode, PointerEvent as ReactPointerEvent } from 'react';
 import { useStage } from './Stage';
@@ -127,9 +127,22 @@ export default function Draggable({
     }
   };
 
+  // Position and size go on the transform ATTRIBUTE, scaled about 0,0 — the
+  // item's centre. Motion's own SVG scale pivots on the bounding box, and a
+  // jigsaw piece's box is the whole picture behind its clip, so tray pieces
+  // drew far from where the game thought they were (seen on Android 12).
+  const ref = useRef<SVGGElement>(null);
+  useEffect(() => {
+    const set = () => ref.current?.setAttribute('transform', `translate(${x.get()} ${y.get()}) scale(${scale.get()})`);
+    set();
+    const off = [x.on('change', set), y.on('change', set), scale.on('change', set)];
+    return () => off.forEach((f) => f());
+  }, [x, y, scale]);
+
   return (
-    <motion.g
-      style={{ x, y, scale, cursor: disabled ? 'default' : 'grab' }}
+    <g
+      ref={ref}
+      style={{ cursor: disabled ? 'default' : 'grab' }}
       onPointerDown={down}
       onPointerMove={move}
       onPointerUp={up}
@@ -139,7 +152,7 @@ export default function Draggable({
     >
       {grabRadius > 0 && <circle r={grabRadius} fill="transparent" />}
       {children}
-    </motion.g>
+    </g>
   );
 }
 

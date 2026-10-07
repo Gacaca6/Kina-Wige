@@ -177,9 +177,9 @@ dead ends, and bananas to collect and count on the way.
 | Andika | `andika` | 1 watch→trace · 2 +faint trace · 3 +write from memory | `snd.write.trace` (letters), `phy.fine.control` |
 | Imiterere n'Amabara | `imiterere` | 30 levels: shapes → colours → both → leaves → more | `num.sort.one` / `num.sort.two` per drop; `num.shape.name` parent-marked |
 | Teranya Ishusho | `teranya` | 4 / 6 / 9 / 12 pieces, 6 Rwandan pictures | `num.shape.build` per puzzle |
-| Shaka Inzira | `inzira` | 1 one road · 2 maze · 3 big maze + bananas | `phy.fine.control` per maze |
+| Shaka Inzira | `inzira` | 6 levels: one road (3×4) → mazes up to 7×9, bananas from level 4, home at the far end of the longest road from level 5 | `phy.fine.control` per maze |
 | Siga Amabara | `siga` | open-ended, 6 pictures, 11 colours, "my pictures" | none on screen; `art.colour.name` parent-marked |
-| Sticker book | `/stickers` | 20 stickers, accumulate-only | — |
+| Sticker book | `/stickers` | 20 stickers (Microsoft Fluent Emoji 3D, MIT, bundled offline), accumulate-only | — |
 
 The kit lives in `src/components/game/kit/` (Stage, Draggable, GhostHand,
 Bursts, GameFrame, hooks) and the art in `src/components/game/art/`. The

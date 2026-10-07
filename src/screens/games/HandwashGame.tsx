@@ -339,13 +339,16 @@ function FoamBubble({ foam, x, y, r, at }: { foam: MotionValue<number>; x: numbe
   );
 }
 
-function Halo({ at, r = 62 }: { at: Pt; r?: number }) {
+function Halo({ at, r = 62, ring = false }: { at: Pt; r?: number; ring?: boolean }) {
   return (
     <motion.circle
       cx={at.x}
       cy={at.y}
       r={r}
-      fill="#FFF3B0"
+      fill={ring ? 'none' : '#FFF3B0'}
+      stroke={ring ? '#FFE07A' : 'none'}
+      strokeWidth={ring ? 9 : 0}
+      strokeDasharray={ring ? '14 10' : undefined}
       opacity={0.6}
       style={{ pointerEvents: 'none', transformOrigin: `${at.x}px ${at.y}px`, transformBox: 'view-box' }}
       animate={{ scale: [0.85, 1.08, 0.85], opacity: [0.35, 0.75, 0.35] }}
@@ -634,8 +637,6 @@ function WashScene({ level, moment, onStepDone, onFinished, onMood }: SceneProps
       <StationFrame tilt={tilt} />
       <Jerrycan tilt={tilt} />
 
-      {level === 1 && step === 'water' && <Halo at={{ x: WASH.pedal.x + 20, y: WASH.pedal.y - 4 }} r={56} />}
-      {level === 1 && step === 'rinse' && <Halo at={{ x: WASH.pedal.x + 20, y: WASH.pedal.y - 4 }} r={56} />}
       {level === 1 && step === 'soap' && <Halo at={WASH.soapHome} r={50} />}
       {level === 1 && step === 'dry' && <Halo at={WASH.towelHome} r={66} />}
       {level === 1 && step === 'scrub' && <Halo at={{ x: WASH.hands.x, y: WASH.hands.y - 20 }} r={110} />}
@@ -696,6 +697,11 @@ function WashScene({ level, moment, onStepDone, onFinished, onMood }: SceneProps
       ))}
 
       <WaterStream flow={flow} />
+
+      {/* the pedal sits low between the arms: its glow is a ring drawn on top */}
+      {level === 1 && (step === 'water' || step === 'rinse') && (
+        <Halo at={{ x: WASH.pedal.x - 5, y: WASH.pedal.y + 2 }} r={60} ring />
+      )}
 
       {/* the rub area: invisible, generous */}
       <ellipse

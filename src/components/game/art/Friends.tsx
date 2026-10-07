@@ -3,10 +3,9 @@
 // gradients. Every drawing sits in a 100 × 100 box centred on 0,0 (-50..50),
 // so a game places it with one translate/scale.
 //
-// Used as stickers, as maze characters and goals, and inside puzzle scenes —
-// one library, so the whole app looks like one hand drew it.
-
-import type { ReactNode } from 'react';
+// Used as maze characters and goals and inside puzzle scenes — one library,
+// so the games look like one hand drew them. (Stickers are Microsoft's Fluent
+// Emoji — see src/data/stickers.ts.)
 
 export const INK = '#10241B';
 
@@ -393,28 +392,3 @@ export function Flower() {
     </g>
   );
 }
-
-// ── Registry ────────────────────────────────────────────────────────────────
-
-export const FRIEND_ART: Record<string, () => ReactNode> = {
-  cow: Cow,
-  goat: Goat,
-  chicken: Chicken,
-  gorilla: Gorilla,
-  crane: Crane,
-  elephant: Elephant,
-  lion: Lion,
-  zebra: Zebra,
-  fish: Fish,
-  basket: Basket,
-  drum: Drum,
-  banana: Banana,
-  avocado: Avocado,
-  pineapple: Pineapple,
-  churn: Churn,
-  bicycle: Bicycle,
-  house: House,
-  sun: SunFace,
-  mango: Mango,
-  flower: Flower,
-};

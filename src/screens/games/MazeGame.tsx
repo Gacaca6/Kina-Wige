@@ -7,8 +7,13 @@
 // and the character keeps going for you.
 //
 //   level 1  one winding road, no dead ends (age 3)
-//   level 2  a real maze with a few dead ends
-//   level 3  a bigger maze, with bananas to collect and count on the way
+//   level 2  a small maze with a few dead ends
+//   level 3  a bigger maze, more turns
+//   level 4  bigger again, with bananas to collect and count on the way
+//   level 5  a large maze; home is the far end of the longest road
+//   level 6  the largest: more bananas, home at the far end
+// The level starts from the child's age and climbs after two clean mazes in
+// a row (useAdaptiveLevel), so the maze grows with the child.
 //
 // A sitting is three mazes, each a different animal and home.
 
@@ -37,12 +42,23 @@ const W = 400;
 const H = 600;
 const MAZES_PER_SITTING = 3;
 
-const SIZES: Record<number, [number, number]> = { 1: [3, 4], 2: [4, 5], 3: [5, 7] };
+const MAX_LEVEL = 6;
+
+/** Size (cols, rows), bananas (fewest, most), and whether home is at the far end of the longest road. */
+const LEVELS: Record<number, { size: [number, number]; bananas: [number, number]; far: boolean }> = {
+  1: { size: [3, 4], bananas: [0, 0], far: false },
+  2: { size: [4, 5], bananas: [0, 0], far: false },
+  3: { size: [5, 6], bananas: [0, 0], far: false },
+  4: { size: [5, 7], bananas: [3, 4], far: false },
+  5: { size: [6, 8], bananas: [4, 5], far: true },
+  6: { size: [7, 9], bananas: [5, 6], far: true },
+};
 
 function startLevel(age: Age): number {
   if (age === 3) return 1;
-  if (age === 6) return 3;
-  return 2;
+  if (age === 4) return 2;
+  if (age === 5) return 3;
+  return 4;
 }
 
 // ── Maze generation ──────────────────────────────────────────────────────────
@@ -91,7 +107,9 @@ function makeMaze(cols: number, rows: number, level: number): Maze {
     stack.push([r + d.dr, c + d.dc]);
   }
   const start: [number, number] = [rows - 1, 0];
-  const goal: [number, number] = [0, cols - 1];
+  // Bigger levels put home at the cell furthest from the start along the
+  // road — the longest walk the maze has, with the most turns to choose.
+  const goal: [number, number] = LEVELS[level].far ? furthest(open, rows, cols, start) : [0, cols - 1];
   const solution = solve(open, rows, cols, start, goal);
 
   let road = Array.from({ length: rows }, () => Array(cols).fill(true) as boolean[]);
@@ -114,13 +132,38 @@ function makeMaze(cols: number, rows: number, level: number): Maze {
   }
 
   let bananas: [number, number][] = [];
-  if (level === 3) {
+  const [fewest, most] = LEVELS[level].bananas;
+  if (most > 0) {
     const cells: [number, number][] = [];
     for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) cells.push([r, c]);
     const free = cells.filter(([r, c]) => !(r === start[0] && c === start[1]) && !(r === goal[0] && c === goal[1]));
-    bananas = shuffle(free).slice(0, 3 + Math.floor(Math.random() * 3));
+    bananas = shuffle(free).slice(0, fewest + Math.floor(Math.random() * (most - fewest + 1)));
   }
   return { cols, rows, open, road, start, goal, solution, bananas };
+}
+
+/** The cell with the longest road from start. */
+function furthest(open: number[][], rows: number, cols: number, start: [number, number]): [number, number] {
+  const dist = new Map<string, number>([[`${start[0]},${start[1]}`, 0]]);
+  const queue: [number, number][] = [start];
+  let best = start;
+  let bestD = 0;
+  while (queue.length) {
+    const [r, c] = queue.shift()!;
+    const d = dist.get(`${r},${c}`)!;
+    if (d > bestD) {
+      best = [r, c];
+      bestD = d;
+    }
+    for (const dir of DIRS) {
+      if (!(open[r][c] & dir.bit)) continue;
+      const k = `${r + dir.dr},${c + dir.dc}`;
+      if (dist.has(k)) continue;
+      dist.set(k, d + 1);
+      queue.push([r + dir.dr, c + dir.dc]);
+    }
+  }
+  return best;
 }
 
 function solve(open: number[][], rows: number, cols: number, start: [number, number], goal: [number, number]) {
@@ -215,7 +258,7 @@ const THEMES: Theme[] = [
 export default function MazeGame() {
   const { language } = useI18n();
   const info = games.find((g) => g.id === 'inzira');
-  const { level, report } = useAdaptiveLevel('inzira', 3, startLevel);
+  const { level, report } = useAdaptiveLevel('inzira', MAX_LEVEL, startLevel);
   const { play } = useSound();
   const haptic = useHaptic();
   const { addStar } = useStars();
@@ -287,10 +330,10 @@ function MazeRound({ level, theme, onDone, onMood }: { level: number; theme: The
   const { record } = useSkillEvidence();
   const { bursts, burst } = useBursts();
 
-  const [cols, rows] = SIZES[level];
+  const [cols, rows] = LEVELS[level].size;
   const maze = useMemo(() => makeMaze(cols, rows, level), [cols, rows, level]);
 
-  const top = level === 3 ? 76 : 24;
+  const top = LEVELS[level].bananas[1] > 0 ? 76 : 24;
   const cell = Math.min((W - 30) / cols, (H - top - 16) / rows);
   const x0 = (W - cell * cols) / 2;
   const y0 = top + (H - top - 16 - cell * rows) / 2;
@@ -485,7 +528,7 @@ function MazeRound({ level, theme, onDone, onMood }: { level: number; theme: The
       {/* where the animal has walked */}
       <path d={trailPath} fill="none" stroke="#C9A061" strokeWidth={cell * 0.14} strokeLinecap="round" strokeLinejoin="round" strokeDasharray={`1 ${cell * 0.28}`} />
 
-      {/* bananas to collect (level 3) and the counter */}
+      {/* bananas to collect (level 4 up) and the counter */}
       {maze.bananas.map(([r, c]) => {
         const k = `${r},${c}`;
         const p = center(r, c);

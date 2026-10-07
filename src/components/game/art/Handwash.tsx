@@ -231,13 +231,15 @@ export function Hands() {
 export function Mud({ amount }: { amount: MotionValue<number> }) {
   const { x, y } = WASH.hands;
   return (
-    <motion.g style={{ opacity: amount }} fill="#6B4423" aria-hidden>
-      <path d={`M${x - 80} ${y - 20} q10 -12 22 -4 q10 10 -2 18 q-14 6 -20 -14 z`} />
-      <path d={`M${x + 50} ${y - 40} q14 -6 18 8 q2 12 -12 12 q-12 -4 -6 -20 z`} />
-      <path d={`M${x - 30} ${y + 20} q12 -8 20 2 q4 12 -10 12 q-12 -2 -10 -14 z`} />
-      <path d={`M${x + 70} ${y + 10} q10 -4 14 6 q0 10 -10 8 q-8 -2 -4 -14 z`} />
-      <circle cx={x - 58} cy={y - 66} r={6} />
-      <circle cx={x + 30} cy={y - 78} r={5} />
+    // Grey-brown clay with a dark edge: reads as mud on any skin tone.
+    <motion.g style={{ opacity: amount }} fill="#8C7B62" stroke="#4A3B28" strokeWidth={2.5} aria-hidden>
+      <path d={`M${x - 66} ${y - 34} q12 -14 26 -4 q12 12 -2 22 q-16 6 -24 -18 z`} />
+      <path d={`M${x + 34} ${y - 46} q16 -6 20 10 q2 14 -14 14 q-14 -4 -6 -24 z`} />
+      <path d={`M${x - 40} ${y + 6} q14 -8 22 2 q4 14 -12 14 q-14 -2 -10 -16 z`} />
+      <path d={`M${x + 46} ${y + 2} q12 -4 16 8 q0 12 -12 10 q-10 -2 -4 -18 z`} />
+      <circle cx={x - 62} cy={y - 86} r={7} />
+      <circle cx={x + 40} cy={y - 96} r={6} />
+      <circle cx={x - 20} cy={y - 40} r={5} />
     </motion.g>
   );
 }

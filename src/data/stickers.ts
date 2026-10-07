@@ -7,8 +7,15 @@
 // adds a copy to one they have ("×2"), which is still something.
 //
 // Kinyarwanda names are machine-written — ROADMAP §Human-review queue.
+//
+// The pictures are Microsoft's Fluent Emoji (3D), MIT licence — see
+// public/stickers/LICENSE-fluentui-emoji.txt, which ships with them. Bundled
+// in the app as small WebP files, so the book works offline.
 
 import type { Language } from '../i18n/translations';
+
+/** The sticker's picture, served from public/stickers/. */
+export const stickerImage = (id: string) => `/stickers/${id}.webp`;
 
 export interface StickerInfo {
   id: string;
@@ -22,8 +29,8 @@ export const STICKERS: StickerInfo[] = [
   { id: 'banana', name: { KN: 'Umuneke', EN: 'Banana', FR: 'Banane' }, tone: '#FFF4D6' },
   { id: 'drum', name: { KN: 'Ingoma', EN: 'Drum', FR: 'Tambour' }, tone: '#FDE8DF' },
   { id: 'gorilla', name: { KN: 'Ingagi', EN: 'Gorilla', FR: 'Gorille' }, tone: '#E3F2FD' },
-  { id: 'basket', name: { KN: 'Agaseke', EN: 'Peace basket', FR: 'Panier de la paix' }, tone: '#F3E9FF' },
-  { id: 'crane', name: { KN: 'Umusambi', EN: 'Crowned crane', FR: 'Grue couronnée' }, tone: '#E7F7EE' },
+  { id: 'hippo', name: { KN: 'Imvubu', EN: 'Hippo', FR: 'Hippopotame' }, tone: '#F3E9FF' },
+  { id: 'giraffe', name: { KN: 'Umusumbashyamba', EN: 'Giraffe', FR: 'Girafe' }, tone: '#E7F7EE' },
   { id: 'goat', name: { KN: 'Ihene', EN: 'Goat', FR: 'Chèvre' }, tone: '#FFF4D6' },
   { id: 'avocado', name: { KN: 'Avoka', EN: 'Avocado', FR: 'Avocat' }, tone: '#FDE8DF' },
   { id: 'elephant', name: { KN: 'Inzovu', EN: 'Elephant', FR: 'Éléphant' }, tone: '#E3F2FD' },
@@ -32,7 +39,7 @@ export const STICKERS: StickerInfo[] = [
   { id: 'pineapple', name: { KN: 'Inanasi', EN: 'Pineapple', FR: 'Ananas' }, tone: '#FFF4D6' },
   { id: 'lion', name: { KN: 'Intare', EN: 'Lion', FR: 'Lion' }, tone: '#FDE8DF' },
   { id: 'fish', name: { KN: 'Ifi', EN: 'Fish', FR: 'Poisson' }, tone: '#E3F2FD' },
-  { id: 'churn', name: { KN: 'Igisabo', EN: 'Milk gourd', FR: 'Gourde à lait' }, tone: '#F3E9FF' },
+  { id: 'milk', name: { KN: 'Amata', EN: 'Milk', FR: 'Lait' }, tone: '#F3E9FF' },
   { id: 'zebra', name: { KN: 'Imparage', EN: 'Zebra', FR: 'Zèbre' }, tone: '#E7F7EE' },
   { id: 'mango', name: { KN: 'Umwembe', EN: 'Mango', FR: 'Mangue' }, tone: '#FFF4D6' },
   { id: 'bicycle', name: { KN: 'Igare', EN: 'Bicycle', FR: 'Vélo' }, tone: '#FDE8DF' },

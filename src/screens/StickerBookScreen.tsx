@@ -8,8 +8,7 @@
 import { motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import { KidShell } from '../components/ui/Shell';
-import { STICKERS } from '../data/stickers';
-import { FRIEND_ART } from '../components/game/art/Friends';
+import { STICKERS, stickerImage } from '../data/stickers';
 import { useStickers } from '../hooks/useStickers';
 import { useI18n } from '../i18n/context';
 
@@ -28,7 +27,6 @@ export default function StickerBookScreen() {
       <div className="px-4 py-5 grid grid-cols-3 gap-3">
         {STICKERS.map((s, i) => {
           const n = count(s.id);
-          const Art = FRIEND_ART[s.id];
           return (
             <motion.div
               key={s.id}
@@ -42,13 +40,12 @@ export default function StickerBookScreen() {
                 transform: n ? `rotate(${(i % 3) - 1}deg)` : undefined,
               }}
             >
-              <svg
-                viewBox="-50 -50 100 100"
-                style={{ width: '82%', aspectRatio: '1 / 1', height: 'auto', filter: n ? undefined : 'brightness(0) opacity(0.13)' }}
-                aria-hidden
-              >
-                {Art && <Art />}
-              </svg>
+              <img
+                src={stickerImage(s.id)}
+                alt=""
+                draggable={false}
+                style={{ width: '78%', height: 'auto', display: 'block', filter: n ? undefined : 'brightness(0) opacity(0.13)' }}
+              />
               <span
                 className="font-display font-extrabold text-center leading-tight mt-1"
                 style={{ fontSize: 13, color: n ? '#17543C' : 'transparent', minHeight: 32 }}

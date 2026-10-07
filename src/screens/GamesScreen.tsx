@@ -11,8 +11,7 @@ import { games } from '../data/games';
 import { useI18n } from '../i18n/context';
 import { useProgress } from '../hooks/useProgress';
 import { useStickers } from '../hooks/useStickers';
-import { STICKERS } from '../data/stickers';
-import { FRIEND_ART } from '../components/game/art/Friends';
+import { STICKERS, stickerImage } from '../data/stickers';
 
 /* Subject colours from the system — one per game, stable so children learn them. */
 const TONES = [
@@ -43,14 +42,11 @@ export default function GamesScreen() {
         >
           <span className="flex -space-x-3 flex-none" aria-hidden>
             {STICKERS.slice(0, 3).map((s, i) => {
-              const Art = FRIEND_ART[s.id];
               const have = count(s.id) > 0;
               return (
                 <span key={s.id} className="rounded-[14px] grid place-items-center border-[3px] border-white"
                   style={{ width: 52, height: 52, background: have ? s.tone : '#EFEBE1', transform: `rotate(${(i - 1) * 8}deg)` }}>
-                  <svg viewBox="-50 -50 100 100" style={{ width: 42, height: 42, filter: have ? undefined : 'brightness(0) opacity(0.15)' }}>
-                    {Art && <Art />}
-                  </svg>
+                  <img src={stickerImage(s.id)} alt="" draggable={false} style={{ width: 40, height: 40, filter: have ? undefined : 'brightness(0) opacity(0.15)' }} />
                 </span>
               );
             })}
