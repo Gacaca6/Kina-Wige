@@ -183,8 +183,9 @@ for cut in (6.62, 10.62, 13.62):
 for t in (7.18, 11.18, 14.18):
     place(dry, mallet(86, 1.2), t, 0.12, pan=-0.25, send=0.45)
     place(dry, pop(1100, 420), t, 0.05)
-for t in []:                                               # puzzle snaps, set once the footage timing is known
-    place(dry, pop(700, 250), t, 0.10)
+for i, t in enumerate([14.26, 14.96, 15.66, 16.37]):       # puzzle pieces snapping in (index.html CLIPS.teranya)
+    place(dry, pop(700, 250), t, 0.09)
+    place(dry, mallet([79, 83, 86, 91][i], 0.9), t, 0.08, pan=0.2, send=0.4)
 
 # Outro (17 s): the G chord rings, the groove eases out, a last bell at 19 s.
 place(dry, air(0.7, 2500, 12000), 16.35, 0.035, send=0.4)
