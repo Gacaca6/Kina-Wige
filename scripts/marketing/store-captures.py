@@ -53,13 +53,12 @@ def demo_status_bar() -> None:
     demo("clock", "-e", "hhmm", "0941")
     demo("battery", "-e", "level", "100", "-e", "plugged", "false")
     demo("network", "-e", "wifi", "show", "-e", "level", "4", "-e", "fully", "true")
-    demo("network", "-e", "mobile", "show", "-e", "level", "4", "-e", "datatype", "none")
+    demo("network", "-e", "mobile", "hide")
     demo("notifications", "-e", "visible", "false")
 
 
-def shot(name: str) -> None:
-    demo_status_bar()
-    time.sleep(0.8)
+def shot(name: str, settle: float = 0.4) -> None:
+    time.sleep(settle)
     png = subprocess.run(["adb", "exec-out", "screencap", "-p"], capture_output=True, timeout=60).stdout
     with open(os.path.join(OUT, f"{name}.png"), "wb") as f:
         f.write(png)
@@ -225,6 +224,7 @@ adb("shell", "am", "start", "-W", "-n", ACTIVITY)
 page = Page()
 page.attach()
 time.sleep(4)
+demo_status_bar()
 
 
 def home():
@@ -234,9 +234,16 @@ def home():
 
 def episode():
     goto(page, "/episode/bayi-bayi-ingona", wait=4)
-    page.js("""(async () => { const v = document.querySelector('video'); if (!v) return false;
-      v.muted = true; v.currentTime = 24; try { await v.play(); } catch (e) {} return true; })()""")
-    time.sleep(5)  # controls fade away after playback starts
+    # A real tap on the play overlay, as a child would; then let the controls fade.
+    c = page.js("""(() => { const el = [...document.querySelectorAll('button,div,span,p')]
+        .filter(e => (e.innerText || '').trim() === 'Kanda urebe!').pop();
+      if (!el) return null; const r = el.getBoundingClientRect();
+      return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; })()""")
+    if c:
+        page.tap(c["x"], c["y"])
+    time.sleep(3)
+    page.js("(() => { const v = document.querySelector('video'); if (v) { v.muted = true; v.currentTime = 24; } return true; })()")
+    time.sleep(5)
     shot("episode")
 
 
@@ -254,8 +261,7 @@ def karaba():
     # Rub part of the way: foam building, some germs still there, the ring half full.
     rub = [at(140 + (150 if i % 2 else 0), 360 + (i % 4) * 12) for i in range(26)]
     page.drag(rub, step_s=0.04)
-    time.sleep(0.9)
-    shot("karaba")
+    shot("karaba", settle=0.25)
 
 
 def andika():
@@ -332,7 +338,7 @@ def siga():
     page.click_label("Inka")
     time.sleep(1.2)
     at = page.stage("0 0 360 360")
-    for colour, (x, y) in [("Ubururu bwerurutse", (40, 40)), ("Icyatsi kibisi", (30, 330)), ("Umuhondo", (58, 58)),
+    for colour, (x, y) in [("Ubururu bwerurutse", (200, 30)), ("Icyatsi kibisi", (30, 330)), ("Umuhondo", (58, 58)),
                            ("Ikigina", (170, 230)), ("Umweru", (140, 210)), ("Iroza", (282, 178)),
                            ("Ikigina", (282, 130)), ("Umuhondo", (240, 60)), ("Umuhondo", (326, 60))]:
         page.click_label(colour)
