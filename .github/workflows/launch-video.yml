@@ -1,0 +1,76 @@
+name: Launch video
+
+# Marketing only (marketing branch). Builds the web app, records frame-exact
+# gameplay footage with scripts/marketing/web-footage.py, then renders the
+# launch video composition in marketing/launch-video/. Nothing here ships in
+# the app; outputs are downloadable artifacts.
+
+on:
+  push:
+    branches: [marketing]
+    paths:
+      - "scripts/marketing/web-footage.py"
+      - "marketing/launch-video/**"
+      - ".github/workflows/launch-video.yml"
+  workflow_dispatch:
+
+jobs:
+  video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          pip install websocket-client numpy
+          google-chrome --version
+
+      - name: Build the web app
+        run: |
+          npm ci
+          npx vite build
+
+      - name: Record gameplay footage
+        run: |
+          npx vite preview --port 4188 --strictPort > preview.log 2>&1 &
+          for i in $(seq 1 60); do curl -sf http://127.0.0.1:4188/ >/dev/null && break; sleep 1; done
+          python3 scripts/marketing/web-footage.py http://127.0.0.1:4188 footage
+          mkdir -p previews
+          for d in footage/*/; do
+            n=$(basename "$d")
+            ffmpeg -v error -y -framerate 30 -i "$d%05d.jpg" -vf scale=540:-2 -c:v libx264 -crf 22 -pix_fmt yuv420p "previews/footage-$n.mp4"
+          done
+
+      - name: Render the launch video
+        if: hashFiles('marketing/launch-video/render.py') != ''
+        run: python3 marketing/launch-video/render.py footage out
+
+      - name: Upload footage previews
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: footage-previews
+          path: previews/
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Upload launch video
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: launch-video
+          path: out/
+          if-no-files-found: ignore
+          retention-days: 14
