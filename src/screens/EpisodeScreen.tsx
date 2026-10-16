@@ -67,7 +67,12 @@ export default function EpisodeScreen() {
             className="font-body font-black px-4 py-2 rounded-[14px] flex items-center gap-2"
             style={{ fontSize: 13, background: '#EFEBE1', color: '#6B7F73' }}
           >
-            ⭳ {language === 'KN' ? 'Iri kuri telefone' : language === 'FR' ? 'Sur ce téléphone' : 'Saved on this phone'}
+            {/* Drawn, not a text glyph: "⭳" has no font on Android and showed as an empty box. */}
+            <svg viewBox="0 0 24 24" style={{ width: 15, height: 15 }} fill="none" stroke="currentColor"
+              strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M12 4v11M7 10l5 5 5-5M5 20h14" />
+            </svg>
+            {language === 'KN' ? 'Iri kuri telefone' : language === 'FR' ? 'Sur ce téléphone' : 'Saved on this phone'}
           </span>
           {watched && (
             <span
