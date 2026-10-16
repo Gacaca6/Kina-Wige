@@ -347,9 +347,99 @@ def siga():
     shot("siga")
 
 
+# ── Gameplay clips for the launch video ─────────────────────────────────────
+
+def record(name: str, seconds: int, actions) -> None:
+    """Screen-record the real app while `actions` plays it, then pull the MP4."""
+    remote = f"/sdcard/{name}.mp4"
+    adb("shell", "rm", "-f", remote, check=False)
+    rec = subprocess.Popen(["adb", "shell", "screenrecord", "--bit-rate", "12000000",
+                            "--time-limit", str(seconds), remote])
+    time.sleep(0.8)
+    try:
+        actions()
+    finally:
+        rec.wait(timeout=seconds + 30)
+    time.sleep(1.5)
+    adb("pull", remote, os.path.join(OUT, f"{name}.mp4"), timeout=120)
+    log.append(f"recorded {name}")
+    print("recorded", name, flush=True)
+
+
+def clip_karaba():
+    goto(page, "/game/karaba", extra_local={"kina-wige-game-levels": {"karaba": {"level": 2, "up": 0, "down": 0}}})
+    page.click_label("Tangira gukina")
+    time.sleep(1.2)
+    at = page.stage("0 0 400 600")
+
+    def play():
+        time.sleep(0.6)
+        page.tap(*at(225, 548))                       # water
+        time.sleep(2.6)
+        sx, sy = at(334, 340)
+        hx, hy = at(215, 395)
+        page.drag([(sx, sy)] + [(sx + (hx - sx) * i / 16, sy + (hy - sy) * i / 16) for i in range(1, 17)], step_s=0.03)
+        time.sleep(1.4)
+        rub = [at(140 + (150 if i % 2 else 0), 360 + (i % 4) * 12) for i in range(70)]
+        page.drag(rub, step_s=0.05)                   # scrub: germs pop, the ring fills
+        time.sleep(1.2)
+    record("clip-karaba", 15, play)
+
+
+def clip_andika():
+    goto(page, "/game/andika", extra_local={"kina-wige-game-levels": {"andika": {"level": 1, "up": 0, "down": 0}}})
+    page.click_label("a e i o u")
+
+    def play():
+        time.sleep(6.2)                               # Kina's pencil writes "a"
+        at = page.stage("0 0 400 590")
+        for d in ["M69 52 A22 22 0 1 0 69 74", "M72 41 V85"]:
+            pts = page.js(f"""(() => {{ const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+              p.setAttribute('d', {json.dumps(d)}); const s = document.querySelector('svg[viewBox="0 0 400 590"]');
+              s.appendChild(p); const L = p.getTotalLength(); const out = [];
+              for (let i = 0; i <= 50; i++) {{ const q = p.getPointAtLength(L * i / 50); out.push([q.x, q.y]); }}
+              p.remove(); return out; }})()""")
+            page.drag([at(50 + 3 * gx, 24 + 3 * gy) for gx, gy in pts], step_s=0.035)
+            time.sleep(0.5)
+        time.sleep(2.0)                               # the letter turns gold
+    record("clip-andika", 16, play)
+
+
+def clip_teranya():
+    goto(page, "/game/teranya", extra_local={"kina-wige-game-levels": {"teranya": {"level": 1, "up": 0, "down": 0}}})
+    page.click_label("Inka ku musozi")
+    time.sleep(1.5)
+    at = page.stage("0 0 400 600")
+
+    def play():
+        time.sleep(0.5)
+        for _ in range(4):
+            info = page.js("""(() => [...document.querySelectorAll('g[clip-path^="url(#kw-piece-"]')].map(g => {
+                const id = Number(g.getAttribute('clip-path').match(/kw-piece-(\\d+)/)[1]);
+                const t = g.parentElement.parentElement.getAttribute('transform') || '';
+                const m = /translate\\(([-\\d.]+)[ ,]+([-\\d.]+)\\)/.exec(t);
+                return { id, x: m ? Number(m[1]) : null, y: m ? Number(m[2]) : null };
+              }))()""")
+            cols = 2 if len(info) == 4 else 3
+            rows = len(info) // cols
+            pw, ph = 360 / cols, 270 / rows
+            for p in info:
+                c, r = p["id"] % cols, p["id"] // cols
+                tx, ty = 20 + c * pw + pw / 2, 16 + r * ph + ph / 2
+                if p["x"] is None or abs(p["x"] - tx) + abs(p["y"] - ty) < 2:
+                    continue
+                a, b = at(p["x"], p["y"]), at(tx, ty)
+                page.drag([a] + [(a[0] + (b[0] - a[0]) * i / 14, a[1] + (b[1] - a[1]) * i / 14) for i in range(1, 15)], step_s=0.03)
+                time.sleep(0.6)
+                break
+        time.sleep(3.5)                               # the picture comes alive
+    record("clip-teranya", 12, play)
+
+
 for name, fn in [("home", home), ("episode", episode), ("karaba", karaba), ("andika", andika),
                  ("teranya", teranya), ("stickers", stickers), ("parents", parents), ("rest", rest),
-                 ("inzira", inzira), ("imiterere", imiterere), ("siga", siga)]:
+                 ("inzira", inzira), ("imiterere", imiterere), ("siga", siga),
+                 ("clip-karaba", clip_karaba), ("clip-andika", clip_andika), ("clip-teranya", clip_teranya)]:
     scene(name, fn)
 
 with open(os.path.join(OUT, "captures.log"), "w", encoding="utf-8") as f:
