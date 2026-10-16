@@ -10,7 +10,7 @@ on:
   push:
     branches: [marketing]
     paths:
-      - "scripts/marketing/**"
+      - "scripts/marketing/store-captures.py"
       - ".github/workflows/store-captures.yml"
   workflow_dispatch:
 

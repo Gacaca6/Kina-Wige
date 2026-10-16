@@ -301,7 +301,9 @@ def open_take(c: Chrome, name: str, path: str, extra: dict | None = None) -> Tak
     store.update(extra or {})
     sets = "".join(f"localStorage.setItem({json.dumps(k)}, {json.dumps(v if isinstance(v, str) else json.dumps(v))});"
                    for k, v in store.items())
-    c.send("Page.navigate", url=BASE_URL + "/")
+    nav = c.send("Page.navigate", url=BASE_URL + "/")
+    if nav.get("errorText"):
+        raise RuntimeError(f"could not open {BASE_URL}: {nav['errorText']}")
     c.wait_for_origin()
     c.js("localStorage.clear(); sessionStorage.clear();" + sets + "true")
     c.send("Page.navigate", url=BASE_URL + path)
@@ -414,6 +416,14 @@ try:
         except Exception as e:  # noqa: BLE001 — one failed scene must not lose the rest
             failed.append(name)
             print(f"FAILED {name}: {e}", flush=True)
+            try:
+                print("  at", chrome.js("location.href + ' | ' + (document.body ? document.body.innerText.slice(0, 200) : '')"))
+                shot = chrome.send("Page.captureScreenshot", format="png")
+                os.makedirs("debug", exist_ok=True)
+                with open(os.path.join("debug", f"{name}.png"), "wb") as f:
+                    f.write(base64.b64decode(shot["data"]))
+            except Exception as e2:  # noqa: BLE001
+                print("  (no debug capture:", e2, ")")
 finally:
     chrome.close()
 sys.exit(1 if failed else 0)
