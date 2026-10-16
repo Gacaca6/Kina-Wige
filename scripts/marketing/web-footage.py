@@ -165,8 +165,20 @@ class Chrome:
     def js(self, expr: str):
         r = self.send("Runtime.evaluate", expression=expr, returnByValue=True, awaitPromise=True)
         if r.get("exceptionDetails"):
-            raise RuntimeError(f"page script failed: {r['exceptionDetails'].get('text')} :: {expr[:120]}")
+            d = r["exceptionDetails"]
+            why = (d.get("exception") or {}).get("description") or d.get("text")
+            raise RuntimeError(f"page script failed: {why} :: {expr[:100]}")
         return r.get("result", {}).get("value")
+
+    def wait_for_origin(self) -> None:
+        for _ in range(100):
+            try:
+                if self.js(f"location.href.startsWith({json.dumps(BASE_URL)}) && document.readyState !== 'loading'"):
+                    return
+            except RuntimeError:
+                pass
+            time.sleep(0.1)
+        raise RuntimeError("app page did not load")
 
     def close(self) -> None:
         self.proc.terminate()
@@ -290,7 +302,7 @@ def open_take(c: Chrome, name: str, path: str, extra: dict | None = None) -> Tak
     sets = "".join(f"localStorage.setItem({json.dumps(k)}, {json.dumps(v if isinstance(v, str) else json.dumps(v))});"
                    for k, v in store.items())
     c.send("Page.navigate", url=BASE_URL + "/")
-    time.sleep(2.5)
+    c.wait_for_origin()
     c.js("localStorage.clear(); sessionStorage.clear();" + sets + "true")
     c.send("Page.navigate", url=BASE_URL + path)
     t = Take(c, name)
