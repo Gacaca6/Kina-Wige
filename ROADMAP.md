@@ -458,10 +458,16 @@ access, and Google now checks that testers actually used the app.
   **Moved to Cloudflare 2026-10-21** (Vercel's free plan forbids commercial
   use). Account gacacagodwin@gmail.com. Site + privacy policy:
   `https://kinawige.pages.dev` (Pages project `kinawige`). Web app:
-  `https://app.kinawige.workers.dev` (Worker `app`, `wrangler.jsonc`;
-  `cloudflare/worker.js` adds byte ranges for /videos/* because Cloudflare's
-  static assets ignore Range and iPhone Safari needs 206). Keep the Vercel
+  `https://kinawige-app.pages.dev` (Pages project `kinawige-app`;
+  `functions/videos/[[path]].js` adds byte ranges for /videos/* because
+  Cloudflare ignores Range and iPhone Safari needs 206). Keep the Vercel
   projects about two weeks for anyone on the old addresses, then delete.
+  ⚠️ **The same Cloudflare account holds the owner's separate Wayfind
+  project, including a Worker named `app`. Never run `wrangler deploy`
+  (Workers) for Kina Wige.** Deploy only with
+  `wrangler pages deploy … --project-name kinawige` / `kinawige-app`.
+  On 2026-10-21 a Kina Wige Worker deploy named `app` overwrote Wayfind's
+  `app` for ~30 minutes before it was rolled back.
 - [x] **F. Confirm licences for the content videos** — **resolved 2026-08-08 by
   owner: the alphabet songs and "letter-a-in-the-neighbourhood" come from the
   Ubongo Toolkit** (CC BY-NC-ND). `attribution` filled in `episodes.ts` and

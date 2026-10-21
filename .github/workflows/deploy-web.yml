@@ -1,13 +1,18 @@
 name: Deploy web app
 
-# Publishes the website/PWA build to Cloudflare Workers
-# (https://app.kinawige.workers.dev) on every push to main. The Android app is
-# not affected: it carries its own copy and never loads anything from here.
+# Publishes the website/PWA build to Cloudflare Pages project `kinawige-app`
+# (https://kinawige-app.pages.dev) on every push to main, with functions/
+# (byte ranges for /videos/*). The Android app is not affected: it carries its
+# own copy and never loads anything from here.
+#
+# The same Cloudflare account also holds the owner's separate Wayfind
+# project. This workflow must only ever touch the Pages project named below:
+# never `wrangler deploy` (Workers), which would deploy by Worker name.
 #
 # Needs two repository secrets, created by the owner (never pasted in chat):
-#   CLOUDFLARE_API_TOKEN   a token with the "Edit Cloudflare Workers" template
+#   CLOUDFLARE_API_TOKEN   a token with "Cloudflare Pages: Edit"
 #   CLOUDFLARE_ACCOUNT_ID  c2f20a67cc8afab4288db38ead695fe0
-# Without them the job skips the deploy step instead of failing.
+# Without them the job builds and checks but skips the deploy.
 
 on:
   push:
@@ -37,13 +42,13 @@ jobs:
           npm ci
           npm run build
 
-      - name: Deploy to Cloudflare
+      - name: Deploy to Cloudflare Pages (kinawige-app only)
         if: env.HAS_TOKEN == 'true'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy
+          command: pages deploy dist --project-name kinawige-app --branch main
 
       - name: No token yet
         if: env.HAS_TOKEN != 'true'

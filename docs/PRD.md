@@ -47,7 +47,7 @@ Any requirement below is written against this reality, not a greenfield.
 | Area | Actual state |
 | --- | --- |
 | Platform | Installable PWA — React 19, Vite 6, TypeScript, Tailwind 4, `motion`, react-router 7 |
-| Hosting | Cloudflare Workers, `https://app.kinawige.workers.dev` (`wrangler.jsonc`), deployed on push to `main` by `.github/workflows/deploy-web.yml`. Moved from Vercel on 2026-10-21 because Vercel's free plan is non-commercial |
+| Hosting | Cloudflare Pages project `kinawige-app`, `https://kinawige-app.pages.dev`, deployed on push to `main` by `.github/workflows/deploy-web.yml`. Moved from Vercel on 2026-10-21 because Vercel's free plan is non-commercial |
 | Content | 7 episode entries, 6 games (handwash, memory, counting, pattern, sorting, +1) |
 | Offline | Full. Service worker precache ≈ 1.29 MB; videos cached via prefetch + lazy `cacheEpisodeClips()` |
 | Video weight | `public/videos` ≈ 59 MB on disk (480p CRF 26); small clips prefetch, long songs cache on first open |
