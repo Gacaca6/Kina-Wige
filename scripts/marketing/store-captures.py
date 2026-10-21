@@ -436,10 +436,15 @@ def clip_teranya():
     record("clip-teranya", 12, play)
 
 
+ONLY = set(os.environ.get("KW_SCENES", "").split())
+log.append("viewport " + str(page.js("JSON.stringify({w: innerWidth, h: innerHeight, dpr: devicePixelRatio, "
+                                     "orientation: (screen.orientation || {}).type})")))
 for name, fn in [("home", home), ("episode", episode), ("karaba", karaba), ("andika", andika),
                  ("teranya", teranya), ("stickers", stickers), ("parents", parents), ("rest", rest),
                  ("inzira", inzira), ("imiterere", imiterere), ("siga", siga),
                  ("clip-karaba", clip_karaba), ("clip-andika", clip_andika), ("clip-teranya", clip_teranya)]:
+    if ONLY and name not in ONLY:
+        continue
     scene(name, fn)
 
 with open(os.path.join(OUT, "captures.log"), "w", encoding="utf-8") as f:

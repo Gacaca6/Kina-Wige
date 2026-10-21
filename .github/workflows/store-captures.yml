@@ -13,6 +13,16 @@ on:
       - "scripts/marketing/store-captures.py"
       - ".github/workflows/store-captures.yml"
   workflow_dispatch:
+    inputs:
+      api_level:
+        description: Android API level (36 = Android 16, where tablets ignore the portrait lock)
+        default: "35"
+      profile:
+        description: Emulator device profile (pixel_6, pixel_tablet)
+        default: pixel_6
+      scenes:
+        description: Space-separated scene names; empty = all
+        default: ""
 
 jobs:
   captures:
@@ -61,18 +71,18 @@ jobs:
       - name: Capture in the emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 35
+          api-level: ${{ github.event.inputs.api_level || '35' }}
           target: google_apis
           arch: x86_64
-          profile: pixel_6
+          profile: ${{ github.event.inputs.profile || 'pixel_6' }}
           disable-animations: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
-          script: python3 scripts/marketing/store-captures.py android/app/build/outputs/apk/debug/app-debug.apk store-raw
+          script: KW_SCENES="${{ github.event.inputs.scenes }}" python3 scripts/marketing/store-captures.py android/app/build/outputs/apk/debug/app-debug.apk store-raw
 
       - name: Upload captures
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: store-raw
+          name: store-raw-${{ github.event.inputs.profile || 'pixel_6' }}-${{ github.event.inputs.api_level || '35' }}
           path: store-raw
           retention-days: 14
