@@ -92,7 +92,13 @@ jobs:
           KINA_KEY_ALIAS: ${{ secrets.KINA_KEY_ALIAS }}
           KINA_KEY_PASSWORD: ${{ secrets.KINA_KEY_PASSWORD }}
         run: |
-          echo "$KINA_KEYSTORE_BASE64" | base64 -d > "$KINA_KEYSTORE_FILE"
+          # Strip stray CR/LF/spaces: a secret set from Windows PowerShell can
+          # carry a trailing CRLF, which GNU base64 rejects as garbage.
+          printf '%s' "$KINA_KEYSTORE_BASE64" | tr -d '\r\n ' | base64 -d > "$KINA_KEYSTORE_FILE"
+          if ! keytool -list -keystore "$KINA_KEYSTORE_FILE" -storepass "$KINA_KEYSTORE_PASSWORD" -alias "$KINA_KEY_ALIAS" >/dev/null 2>&1; then
+            echo "::error::The keystore did not open with KINA_KEYSTORE_PASSWORD and alias '$KINA_KEY_ALIAS'. Check those three secrets."
+            rm -f "$KINA_KEYSTORE_FILE"; exit 1
+          fi
           ./gradlew bundleRelease --no-daemon --stacktrace
           rm -f "$KINA_KEYSTORE_FILE"
           echo "Upload certificate of the signed bundle (public, safe to share):"
