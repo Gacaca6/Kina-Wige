@@ -473,8 +473,9 @@ access, and Google now checks that testers actually used the app.
   Ubongo Toolkit** (CC BY-NC-ND). `attribution` filled in `episodes.ts` and
   Ubongo is credited on the grown-up side in Settings.
   Still true for the rest: Pixabay clip = Pixabay Content Licence (no
-  attribution required); the Twinkle *melody* is public domain but the specific
-  video is not necessarily — that one still wants a source before wide release.
+  attribution required); the Twinkle *melody* is public domain, and **the
+  video was made by the owner himself (confirmed 2026-10-21)** — no third-party
+  rights, cleared for the Play release. Credited as "Kina Wige animation".
   - ⚠️ **NC = NonCommercial.** Ubongo Toolkit content is fine for Kina Wige as
     it stands, but if the app is ever sold, ad-supported, or bundled into a paid
     offering, this material must be re-licensed or replaced. Worth knowing

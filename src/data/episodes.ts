@@ -188,10 +188,9 @@ export const episodes: Episode[] = [
     hasQuiz: false,
     prefetch: false,
     // `attribution` is PARENT-FACING — it renders in Settings › Thanks. Keep
-    // engineering caveats in ROADMAP.md, not here. This credits the melody,
-    // which is verifiably public domain, and asserts nothing about the specific
-    // video, whose source is still open (ROADMAP F).
-    attribution: 'Twinkle Twinkle Little Star — traditional melody, public domain',
+    // engineering caveats in ROADMAP.md, not here. The melody is public domain;
+    // the video itself was made by the owner (confirmed 2026-10-21, ROADMAP F).
+    attribution: 'Twinkle Twinkle Little Star — traditional melody, public domain · Kina Wige animation',
     curriculum: {
       skills: ['snd.listen.attend'],
       level: 'L1',
