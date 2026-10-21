@@ -48,7 +48,11 @@ export const comics: Comic[] = [
     },
     category: { KN: '💛 Kwikunda', EN: '💛 Self-love', FR: "💛 S'aimer" },
     cover: mySpecialHair.cover,
-    attribution: 'Illustrations: Book Dash (bookdash.org) · CC BY 4.0',
+    // CC BY 4.0 requires naming the creators and saying what changed: the
+    // illustrations are theirs, the trilingual text is our own new telling.
+    attribution:
+      'Illustrations from “My Special Hair” by Candice Dingwall, illustrated by Jess Jardim-Wedepohl, ' +
+      'designed by Renate van Rensburg (Book Dash, bookdash.org) · CC BY 4.0 · New text by Kina Wige',
     curriculum: {
       skills: ['self.confidence', 'wrd.story.recall'],
       level: 'L2',

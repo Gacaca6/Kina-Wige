@@ -507,6 +507,10 @@ Assistant reported; owner chose "report only, don't build yet". Verdicts:
   theme — girl + dog Bobi across the seasons). Comic type gained `attribution`,
   shown on the card (CC BY compliance). Browser-verified end to end. NOTE: for
   full CC BY, add the specific Book Dash author/illustrator names (see F).
+  *(2026-10-21: names added — "My Special Hair" by Candice Dingwall, illustrated
+  by Jess Jardim-Wedepohl, designed by Renate van Rensburg, Book Dash 2017,
+  per the Library of Congress record. Owner to confirm the art came from that
+  book.)*
 
 ### HyperFrames PILOT — IN PROGRESS (`video-factory/`)
 Owner supplied `a-i-e-o-u.mp3` (65.411s Kinyarwanda vowels song) → building a
