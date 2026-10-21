@@ -455,6 +455,13 @@ access, and Google now checks that testers actually used the app.
   one. The hard rule against network APIs (CLAUDE.md rule 1) is what keeps it
   that way — those guards stay, the task does not.
 - [x] **E. Hosting** — done, deployed on Vercel by owner (2026-07-08).
+  **Moved to Cloudflare 2026-10-21** (Vercel's free plan forbids commercial
+  use). Account gacacagodwin@gmail.com. Site + privacy policy:
+  `https://kinawige.pages.dev` (Pages project `kinawige`). Web app:
+  `https://app.kinawige.workers.dev` (Worker `app`, `wrangler.jsonc`;
+  `cloudflare/worker.js` adds byte ranges for /videos/* because Cloudflare's
+  static assets ignore Range and iPhone Safari needs 206). Keep the Vercel
+  projects about two weeks for anyone on the old addresses, then delete.
 - [x] **F. Confirm licences for the content videos** — **resolved 2026-08-08 by
   owner: the alphabet songs and "letter-a-in-the-neighbourhood" come from the
   Ubongo Toolkit** (CC BY-NC-ND). `attribution` filled in `episodes.ts` and

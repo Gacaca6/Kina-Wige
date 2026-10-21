@@ -1,0 +1,7 @@
+# Cloudflare Pages headers (replaces the headers block in vercel.json).
+# Pages already sends "Cache-Control: public, max-age=0, must-revalidate" and
+# supports byte ranges for every file, which is what the videos need, so only
+# the service worker is listed: browsers must always re-check it, or an
+# installed PWA could keep running an old version.
+/sw.js
+  Cache-Control: no-cache

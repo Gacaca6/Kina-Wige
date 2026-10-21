@@ -1,1 +1,4 @@
-/* /index.html 200
+# Intentionally empty. Cloudflare Pages already serves index.html for any path
+# that is not a real file (single-page app fallback, because dist has no
+# 404.html), so the old Netlify catch-all "/* /index.html 200" is not needed
+# and could otherwise rewrite real files such as /videos/*.mp4.

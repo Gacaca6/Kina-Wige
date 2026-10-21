@@ -27,7 +27,7 @@ const VIDEO_CACHE = 'kina-wige-videos';
 // with `max-age=31536000, immutable` on a URL that never changes, so Safari —
 // which honours `immutable` strictly, where Chrome will still revalidate —
 // answered that fetch from its own year-long disk cache and handed us the SAME
-// stale bytes we were trying to replace. The header is fixed in vercel.json,
+// stale bytes we were trying to replace. The header is fixed in the host's config,
 // but a device that already stored the old response under the old header would
 // stay stuck for a year. `cache: 'reload'` bypasses the HTTP cache outright,
 // so the repair works regardless of what a device stored previously.

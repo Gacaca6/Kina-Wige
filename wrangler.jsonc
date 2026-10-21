@@ -1,0 +1,22 @@
+// The Kina Wige web app (PWA) on Cloudflare Workers static assets:
+//   https://app.kinawige.workers.dev
+// Deploy:  npm run build  then  npx wrangler deploy
+// Replaces vercel.json. public/_headers carries the service-worker header.
+// The Android app does not use this at all: it carries its own copy inside.
+{
+  "name": "app",
+  "main": "cloudflare/worker.js",
+  "compatibility_date": "2026-10-19",
+  "workers_dev": true,
+  "preview_urls": false,
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    // Any path that is not a real file (/home-path, /game/karaba …) gets
+    // index.html, like the old Vercel rewrite.
+    "not_found_handling": "single-page-application",
+    // Only videos go through cloudflare/worker.js, for byte ranges (iPhone
+    // Safari needs 206). Everything else is served directly, at no cost.
+    "run_worker_first": ["/videos/*"]
+  }
+}

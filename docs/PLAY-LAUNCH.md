@@ -103,7 +103,7 @@ the very first open. For comparison, Apples & Bananas is about 497 MB.
 | Target audience | **5 and under** and **6–8** — setup offers ages 3 to 6, so a six-year-old is in scope. Appeals to children: Yes. |
 | Families policy | Comply. No ads, no analytics, no SDKs, no data sent anywhere. |
 | Data safety | Collects **no** data, shares **no** data. The child's nickname and progress stay on the device and are never transmitted — Play counts only data that leaves the device. |
-| Privacy policy URL | `https://kina-wige-site.vercel.app/privacy/` (until the domain exists) |
+| Privacy policy URL | `https://kinawige.pages.dev/privacy/` (Cloudflare Pages, since 2026-10-21) |
 | Government / financial / health / news | No |
 | Category / tags | Education · Education, Family |
 
